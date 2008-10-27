@@ -1,0 +1,317 @@
+srcdir_ = @srcdir@
+ifeq ($(src_dir),)
+srcdir:=$(shell (cd $(srcdir_); pwd))
+else
+srcdir:=$(src_dir)
+endif
+VPATH = $(srcdir)	#: This colon should fool config.status into not
+			#: deleting VPATH when srcdir = .
+CPU=-m$(word 1, $(subst ., ,$(CPU-FPU)))
+FPU=-m$(word 2, $(subst ., ,$(CPU-FPU)))
+CC = @CC@
+CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) $(FPU)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+libdir = $(prefix)/lib
+RANLIB = @RANLIB@
+#
+# There are two options in making libm at fdlibm compile time:
+# 	_IEEE_LIBM 	--- IEEE libm; smaller, and somewhat faster
+#	_MULTI_LIBM	--- Support multi-standard at runtime by 
+#			    imposing wrapper functions defined in 
+#			    fdlibm.h:
+#				_IEEE_MODE 	-- IEEE
+#				_XOPEN_MODE 	-- X/OPEN
+#				_POSIX_MODE 	-- POSIX/ANSI
+#				_SVID3_MODE 	-- SVID
+#
+# Here is how to set up CFLAGS to create the desired libm at 
+# compile time:
+#
+# 	DEFS = -D_IEEE_LIBM	... IEEE libm (recommended)
+#	DEFS = -D_SVID3_MODE	... Multi-standard supported
+#					    libm with SVID as the 
+#					    default standard
+#	DEFS = -D_XOPEN_MODE	... Multi-standard supported
+#					    libm with XOPEN as the 
+#					    default standard
+#	DEFS = -D_POSIX_MODE	... Multi-standard supported
+#					    libm with POSIX as the 
+#					    default standard
+#	DEFS = 			... Multi-standard supported
+#					    libm with IEEE as the 
+#					    default standard
+# 
+# NOTE: if scalb's second arguement is an int, then one must
+# define _SCALB_INT in DEFS. The default prototype of scalb
+# is double scalb(double, double)
+#
+
+# Multi-standard supported libm with POSIX as the default standard
+DEFS=-D_IEEE_LIBM -D_SCALB_INT -D_REENTRANT
+
+# Pick the CPU/FPU combinations you want
+CPU-FPU-TYPES = \
+		68000.soft-float \
+		68020-60.68881
+
+
+INCFILES = fdlibm.h
+SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
+	$(srcdir)/k_sin.c $(srcdir)/k_tan.c $(srcdir)/e_acos.c \
+	$(srcdir)/e_acosh.c $(srcdir)/e_asin.c $(srcdir)/e_atan2.c \
+	$(srcdir)/e_atanh.c $(srcdir)/e_cosh.c $(srcdir)/e_exp.c \
+	$(srcdir)/e_fmod.c $(srcdir)/e_gamma.c $(srcdir)/e_gamma_r.c \
+	$(srcdir)/e_hypot.c $(srcdir)/e_j0.c $(srcdir)/e_j1.c \
+	$(srcdir)/e_jn.c $(srcdir)/e_lgamma.c $(srcdir)/e_lgamma_r.c \
+	$(srcdir)/e_log.c $(srcdir)/e_log10.c $(srcdir)/e_pow.c \
+	$(srcdir)/e_rem_pio2.c $(srcdir)/e_remainder.c $(srcdir)/e_scalb.c \
+	$(srcdir)/e_sinh.c $(srcdir)/e_sqrt.c $(srcdir)/w_acos.c \
+	$(srcdir)/w_acosh.c $(srcdir)/w_asin.c $(srcdir)/w_atan2.c \
+	$(srcdir)/w_atanh.c $(srcdir)/w_cosh.c $(srcdir)/w_exp.c \
+	$(srcdir)/w_fmod.c $(srcdir)/w_gamma.c $(srcdir)/w_gamma_r.c \
+	$(srcdir)/w_hypot.c $(srcdir)/w_j0.c $(srcdir)/w_j1.c \
+	$(srcdir)/w_jn.c $(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
+	$(srcdir)/w_log.c $(srcdir)/w_log10.c $(srcdir)/w_pow.c \
+	$(srcdir)/w_remainder.c $(srcdir)/w_scalb.c $(srcdir)/w_sinh.c \
+	$(srcdir)/w_sqrt.c $(srcdir)/s_asinh.c $(srcdir)/s_atan.c \
+	$(srcdir)/s_cbrt.c $(srcdir)/s_ceil.c $(srcdir)/s_copysign.c \
+	$(srcdir)/s_cos.c $(srcdir)/s_erf.c $(srcdir)/s_expm1.c \
+	$(srcdir)/s_fabs.c $(srcdir)/s_finite.c $(srcdir)/s_floor.c \
+	$(srcdir)/s_frexp.c $(srcdir)/s_ilogb.c $(srcdir)/s_isnan.c \
+	$(srcdir)/s_ldexp.c $(srcdir)/s_lib_version.c $(srcdir)/s_log1p.c \
+	$(srcdir)/s_logb.c $(srcdir)/s_matherr.c $(srcdir)/s_modf.c \
+	$(srcdir)/s_nextafter.c $(srcdir)/s_rint.c $(srcdir)/s_scalbn.c \
+	$(srcdir)/s_signgam.c $(srcdir)/s_significand.c $(srcdir)/s_sin.c \
+	$(srcdir)/s_tan.c $(srcdir)/s_tanh.c
+
+OBJ = 	k_standard.o k_rem_pio2.o \
+	k_cos.o k_sin.o k_tan.o \
+	e_acos.o e_acosh.o e_asin.o e_atan2.o \
+	e_atanh.o e_cosh.o e_exp.o e_fmod.o \
+	e_gamma.o e_gamma_r.o e_hypot.o e_j0.o \
+	e_j1.o e_jn.o e_lgamma.o e_lgamma_r.o \
+	e_log.o e_log10.o e_pow.o e_rem_pio2.o e_remainder.o  \
+	e_scalb.o e_sinh.o e_sqrt.o \
+	w_acos.o w_acosh.o w_asin.o w_atan2.o \
+	w_atanh.o w_cosh.o w_exp.o w_fmod.o \
+	w_gamma.o w_gamma_r.o w_hypot.o w_j0.o \
+	w_j1.o w_jn.o w_lgamma.o w_lgamma_r.o \
+	w_log.o w_log10.o w_pow.o w_remainder.o \
+	w_scalb.o w_sinh.o w_sqrt.o \
+	s_asinh.o s_atan.o s_cbrt.o s_ceil.o s_copysign.o \
+	s_cos.o s_erf.o s_expm1.o s_fabs.o s_finite.o s_floor.o \
+	s_frexp.o s_ilogb.o s_isnan.o s_ldexp.o s_lib_version.o \
+	s_log1p.o s_logb.o s_matherr.o s_modf.o s_nextafter.o \
+	s_rint.o s_scalbn.o s_signgam.o s_significand.o s_sin.o \
+	s_tan.o s_tanh.o
+
+.c.o:
+	$(CC) -c $(DEFS) -I$(srcdir) $(CFLAGS) $< $(OUTPUT_OPTION)
+
+all:
+	for i in $(CPU-FPU-TYPES); do \
+	  if [ ! -d $$i ] ; then \
+	    mkdir $$i; \
+	  else true; fi; \
+	  (cd $$i; make -f ../Makefile CPU-FPU=$$i src_dir=$(srcdir) $(LIB)); \
+	done
+
+LIB = libm.a
+
+$(LIB): $(OBJ) 
+	ar cru $(LIB) $(OBJ)
+	$(RANLIB) $(LIB)
+
+install: all
+	if [ -d 68000.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir); \
+	  cp 68000.soft-float/libm.a $(libdir)/libm.a; \
+	else true; fi
+	if [ -d 68020-60.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm020; \
+	  cp 68020-60.soft-float/libm.a $(libdir)/libm020/libm.a; \
+	else true; fi
+	if [ -d 68020-60.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm020/libm881; \
+	  cp 68020-60.68881/libm.a $(libdir)/libm020/libm881/libm.a; \
+	else true; fi
+	if [ -d 68030.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm030; \
+	  cp 68030.soft-float/libm.a $(libdir)/libm030/libm.a; \
+	else true; fi
+	if [ -d 68030.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm030/libm881; \
+	  cp 68030.68881/libm.a $(libdir)/libm030/libm881/libm.a; \
+	else true; fi
+	if [ -d 68040.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm040; \
+	  cp 68040.soft-float/libm.a $(libdir)/libm040/libm.a; \
+	else true; fi
+	if [ -d 68040.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm040/libm881; \
+	  cp 68040.68881/libm.a $(libdir)/libm040/libm881/libm.a; \
+	else true; fi
+	if [ -d 68060.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm060; \
+	  cp 68060.soft-float/libm.a $(libdir)/libm060/libm.a; \
+	else true; fi
+	if [ -d 68060.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/libm060/libm881; \
+	  cp 68060.68881/libm.a $(libdir)/libm060/libm881/libm.a; \
+	else true; fi
+	if [ -d 68000.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib; \
+	  cp 68000.soft-float/libm.a $(libdir)/lib/libm.a; \
+	else true; fi
+	if [ -d 68020-60.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm020; \
+	  cp 68020-60.soft-float/libm.a $(libdir)/lib/libm020/libm.a; \
+	else true; fi
+	if [ -d 68020-60.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm020/libm881; \
+	  cp 68020-60.68881/libm.a $(libdir)/lib/libm020/libm881/libm.a; \
+	else true; fi
+	if [ -d 68030.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm030; \
+	  cp 68030.soft-float/libm.a $(libdir)/lib/libm030/libm.a; \
+	else true; fi
+	if [ -d 68030.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm030/libm881; \
+	  cp 68030.68881/libm.a $(libdir)/lib/libm030/libm881/libm.a; \
+	else true; fi
+	if [ -d 68040.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm040; \
+	  cp 68040.soft-float/libm.a $(libdir)/lib/libm040/libm.a; \
+	else true; fi
+	if [ -d 68040.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm040/libm881; \
+	  cp 68040.68881/libm.a $(libdir)/lib/libm040/libm881/libm.a; \
+	else true; fi
+	if [ -d 68060.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm060; \
+	  cp 68060.soft-float/libm.a $(libdir)/lib/libm060/libm.a; \
+	else true; fi
+	if [ -d 68060.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib/libm060/libm881; \
+	  cp 68060.68881/libm.a $(libdir)/lib/libm060/libm881/libm.a; \
+	else true; fi
+	if [ -d 68020-60.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm020; \
+	  cp 68020-60.soft-float/libm.a $(libdir)/lib32/libm020/libm.a; \
+	else true; fi
+	if [ -d 68020-60.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm020/libm881; \
+	  cp 68020-60.68881/libm.a $(libdir)/lib32/libm020/libm881/libm.a; \
+	else true; fi
+	if [ -d 68030.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm030; \
+	  cp 68030.soft-float/libm.a $(libdir)/lib32/libm030/libm.a; \
+	else true; fi
+	if [ -d 68030.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm030/libm881; \
+	  cp 68030.68881/libm.a $(libdir)/lib32/libm030/libm881/libm.a; \
+	else true; fi
+	if [ -d 68040.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm040; \
+	  cp 68040.soft-float/libm.a $(libdir)/lib32/libm040/libm.a; \
+	else true; fi
+	if [ -d 68040.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm040/libm881; \
+	  cp 68040.68881/libm.a $(libdir)/lib32/libm040/libm881/libm.a; \
+	else true; fi
+	if [ -d 68060.soft-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm060; \
+	  cp 68060.soft-float/libm.a $(libdir)/lib32/libm060/libm.a; \
+	else true; fi
+	if [ -d 68060.68881 ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/lib32/libm060/libm881; \
+	  cp 68060.68881/libm.a $(libdir)/lib32/libm060/libm881/libm.a; \
+	else true; fi
+
+clean:
+	rm -rf a.out $(CPU-FPU-TYPES)
+
+distclean: clean
+	rm -f config.cache config.status config.log Makefile
+
+e_acos.o: $(srcdir)/e_acos.c $(srcdir)/fdlibm.h
+e_acosh.o: $(srcdir)/e_acosh.c $(srcdir)/fdlibm.h
+e_asin.o: $(srcdir)/e_asin.c $(srcdir)/fdlibm.h
+e_atan2.o: $(srcdir)/e_atan2.c $(srcdir)/fdlibm.h
+e_atanh.o: $(srcdir)/e_atanh.c $(srcdir)/fdlibm.h
+e_cosh.o: $(srcdir)/e_cosh.c $(srcdir)/fdlibm.h
+e_exp.o: $(srcdir)/e_exp.c $(srcdir)/fdlibm.h
+e_fmod.o: $(srcdir)/e_fmod.c $(srcdir)/fdlibm.h
+e_gamma.o: $(srcdir)/e_gamma.c $(srcdir)/fdlibm.h
+e_gamma_r.o: $(srcdir)/e_gamma_r.c $(srcdir)/fdlibm.h
+e_hypot.o: $(srcdir)/e_hypot.c $(srcdir)/fdlibm.h
+e_j0.o: $(srcdir)/e_j0.c $(srcdir)/fdlibm.h
+e_j1.o: $(srcdir)/e_j1.c $(srcdir)/fdlibm.h
+e_jn.o: $(srcdir)/e_jn.c $(srcdir)/fdlibm.h
+e_lgamma.o: $(srcdir)/e_lgamma.c $(srcdir)/fdlibm.h
+e_lgamma_r.o: $(srcdir)/e_lgamma_r.c $(srcdir)/fdlibm.h
+e_log.o: $(srcdir)/e_log.c $(srcdir)/fdlibm.h
+e_log10.o: $(srcdir)/e_log10.c $(srcdir)/fdlibm.h
+e_pow.o: $(srcdir)/e_pow.c $(srcdir)/fdlibm.h
+e_rem_pio2.o: $(srcdir)/e_rem_pio2.c $(srcdir)/fdlibm.h
+e_remainder.o: $(srcdir)/e_remainder.c $(srcdir)/fdlibm.h
+e_scalb.o: $(srcdir)/e_scalb.c $(srcdir)/fdlibm.h
+e_sinh.o: $(srcdir)/e_sinh.c $(srcdir)/fdlibm.h
+e_sqrt.o: $(srcdir)/e_sqrt.c $(srcdir)/fdlibm.h
+k_cos.o: $(srcdir)/k_cos.c $(srcdir)/fdlibm.h
+k_rem_pio2.o: $(srcdir)/k_rem_pio2.c $(srcdir)/fdlibm.h
+k_sin.o: $(srcdir)/k_sin.c $(srcdir)/fdlibm.h
+k_standard.o: $(srcdir)/k_standard.c $(srcdir)/fdlibm.h
+k_tan.o: $(srcdir)/k_tan.c $(srcdir)/fdlibm.h
+s_asinh.o: $(srcdir)/s_asinh.c $(srcdir)/fdlibm.h
+s_atan.o: $(srcdir)/s_atan.c $(srcdir)/fdlibm.h
+s_cbrt.o: $(srcdir)/s_cbrt.c $(srcdir)/fdlibm.h
+s_ceil.o: $(srcdir)/s_ceil.c $(srcdir)/fdlibm.h
+s_copysign.o: $(srcdir)/s_copysign.c $(srcdir)/fdlibm.h
+s_cos.o: $(srcdir)/s_cos.c $(srcdir)/fdlibm.h
+s_erf.o: $(srcdir)/s_erf.c $(srcdir)/fdlibm.h
+s_expm1.o: $(srcdir)/s_expm1.c $(srcdir)/fdlibm.h
+s_fabs.o: $(srcdir)/s_fabs.c $(srcdir)/fdlibm.h
+s_finite.o: $(srcdir)/s_finite.c $(srcdir)/fdlibm.h
+s_floor.o: $(srcdir)/s_floor.c $(srcdir)/fdlibm.h
+s_frexp.o: $(srcdir)/s_frexp.c $(srcdir)/fdlibm.h
+s_ilogb.o: $(srcdir)/s_ilogb.c $(srcdir)/fdlibm.h
+s_isnan.o: $(srcdir)/s_isnan.c $(srcdir)/fdlibm.h
+s_ldexp.o: $(srcdir)/s_ldexp.c $(srcdir)/fdlibm.h
+s_lib_version.o: $(srcdir)/s_lib_version.c $(srcdir)/fdlibm.h
+s_log1p.o: $(srcdir)/s_log1p.c $(srcdir)/fdlibm.h
+s_logb.o: $(srcdir)/s_logb.c $(srcdir)/fdlibm.h
+s_matherr.o: $(srcdir)/s_matherr.c $(srcdir)/fdlibm.h
+s_modf.o: $(srcdir)/s_modf.c $(srcdir)/fdlibm.h
+s_nextafter.o: $(srcdir)/s_nextafter.c $(srcdir)/fdlibm.h
+s_rint.o: $(srcdir)/s_rint.c $(srcdir)/fdlibm.h
+s_scalbn.o: $(srcdir)/s_scalbn.c $(srcdir)/fdlibm.h
+s_signgam.o: $(srcdir)/s_signgam.c $(srcdir)/fdlibm.h
+s_significand.o: $(srcdir)/s_significand.c $(srcdir)/fdlibm.h
+s_sin.o: $(srcdir)/s_sin.c $(srcdir)/fdlibm.h
+s_tan.o: $(srcdir)/s_tan.c $(srcdir)/fdlibm.h
+s_tanh.o: $(srcdir)/s_tanh.c $(srcdir)/fdlibm.h
+w_acos.o: $(srcdir)/w_acos.c $(srcdir)/fdlibm.h
+w_acosh.o: $(srcdir)/w_acosh.c $(srcdir)/fdlibm.h
+w_asin.o: $(srcdir)/w_asin.c $(srcdir)/fdlibm.h
+w_atan2.o: $(srcdir)/w_atan2.c $(srcdir)/fdlibm.h
+w_atanh.o: $(srcdir)/w_atanh.c $(srcdir)/fdlibm.h
+w_cosh.o: $(srcdir)/w_cosh.c $(srcdir)/fdlibm.h
+w_exp.o: $(srcdir)/w_exp.c $(srcdir)/fdlibm.h
+w_fmod.o: $(srcdir)/w_fmod.c $(srcdir)/fdlibm.h
+w_gamma.o: $(srcdir)/w_gamma.c $(srcdir)/fdlibm.h
+w_gamma_r.o: $(srcdir)/w_gamma_r.c $(srcdir)/fdlibm.h
+w_hypot.o: $(srcdir)/w_hypot.c $(srcdir)/fdlibm.h
+w_j0.o: $(srcdir)/w_j0.c $(srcdir)/fdlibm.h
+w_j1.o: $(srcdir)/w_j1.c $(srcdir)/fdlibm.h
+w_jn.o: $(srcdir)/w_jn.c $(srcdir)/fdlibm.h
+w_lgamma.o: $(srcdir)/w_lgamma.c $(srcdir)/fdlibm.h
+w_lgamma_r.o: $(srcdir)/w_lgamma_r.c $(srcdir)/fdlibm.h
+w_log.o: $(srcdir)/w_log.c $(srcdir)/fdlibm.h
+w_log10.o: $(srcdir)/w_log10.c $(srcdir)/fdlibm.h
+w_pow.o: $(srcdir)/w_pow.c $(srcdir)/fdlibm.h
+w_remainder.o: $(srcdir)/w_remainder.c $(srcdir)/fdlibm.h
+w_scalb.o: $(srcdir)/w_scalb.c $(srcdir)/fdlibm.h
+w_sinh.o: $(srcdir)/w_sinh.c $(srcdir)/fdlibm.h
+w_sqrt.o: $(srcdir)/w_sqrt.c $(srcdir)/fdlibm.h
