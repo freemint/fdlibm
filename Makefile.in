@@ -48,7 +48,7 @@ RANLIB = @RANLIB@
 #
 
 # Multi-standard supported libm with POSIX as the default standard
-DEFS=-D_IEEE_LIBM -D_SCALB_INT -D_REENTRANT
+DEFS=-D_IEEE_LIBM -D_REENTRANT
 
 # Pick the CPU/FPU combinations you want
 CPU-FPU-TYPES = \
