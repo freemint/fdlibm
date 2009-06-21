@@ -162,6 +162,7 @@ install: all
 	  $(srcdir)/mkinstalldirs $(libdir)/libm060/libm881; \
 	  cp 68060.68881/libm.a $(libdir)/libm060/libm881/libm.a; \
 	else true; fi
+	$(srcdir)/mkinstalldirs $(incdir)
 	cp math.h $(incdir)/math.h
 
 clean:
