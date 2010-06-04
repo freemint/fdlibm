@@ -6,10 +6,17 @@ srcdir:=$(src_dir)
 endif
 VPATH = $(srcdir)	#: This colon should fool config.status into not
 			#: deleting VPATH when srcdir = .
-CPU=-m$(word 1, $(subst ., ,$(CPU-FPU)))
+ifeq ($(CPU-FPU),5475.hard-float)
+	CPU=-mcpu=$(word 1, $(subst ., ,$(CPU-FPU)))
+else
+	CPU=-m$(word 1, $(subst ., ,$(CPU-FPU)))
+endif
 FPU=-m$(word 2, $(subst ., ,$(CPU-FPU)))
 CC = @CC@
-CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) $(FPU)
+#CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) $(FPU)
+# Remove explicit FPU parameter, let the compiler defines deal with this for 
+# CPU target
+CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 libdir = $(prefix)/lib
@@ -55,8 +62,9 @@ DEFS=-D_IEEE_LIBM -D_REENTRANT
 # The compiler will prefix -mCPU and -mFPU 
 # so 68000.soft-float becomes -m68000 -msoft-float
 CPU-FPU-TYPES = \
-		68000.soft-float
-
+		68000.soft-float \
+		68020-60.68881  \
+		5475.hard-float 
 
 INCFILES = fdlibm.h
 SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
@@ -135,8 +143,8 @@ install: all
 	  cp 68020-60.soft-float/libm.a $(libdir)/m68020-60/libm.a; \
 	else true; fi
 	if [ -d 68020-60.68881 ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/libm020/libm881; \
-	  cp 68020-60.68881/libm.a $(libdir)/libm020/libm881/libm.a; \
+	  $(srcdir)/mkinstalldirs $(libdir)/m68020-60; \
+	  cp 68020-60.68881/libm.a $(libdir)/m68020-60/libm.a; \
 	else true; fi
 	if [ -d 68030.soft-float ] ; then \
 	  $(srcdir)/mkinstalldirs $(libdir)/libm030; \
@@ -161,6 +169,10 @@ install: all
 	if [ -d 68060.68881 ] ; then \
 	  $(srcdir)/mkinstalldirs $(libdir)/libm060/libm881; \
 	  cp 68060.68881/libm.a $(libdir)/libm060/libm881/libm.a; \
+	else true; fi
+	if [ -d 5475.hard-float ] ; then \
+	  $(srcdir)/mkinstalldirs $(libdir)/m5475; \
+	  cp 5475.hard-float/libm.a $(libdir)/m5475/libm.a; \
 	else true; fi
 	$(srcdir)/mkinstalldirs $(incdir)
 	cp math.h $(incdir)/math.h
