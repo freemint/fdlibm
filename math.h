@@ -177,7 +177,7 @@ extern int    __kernel_rem_pio2 __P((double*,double*,int,int,int,const int*));
 __END_DECLS
 
 #if (defined(__GNUC__) || defined(__cplusplus)) && defined(__HAVE_68881__)
-#include <bits/math-68881.h>
+#include <math-68881.h>
 #else
 
 #define	HUGE_VAL	1e500			/* IEEE: positive infinity */
