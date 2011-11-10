@@ -37,6 +37,45 @@
 #define	__P(p)	()
 #endif
 
+/* A union which permits us to convert between a double and two 32 bit
+   ints.  */
+
+#ifndef __LITTLE_ENDIAN
+
+typedef union 
+{
+  double value;
+  struct 
+  {
+    unsigned long msw;
+    unsigned long lsw;
+  } parts;
+} ieee_double_shape_type;
+
+#else
+
+typedef union 
+{
+  double value;
+  struct 
+  {
+    unsigned long lsw;
+    unsigned long msw;
+  } parts;
+} ieee_double_shape_type;
+
+#endif
+
+/* Get two 32 bit ints from a double.  */
+
+#define EXTRACT_WORDS(ix0,ix1,d)				\
+do {								\
+  ieee_double_shape_type ew_u;					\
+  ew_u.value = (d);						\
+  (ix0) = ew_u.parts.msw;					\
+  (ix1) = ew_u.parts.lsw;					\
+} while (0)
+
 /*
  * ANSI/POSIX
  */
@@ -73,6 +112,21 @@ struct exception {
 };
 
 #define	HUGE		MAXFLOAT
+
+/* All floating-point numbers can be put in one of these categories.  */
+enum
+{
+  FP_NAN,
+# define FP_NAN FP_NAN
+  FP_INFINITE,
+# define FP_INFINITE FP_INFINITE
+  FP_ZERO,
+# define FP_ZERO FP_ZERO
+  FP_SUBNORMAL,
+# define FP_SUBNORMAL FP_SUBNORMAL
+  FP_NORMAL
+# define FP_NORMAL FP_NORMAL
+};
 
 /* 
  * set X_TLOSS = pi*2**52, which is possibly defined in <values.h>
