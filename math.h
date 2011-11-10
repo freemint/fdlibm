@@ -77,13 +77,32 @@ extern  _LIB_VERSION_TYPE  _LIB_VERSION;
 #define _XOPEN_ fdlibm_xopen
 #define _POSIX_ fdlibm_posix
 
-struct exception {
+#ifdef __USE_SVID
+/* In SVID error handling, `matherr' is called with this description
+   of the exceptional condition.
+
+   We have a problem when using C++ since `exception' is a reserved
+   name in C++.  */
+#ifdef __cplusplus
+struct __exception
+#else
+struct exception
+#endif
+{
 	int type;
 	char *name;
 	double arg1;
 	double arg2;
 	double retval;
 };
+
+__BEGIN_DECLS
+#ifdef __cplusplus
+extern int matherr __P((struct __exception *)) throw ();
+#else
+extern int matherr __P((struct exception *));
+#endif
+__END_DECLS
 
 /* 
  * set X_TLOSS = pi*2**52, which is possibly defined in <values.h>
@@ -99,8 +118,41 @@ struct exception {
 #define	TLOSS		5
 #define	PLOSS		6
 
+/* SVID mode specifies returning this large value instead of infinity.  */
+# define HUGE		3.40282347e+38F
+
+#else	/* !SVID */
+
+# ifdef __USE_XOPEN
+/* X/Open wants another strange constant.  */
+#  define MAXFLOAT	3.40282347e+38F
+# endif
+
+#endif	/* SVID */
+
+/* All floating-point numbers can be put in one of these categories.  */
+enum
+{
+  FP_NAN,
+# define FP_NAN FP_NAN
+  FP_INFINITE,
+# define FP_INFINITE FP_INFINITE
+  FP_ZERO,
+# define FP_ZERO FP_ZERO
+  FP_SUBNORMAL,
+# define FP_SUBNORMAL FP_SUBNORMAL
+  FP_NORMAL
+# define FP_NORMAL FP_NORMAL
+};
+
 __BEGIN_DECLS
-extern int matherr __P((struct exception *));
+extern int fpclassify __P(double x);
+
+#ifndef isfinite
+  #define isfinite(__y) \
+          (__extension__ ({int __cy = fpclassify(__y); \
+                           __cy != FP_INFINITE && __cy != FP_NAN;}))
+#endif
 
 extern int signgam;
 
@@ -182,12 +234,6 @@ __END_DECLS
 
 #define	HUGE_VAL	1e500			/* IEEE: positive infinity */
 
-/*
- * ANSI/POSIX
- */
-
-#define	HUGE	((float)3.40282346638528860e+38)
-
 __BEGIN_DECLS
 extern double acos __P((double));
 extern double asin __P((double));
@@ -222,6 +268,8 @@ extern double scalb __P((double, double));
 extern double rint __P((double));
 extern double expm1 __P((double));
 extern double log1p __P((double));
+extern double fmin __P((double, double));
+extern double fmax __P((double, double));
 __END_DECLS
 
 #endif /* __HAVE_68881__ */

@@ -93,7 +93,8 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_logb.c $(srcdir)/s_matherr.c $(srcdir)/s_modf.c \
 	$(srcdir)/s_nextafter.c $(srcdir)/s_rint.c $(srcdir)/s_scalbn.c \
 	$(srcdir)/s_signgam.c $(srcdir)/s_significand.c $(srcdir)/s_sin.c \
-	$(srcdir)/s_tan.c $(srcdir)/s_tanh.c
+	$(srcdir)/s_tan.c $(srcdir)/s_tanh.c $(srcdir)/s_fmin.c \
+	$(srcdir)/s_fmax.c $(srcdir)/s_fpclassify.c
 
 OBJ = 	k_standard.o k_rem_pio2.o \
 	k_cos.o k_sin.o k_tan.o \
@@ -114,7 +115,7 @@ OBJ = 	k_standard.o k_rem_pio2.o \
 	s_frexp.o s_ilogb.o s_isnan.o s_ldexp.o s_lib_version.o \
 	s_log1p.o s_logb.o s_matherr.o s_modf.o s_nextafter.o \
 	s_rint.o s_scalbn.o s_signgam.o s_significand.o s_sin.o \
-	s_tan.o s_tanh.o
+	s_tan.o s_tanh.o s_fmin.o s_fmax.o s_fpclassify.o
 
 .c.o:
 	$(CC) -c $(DEFS) -I$(srcdir) $(CFLAGS) $< $(OUTPUT_OPTION)
@@ -263,3 +264,6 @@ w_remainder.o: $(srcdir)/w_remainder.c $(srcdir)/fdlibm.h
 w_scalb.o: $(srcdir)/w_scalb.c $(srcdir)/fdlibm.h
 w_sinh.o: $(srcdir)/w_sinh.c $(srcdir)/fdlibm.h
 w_sqrt.o: $(srcdir)/w_sqrt.c $(srcdir)/fdlibm.h
+s_fmin.o: $(srcdir)/s_fmin.c $(srcdir)/fdlibm.h
+s_fmax.o: $(srcdir)/s_fmax.c $(srcdir)/fdlibm.h
+s_fpclassify.o: $(srcdir)/s_fpclassify.c $(srcdir)/fdlibm.h
