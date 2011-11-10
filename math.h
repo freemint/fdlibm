@@ -146,7 +146,7 @@ enum
 };
 
 __BEGIN_DECLS
-extern int fpclassify __P(double x);
+extern int fpclassify __P((double));
 
 #ifndef isfinite
   #define isfinite(__y) \
