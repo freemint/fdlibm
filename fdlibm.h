@@ -32,6 +32,7 @@
 #endif
 
 #ifdef __STDC__
+#undef __P
 #define	__P(p)	p
 #else
 #define	__P(p)	()
@@ -75,6 +76,25 @@ do {								\
   (ix0) = ew_u.parts.msw;					\
   (ix1) = ew_u.parts.lsw;					\
 } while (0)
+
+/* Set a double from two 32 bit ints.  */
+
+#define INSERT_WORDS(d,ix0,ix1)                                 \
+do {                                                            \
+  ieee_double_shape_type iw_u;                                  \
+  iw_u.parts.msw = (ix0);                                       \
+  iw_u.parts.lsw = (ix1);                                       \
+  (d) = iw_u.value;                                             \
+} while (0)
+
+/* Macros to avoid undefined behaviour that can arise if the amount
+   of a shift is exactly equal to the size of the shifted operand.  */
+
+#define SAFE_LEFT_SHIFT(op,amt)                                 \
+  (((amt) < 8 * sizeof(op)) ? ((op) << (amt)) : 0)
+
+#define SAFE_RIGHT_SHIFT(op,amt)                                \
+  (((amt) < 8 * sizeof(op)) ? ((op) >> (amt)) : 0)
 
 /*
  * ANSI/POSIX

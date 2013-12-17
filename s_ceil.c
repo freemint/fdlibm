@@ -76,3 +76,8 @@ static double huge = 1.0e300;
 	__LO(x) = i1;
 	return x;
 }
+
+float ceilf(float x)
+{
+	return ceil((double) x);
+}

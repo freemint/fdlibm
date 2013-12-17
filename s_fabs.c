@@ -27,3 +27,8 @@
 	__HI(x) &= 0x7fffffff;
         return x;
 }
+
+float fabsf(float x)
+{
+	return fabs((double) x);
+}

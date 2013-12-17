@@ -36,6 +36,10 @@
 #ifndef	_MATH_H_
 #define	_MATH_H_
 
+#ifdef __cplusplus
+#define exception __math_exception
+#endif
+
 #include <float.h>
 
 #ifndef BITS
@@ -177,6 +181,11 @@ extern double significand __P((double));
 extern double copysign __P((double, double));
 extern int ilogb __P((double));
 extern double scalbn __P((double, int));
+extern double round __P((double));
+extern float roundf __P((float));
+extern long int lround __P((double x));
+extern long int lroundf __P((float));
+
 /*
  * Reentrant version of gamma & lgamma; passes signgam back by reference
  * as the second argument; user must allocate space for signgam.
@@ -254,7 +263,9 @@ extern double modf __P((double, double *));
 extern double pow __P((double, double));
 extern double sqrt __P((double));
 extern double ceil __P((double));
+extern float ceilf __P((float));
 extern double fabs __P((double));
+extern float fabsf __P((float));
 extern double floor __P((double));
 extern double fmod __P((double, double));
 extern double hypot __P((double, double));
@@ -281,5 +292,9 @@ extern int     isnan __P((double));
 /* This function had a different name in the old libm.a */
 #define drem remainder
 __END_DECLS
+
+#ifdef __cplusplus
+#undef exception
+#endif
 
 #endif /* _MATH_H_ */
