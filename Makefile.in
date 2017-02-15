@@ -22,6 +22,7 @@ exec_prefix = @exec_prefix@
 libdir = $(prefix)/lib
 incdir = $(prefix)/include
 RANLIB = @RANLIB@
+AR = @AR@
 #
 # There are two options in making libm at fdlibm compile time:
 # 	_IEEE_LIBM 	--- IEEE libm; smaller, and somewhat faster
@@ -133,7 +134,7 @@ all:
 LIB = libm.a
 
 $(LIB): $(OBJ) 
-	ar cru $(LIB) $(OBJ)
+	$(AR) cru $(LIB) $(OBJ)
 	$(RANLIB) $(LIB)
 
 install: all
