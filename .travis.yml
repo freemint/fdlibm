@@ -1,2 +1,30 @@
+language: c
+os: linux
+dist: trusty
+sudo: required
+
+compiler:
+  - m68k-atari-mint-gcc
+
 before_install:
-  - openssl aes-256-cbc -K $encrypted_c6a78c00dc3b_key -iv $encrypted_c6a78c00dc3b_iv -in .travis/deploy-key.enc -out .travis/deploy-key -d
+  - export OWNER=$(echo "${TRAVIS_REPO_SLUG}" | cut -d '/' -f 1)
+  - if [ "${TRAVIS_PULL_REQUEST}" = "false" ];
+    then
+        export USER=${OWNER};
+    else
+        export USER=$(echo "${TRAVIS_PULL_REQUEST_SLUG}" | cut -d '/' -f 1);
+    fi
+  - export BASE_RAW_URL="https://raw.githubusercontent.com/${USER}"
+
+  - wget -O .travis/download_prerequisities.sh "${BASE_RAW_URL}/travis-scripts/master/download_prerequisities.sh"
+  - sh ./.travis/download_prerequisities.sh
+  - sh ./.travis/install-cross-mint.sh trusty gcc-m68k-atari-mint binutils-m68k-atari-mint mintlib-m68k-atari-mint > /dev/null
+  
+before_script:
+  - . ./.travis/setup_env.sh
+
+script:
+  - sh ./.travis/build.sh "${PWD}/.travis/tmp" "${PWD}/.travis/out"
+
+after_success:
+  - sh ./.travis/deploy.sh "${PWD}/.travis/out" $encrypted_c6a78c00dc3b_key $encrypted_c6a78c00dc3b_iv
