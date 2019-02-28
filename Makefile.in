@@ -23,6 +23,9 @@ libdir = $(prefix)/lib
 incdir = $(prefix)/include
 RANLIB = @RANLIB@
 AR = @AR@
+ac_aux_dir=@ac_aux_dir@
+MKINSTALLDIRS = $(ac_aux_dir)/mkinstalldirs
+
 #
 # There are two options in making libm at fdlibm compile time:
 # 	_IEEE_LIBM 	--- IEEE libm; smaller, and somewhat faster
@@ -139,53 +142,54 @@ $(LIB): $(OBJ)
 
 install: all
 	if [ -d 68000.soft-float ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir); \
-	  cp 68000.soft-float/libm.a $(libdir)/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir); \
+	  cp 68000.soft-float/libm.a $(DESTDIR)$(libdir)/libm.a; \
 	else true; fi
 	if [ -d 68020-60.soft-float ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/m68020-60; \
-	  cp 68020-60.soft-float/libm.a $(libdir)/m68020-60/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m68020-60; \
+	  cp 68020-60.soft-float/libm.a $(DESTDIR)$(libdir)/m68020-60/libm.a; \
 	else true; fi
 	if [ -d 68020-60.68881 ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/m68020-60; \
-	  cp 68020-60.68881/libm.a $(libdir)/m68020-60/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m68020-60; \
+	  cp 68020-60.68881/libm.a $(DESTDIR)$(libdir)/m68020-60/libm.a; \
 	else true; fi
 	if [ -d 68030.soft-float ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/libm030; \
-	  cp 68030.soft-float/libm.a $(libdir)/libm030/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm030; \
+	  cp 68030.soft-float/libm.a $(DESTDIR)$(libdir)/libm030/libm.a; \
 	else true; fi
 	if [ -d 68030.68881 ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/libm030/libm881; \
-	  cp 68030.68881/libm.a $(libdir)/libm030/libm881/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm030/libm881; \
+	  cp 68030.68881/libm.a $(DESTDIR)$(libdir)/libm030/libm881/libm.a; \
 	else true; fi
 	if [ -d 68040.soft-float ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/libm040; \
-	  cp 68040.soft-float/libm.a $(libdir)/libm040/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm040; \
+	  cp 68040.soft-float/libm.a $(DESTDIR)$(libdir)/libm040/libm.a; \
 	else true; fi
 	if [ -d 68040.68881 ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/libm040/libm881; \
-	  cp 68040.68881/libm.a $(libdir)/libm040/libm881/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm040/libm881; \
+	  cp 68040.68881/libm.a $(DESTDIR)$(libdir)/libm040/libm881/libm.a; \
 	else true; fi
 	if [ -d 68060.soft-float ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/libm060; \
-	  cp 68060.soft-float/libm.a $(libdir)/libm060/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm060; \
+	  cp 68060.soft-float/libm.a $(DESTDIR)$(libdir)/libm060/libm.a; \
 	else true; fi
 	if [ -d 68060.68881 ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/libm060/libm881; \
-	  cp 68060.68881/libm.a $(libdir)/libm060/libm881/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm060/libm881; \
+	  cp 68060.68881/libm.a $(DESTDIR)$(libdir)/libm060/libm881/libm.a; \
 	else true; fi
 	if [ -d 5475.hard-float ] ; then \
-	  $(srcdir)/mkinstalldirs $(libdir)/m5475; \
-	  cp 5475.hard-float/libm.a $(libdir)/m5475/libm.a; \
+	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m5475; \
+	  cp 5475.hard-float/libm.a $(DESTDIR)$(libdir)/m5475/libm.a; \
 	else true; fi
-	$(srcdir)/mkinstalldirs $(incdir)
-	cp math.h $(incdir)/math.h
+	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)
+	cp math.h $(DESTDIR)$(incdir)/math.h
 
 clean:
 	rm -rf a.out $(CPU-FPU-TYPES)
 
 distclean: clean
 	rm -f config.cache config.status config.log Makefile
+	rm -rf autom4te.cache
 
 e_acos.o: $(srcdir)/e_acos.c $(srcdir)/fdlibm.h
 e_acosh.o: $(srcdir)/e_acosh.c $(srcdir)/fdlibm.h
