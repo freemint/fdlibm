@@ -3,7 +3,7 @@
 TMP="$1"
 OUT="$2"
 
-CC=m68k-atari-mint-gcc ./configure && make CROSS=yes
+./configure --host=m68k-atari-mint && make
 
 make prefix="${TMP}" install
 find "${TMP}" -type f \( -name '*.a' -o -name '*.o' \) -exec m68k-atari-mint-strip -S -x {} \;
