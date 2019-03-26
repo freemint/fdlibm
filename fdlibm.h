@@ -38,6 +38,18 @@
 #define	__P(p)	()
 #endif
 
+#define IEEE754_FLOAT_MAXEXP	0xff
+#define IEEE754_FLOAT_BIAS	0x7f /* Added to exponent.  */
+#define IEEE754_FLOAT_SHIFT 23
+
+#define IEEE754_DOUBLE_MAXEXP	0x7ff
+#define IEEE754_DOUBLE_BIAS	0x3ff /* Added to exponent.  */
+#define IEEE754_DOUBLE_SHIFT 20
+
+#define IEEE854_LONG_DOUBLE_MAXEXP	0x7fff
+#define IEEE854_LONG_DOUBLE_BIAS 0x3fff
+#define IEEE854_LONG_DOUBLE_SHIFT 0
+
 /* A union which permits us to convert between a double and two 32 bit
    ints.  */
 
@@ -213,6 +225,11 @@ extern double cbrt __P((double));
 extern double logb __P((double));
 extern double nextafter __P((double, double));
 extern double remainder __P((double, double));
+#ifdef __mc68000__
+#undef _SCALB_INT
+#else
+#define _SCALB_INT
+#endif
 #ifdef _SCALB_INT
 extern double scalb __P((double, int));
 #else

@@ -26,5 +26,5 @@
 	double x;
 #endif
 {
-	return __ieee754_scalb(x,(double) -ilogb(x));
+	return __ieee754_scalb(x, -ilogb(x));
 }

@@ -222,7 +222,11 @@ extern double __ieee754_jn __P((int,double));
 extern double __ieee754_yn __P((int,double));
 extern double __ieee754_remainder __P((double,double));
 extern int    __ieee754_rem_pio2 __P((double,double*));
+#ifdef __mc68000__
+#undef _SCALB_INT
+#else
 #define _SCALB_INT
+#endif
 #ifdef _SCALB_INT
 extern double __ieee754_scalb __P((double,int));
 #else
