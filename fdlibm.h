@@ -108,12 +108,15 @@ do {                                                            \
 
 extern int signgam;
 
+#undef MAXFLOAT
 #define	MAXFLOAT	((float)3.40282346638528860e+38)
 
+#ifndef _LIB_VERSION
 enum fdversion {fdlibm_ieee = -1, fdlibm_svid, fdlibm_xopen, fdlibm_posix};
 
 #define _LIB_VERSION_TYPE enum fdversion
 #define _LIB_VERSION _fdlib_version  
+#endif
 
 /* if global variable _LIB_VERSION is not desirable, one may 
  * change the following to be a constant by: 
@@ -129,6 +132,7 @@ extern  _LIB_VERSION_TYPE  _LIB_VERSION;
 #define _XOPEN_ fdlibm_xopen
 #define _POSIX_ fdlibm_posix
 
+#ifndef _MATH_H_
 struct exception {
 	int type;
 	char *name;
@@ -136,10 +140,13 @@ struct exception {
 	double arg2;
 	double retval;
 };
+#endif
 
+#undef HUGE
 #define	HUGE		MAXFLOAT
 
 /* All floating-point numbers can be put in one of these categories.  */
+#ifndef FP_NAN
 enum
 {
   FP_NAN,
@@ -153,6 +160,7 @@ enum
   FP_NORMAL
 # define FP_NORMAL FP_NORMAL
 };
+#endif
 
 /* 
  * set X_TLOSS = pi*2**52, which is possibly defined in <values.h>
@@ -222,7 +230,7 @@ extern double remainder __P((double, double));
 #ifdef __mc68000__
 #undef _SCALB_INT
 #else
-#define _SCALB_INT
+#undef _SCALB_INT
 #endif
 #ifdef _SCALB_INT
 extern double scalb __P((double, int));

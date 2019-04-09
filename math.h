@@ -87,6 +87,7 @@ extern  _LIB_VERSION_TYPE  _LIB_VERSION;
 
    We have a problem when using C++ since `exception' is a reserved
    name in C++.  */
+/* do not change the comment above; it is looked up by GCCs fixincludes script */
 #ifdef __cplusplus
 struct __exception
 #else
@@ -225,7 +226,7 @@ extern int    __ieee754_rem_pio2 __P((double,double*));
 #ifdef __mc68000__
 #undef _SCALB_INT
 #else
-#define _SCALB_INT
+#undef _SCALB_INT
 #endif
 #ifdef _SCALB_INT
 extern double __ieee754_scalb __P((double,int));

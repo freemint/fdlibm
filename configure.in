@@ -17,6 +17,7 @@ dnl Checks for libraries.
 
 dnl Checks for header files.
 AC_CHECK_HEADERS(unistd.h)
+AC_CHECK_LIB(m, cos)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

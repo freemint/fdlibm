@@ -6,3 +6,5 @@ config.log
 config.status
 Makefile
 *~
+*.ttp
+*.log

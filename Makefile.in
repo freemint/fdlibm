@@ -131,7 +131,7 @@ all:
 	  if [ ! -d $$i ] ; then \
 	    mkdir $$i; \
 	  else true; fi; \
-	  (cd $$i; make -f ../Makefile CPU-FPU=$$i src_dir=$(srcdir) $(LIB)); \
+	  (cd $$i; $(MAKE) -f ../Makefile CPU-FPU=$$i src_dir=$(srcdir) $(LIB)); \
 	done
 
 LIB = libm.a
@@ -184,10 +184,15 @@ install: all
 	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)
 	cp math.h $(DESTDIR)$(incdir)/math.h
 
+check: all
+	$(MAKE) -C tests $@
+
 clean:
+	$(MAKE) -C tests $@
 	rm -rf a.out $(CPU-FPU-TYPES)
 
 distclean: clean
+	$(MAKE) -C tests $@
 	rm -f config.cache config.status config.log Makefile
 	rm -rf autom4te.cache
 

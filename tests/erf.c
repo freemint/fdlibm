@@ -1,0 +1,36 @@
+#include "testconfig.h"
+#define TEST_FUNC_F_F __MATH_PRECNAME(erf)
+#include "testdriver.h"
+
+
+
+static test_f_f_data const erf_data[] = {
+	{ __LINE__, ZERO_P, ZERO_P, 0 },
+	{ __LINE__, ZERO_M, ZERO_M, FLAG_FAIL_ARANYM2 },
+	{ __LINE__, INF_P, HEXCONSTE(1, 0x3fff, 0x80000000L, 0x00000000L), 0 },
+	{ __LINE__, INF_M, HEXCONSTE(-1, 0xbfff, 0x80000000L, 0x00000000L), 0 },
+	{ __LINE__, QNAN_P, QNAN_P, 0 },
+	{ __LINE__, QNAN_M, QNAN_P, 0 },
+	{ __LINE__, SNAN_P, QNAN_P, 0 },
+	{ __LINE__, SNAN_M, QNAN_P, 0 },
+
+	{ __LINE__, HEXCONSTE(0.125L, 0x3ffc, 0x80000000L, 0x00000000L), HEXCONSTE(0.140316204801333817393029446521623398L, 0x3ffc, 0x8faf0d1aL, 0xe1dc4ba1L), 0 },
+	{ __LINE__, HEXCONSTE(0.75L, 0x3ffe, 0xc0000000L, 0x00000000L), HEXCONSTE(0.711155633653515131598937834591410777L, 0x3ffe, 0xb60e4bacL, 0xe872fb63L), FLAG_INEXACT },
+	{ __LINE__, HEXCONSTE(1.25L, 0x3fff, 0xa0000000L, 0x00000000L), HEXCONSTE(0.922900128256458230136523481197281140L, 0x3ffe, 0xec432eccL, 0x55f00406L), FLAG_FAIL_ARANYM }, /* too inexact when using double */
+	{ __LINE__, HEXCONSTE(2.0L, 0x4000, 0x80000000L, 0x00000000L), HEXCONSTE(0.995322265018952734162069256367252929L, 0x3ffe, 0xfecd70a1L, 0x3caf1997L), 0 },
+	{ __LINE__, HEXCONSTE(4.125L, 0x4001, 0x84000000L, 0x00000000L), HEXCONSTE(0.999999994576599200434933994687765914L, 0x3ffe, 0xffffffe8L, 0xb4e862e1L), 0 },
+	{ __LINE__, HEXCONSTE(27.0L, 0x4003, 0xd8000000L, 0x00000000L), HEXCONSTE(1.0L, 0x3fff, 0x80000000L, 0x00000000L), 0 },
+};
+
+int main(int argc, char **argv)
+{
+	int status;
+	
+	status = 0;
+	
+	test_init(argc, argv);
+	
+	status |= test_table_f_f(erf_data, ARRAY_SIZE(erf_data), __FILE__);
+	
+	return status ? EXIT_FAILURE : EXIT_SUCCESS;
+}
