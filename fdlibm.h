@@ -13,13 +13,7 @@
 /* Sometimes it's necessary to define __LITTLE_ENDIAN explicitly
    but these catch some common cases. */
 
-#if defined(i386) || defined(i486) || \
-	defined(intel) || defined(x86) || defined(i86pc) || \
-	defined(__alpha) || defined(__osf__)
-#define __LITTLE_ENDIAN
-#endif
-
-#ifdef __LITTLE_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define __HI(x) *(1+(int*)&x)
 #define __LO(x) *(int*)&x
 #define __HIp(x) *(1+(int*)x)
@@ -53,7 +47,7 @@
 /* A union which permits us to convert between a double and two 32 bit
    ints.  */
 
-#ifndef __LITTLE_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 
 typedef union 
 {
