@@ -60,8 +60,8 @@ static test_ff_f_data const scalb_data[] = {
 	{ __LINE__, ZERO_M, HEXCONSTE(-10, 0xc002, 0xa0000000L, 0x00000000L), ZERO_M, FLAG_FAIL_ARANYM2 }, /* returns +0 */
 	{ __LINE__, ZERO_P, INF_M, ZERO_P, 0 },
 	{ __LINE__, ZERO_M, INF_M, ZERO_M, FLAG_FAIL_ARANYM2 }, /* returns +0 */
-	{ __LINE__, ZERO_P, INF_P, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns inf */
-	{ __LINE__, ZERO_M, INF_P, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns inf */
+	{ __LINE__, ZERO_P, INF_P, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns inf */
+	{ __LINE__, ZERO_M, INF_P, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns inf */
 	
 	{ __LINE__, INF_P, ONE_P, INF_P, FLAG_XFAIL_LINUX },
 	{ __LINE__, INF_M, ONE_P, INF_M, FLAG_XFAIL_LINUX },
@@ -73,8 +73,8 @@ static test_ff_f_data const scalb_data[] = {
 	{ __LINE__, INF_M, HEXCONSTE(100, 0x4005, 0xc8000000L, 0x00000000L), INF_M, 0 },
 	{ __LINE__, INF_P, INF_P, INF_P, 0 },
 	{ __LINE__, INF_M, INF_P, INF_M, 0 },
-	{ __LINE__, INF_P, INF_M, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns inf */
-	{ __LINE__, INF_M, INF_M, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns inf */
+	{ __LINE__, INF_P, INF_M, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns inf */
+	{ __LINE__, INF_M, INF_M, QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns inf */
 
 	{ __LINE__, QNAN_P, ONE_P, QNAN_P, 0 },
 	{ __LINE__, QNAN_M, ONE_P, QNAN_P, 0 },
@@ -151,11 +151,11 @@ static test_ff_f_data const scalb_data[] = {
 	{ __LINE__, HEXCONSTE(0x1p16382, 0x7ffd, 0x80000000L, 0x0L), ONE_P, HEXCONSTE("0x1p16383", 0x7ffe, 0x80000000L, 0x0L), 0 },
 	{ __LINE__, HEXCONSTE(0x1p16383, 0x7ffe, 0x80000000L, 0x0L), ONE_P, INF_P, 0 },
 
-	{ __LINE__, HEXCONSTE(2.0, 0x4000, 0x80000000L, 0x00000000L), HEXCONSTE(0.5, 0x3ffe, 0x80000000L, 0x00000000L), QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns 2.0 */
-	{ __LINE__, HEXCONSTE(3.0, 0x4000, 0xc0000000L, 0x00000000L), HEXCONSTE(-2.5, 0xc000, 0xa0000000L, 0x00000000L), QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns 7.5 */
+	{ __LINE__, HEXCONSTE(2.0, 0x4000, 0x80000000L, 0x00000000L), HEXCONSTE(0.5, 0x3ffe, 0x80000000L, 0x00000000L), QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 2.0 */
+	{ __LINE__, HEXCONSTE(3.0, 0x4000, 0xc0000000L, 0x00000000L), HEXCONSTE(-2.5, 0xc000, 0xa0000000L, 0x00000000L), QNAN_P, INVALID_EXCEPTION|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 0.75 */
 
-	{ __LINE__, ZERO_P, QNAN_P, QNAN_P, FLAG_FAIL_ARANYM }, /* glibc returns 0 */
-	{ __LINE__, ONE_P, QNAN_P, QNAN_P, FLAG_FAIL_ARANYM }, /* glibc returns 0 */
+	{ __LINE__, ZERO_P, QNAN_P, QNAN_P, FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 0 */
+	{ __LINE__, ONE_P, QNAN_P, QNAN_P, FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 0 */
 
 	{ __LINE__, ONE_P, ZERO_P, ONE_P, 0 },
 	{ __LINE__, ONE_M, ZERO_P, ONE_M, 0 },
@@ -167,11 +167,11 @@ static test_ff_f_data const scalb_data[] = {
 	{ __LINE__, ONE_M, INF_P, INF_M, FLAG_FAIL_ARANYM }, /* glibc returns 0 */
 
 	{ __LINE__, QNAN_P, ONE_P, QNAN_P, 0 },
-	{ __LINE__, ONE_P, QNAN_P, QNAN_P, FLAG_FAIL_ARANYM }, /* glibc returns 0 */
+	{ __LINE__, ONE_P, QNAN_P, QNAN_P, FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 0 */
 	{ __LINE__, QNAN_P, ZERO_P, QNAN_P, 0 },
-	{ __LINE__, ZERO_P, QNAN_P, QNAN_P, FLAG_FAIL_ARANYM }, /* glibc returns 0 */
+	{ __LINE__, ZERO_P, QNAN_P, QNAN_P, FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 0 */
 	{ __LINE__, QNAN_P, INF_P, QNAN_P, 0 },
-	{ __LINE__, INF_P, QNAN_P, QNAN_P, FLAG_FAIL_SOFTFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 0 */
+	{ __LINE__, INF_P, QNAN_P, QNAN_P, FLAG_FAIL_SOFTFLOAT|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* glibc returns 0 */
 	{ __LINE__, QNAN_P, QNAN_P, QNAN_P, 0 },
 
 	{ __LINE__, HEXCONSTE(0.8L, 0x3ffe, 0xccccccccL, 0xcccccccdL), HEXCONSTE(4, 0x4001, 0x80000000L, 0x00000000L), HEXCONSTE(12.8L, 0x4002, 0xccccccccL, 0xcccccccdL), 0 },

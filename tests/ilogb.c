@@ -34,12 +34,12 @@ static test_f_i_data const ilogb_data[] = {
 	{ __LINE__, ZERO_P, FP_ILOGB0, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_SOFTFLOAT|FLAG_XFAIL }, /* only implemented as softfloat and thus always fails */
 	{ __LINE__, ZERO_M, FP_ILOGB0, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_SOFTFLOAT|FLAG_XFAIL }, /* only implemented as softfloat and thus always fails */
 	/* ilogb (qNaN) == FP_ILOGBNAN plus invalid exception  */
-	{ __LINE__, QNAN_P, FP_ILOGBNAN, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_ARANYM }, /* not handled by inline version in math-68881.h */
-	{ __LINE__, QNAN_M, FP_ILOGBNAN, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_ARANYM }, /* not handled by inline version in math-68881.h */
+	{ __LINE__, QNAN_P, FP_ILOGBNAN, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_HARDFLOAT }, /* not handled by inline version in math-68881.h */
+	{ __LINE__, QNAN_M, FP_ILOGBNAN, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_HARDFLOAT }, /* not handled by inline version in math-68881.h */
 	/* ilogb (inf) == INT_MAX plus invalid exception  */
-	{ __LINE__, INF_P, INT_MAX, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_ARANYM }, /* not handled by inline version in math-68881.h */
+	{ __LINE__, INF_P, INT_MAX, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* not handled by inline version in math-68881.h */
 	/* ilogb (-inf) == INT_MAX plus invalid exception  */
-	{ __LINE__, INF_M, INT_MAX, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_ARANYM }, /* not handled by inline version in math-68881.h */
+	{ __LINE__, INF_M, INT_MAX, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM|FLAG_FAIL_HARDFLOAT|FLAG_FAIL_ARANYM }, /* not handled by inline version in math-68881.h */
 
 	{ __LINE__, HEXCONSTE(1, 0x3fff, 0x80000000L, 0x00000000L), 0, NO_INEXACT_EXCEPTION },
 	{ __LINE__, HEXCONST_E, 1, NO_INEXACT_EXCEPTION },

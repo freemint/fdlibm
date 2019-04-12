@@ -72,6 +72,7 @@ typedef struct { int line; int i; ld_union x; ld_union e; flag_t flags; } test_i
 #define FLAG_FAIL_SOFTFLOAT      0x00008000 /* test currently fails with softfloat version and has to be fixed */
 #define FLAG_XFAIL               0x00010000 /* test currently fails and has to be fixed */
 #define FLAG_IGNORE_ZEROSIGN     0x00020000 /* accept both +/-0 */
+#define FLAG_FAIL_HARDFLOAT      0x00040000 /* test currently fails with FPU version and has to be fixed */
 
 /*
  * exceptions that should be raised (not checked yet)
@@ -629,6 +630,12 @@ static int check_fp(uint16_t exponent, uint32_t mant0, uint32_t mant1, const ld_
 		return 0;
 	}
 #endif
+#ifdef __HAVE_68881__
+	if (flags & (FLAG_FAIL_HARDFLOAT))
+	{
+		return 0;
+	}
+#endif
 	if (flags & (FLAG_FAIL_ARANYM|FLAG_FAIL_ARANYM2|FLAG_FAIL_X87))
 	{
 		if (emulator == EMULATOR_ARANYM)
@@ -705,6 +712,12 @@ static int check_int(int e, int f, int flags, int i, const char *file, int line)
 		return 0;
 	}
 #endif
+#ifdef __HAVE_68881__
+	if (flags & (FLAG_FAIL_HARDFLOAT))
+	{
+		return 0;
+	}
+#endif
 	if (flags & (FLAG_FAIL_ARANYM|FLAG_FAIL_ARANYM2|FLAG_FAIL_X87))
 	{
 		if (emulator == EMULATOR_ARANYM)
@@ -765,18 +778,23 @@ static int check_long(long e, long f, int flags, int i, const char *file, int li
 		if (emulator == EMULATOR_STONX)
 			return 0;
 	}
-#ifdef __HAVE_68881__
-	if (flags & (FLAG_FAIL_ARANYM|FLAG_FAIL_ARANYM2|FLAG_FAIL_X87))
-	{
-		if (emulator == EMULATOR_ARANYM)
-			return 0;
-	}
-#else
+#ifndef __HAVE_68881__
 	if (flags & (FLAG_FAIL_SOFTFLOAT))
 	{
 		return 0;
 	}
 #endif
+#ifdef __HAVE_68881__
+	if (flags & (FLAG_FAIL_HARDFLOAT))
+	{
+		return 0;
+	}
+#endif
+	if (flags & (FLAG_FAIL_ARANYM|FLAG_FAIL_ARANYM2|FLAG_FAIL_X87))
+	{
+		if (emulator == EMULATOR_ARANYM)
+			return 0;
+	}
 	if (flags & (FLAG_XFAIL))
 	{
 		return 0;
@@ -832,18 +850,23 @@ static int check_longlong(long long e, long long f, int flags, int i, const char
 		if (emulator == EMULATOR_STONX)
 			return 0;
 	}
-#ifdef __HAVE_68881__
-	if (flags & (FLAG_FAIL_ARANYM|FLAG_FAIL_ARANYM2|FLAG_FAIL_X87))
-	{
-		if (emulator == EMULATOR_ARANYM)
-			return 0;
-	}
-#else
+#ifndef __HAVE_68881__
 	if (flags & (FLAG_FAIL_SOFTFLOAT))
 	{
 		return 0;
 	}
 #endif
+#ifdef __HAVE_68881__
+	if (flags & (FLAG_FAIL_HARDFLOAT))
+	{
+		return 0;
+	}
+#endif
+	if (flags & (FLAG_FAIL_ARANYM|FLAG_FAIL_ARANYM2|FLAG_FAIL_X87))
+	{
+		if (emulator == EMULATOR_ARANYM)
+			return 0;
+	}
 	if (flags & (FLAG_XFAIL))
 	{
 		return 0;

@@ -7,8 +7,8 @@
 static test_fip_f_data const frexp_data[] = {
 	{ __LINE__, ZERO_P, ZERO_P, 0, NO_INEXACT_EXCEPTION },
 	{ __LINE__, ZERO_M, ZERO_M, 0, NO_INEXACT_EXCEPTION|FLAG_FAIL_ARANYM2 },
-	{ __LINE__, INF_P, INF_P, 0, NO_INEXACT_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns NaN */
-	{ __LINE__, INF_M, INF_M, 0, NO_INEXACT_EXCEPTION|FLAG_FAIL_ARANYM }, /* glibc returns NaN */
+	{ __LINE__, INF_P, INF_P, 0, NO_INEXACT_EXCEPTION|FLAG_FAIL_ARANYM|FLAG_FAIL_HARDFLOAT }, /* glibc returns NaN; inline version in math-68881.h returns NaN */
+	{ __LINE__, INF_M, INF_M, 0, NO_INEXACT_EXCEPTION|FLAG_FAIL_ARANYM|FLAG_FAIL_HARDFLOAT }, /* glibc returns NaN; inline version in math-68881.h returns NaN */
 	{ __LINE__, QNAN_P, QNAN_P, 0, NO_INEXACT_EXCEPTION },
 	{ __LINE__, QNAN_M, QNAN_P, 0, NO_INEXACT_EXCEPTION },
 	{ __LINE__, SNAN_P, QNAN_P, 0, NO_INEXACT_EXCEPTION },

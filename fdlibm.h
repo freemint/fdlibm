@@ -132,7 +132,7 @@ extern  _LIB_VERSION_TYPE  _LIB_VERSION;
 #define _XOPEN_ fdlibm_xopen
 #define _POSIX_ fdlibm_posix
 
-#ifndef _MATH_H_
+#if !defined(_MATH_H) && !defined(_MATH_H_)
 struct exception {
 	int type;
 	char *name;

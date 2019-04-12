@@ -9,10 +9,10 @@ static test_ff_f_data const hypot_data[] = {
 	{ __LINE__, INF_P, HEXCONSTE(1, 0x3fff, 0x80000000L, 0x00000000L), INF_P, 0 },
 	{ __LINE__, INF_M, HEXCONSTE(1, 0x3fff, 0x80000000L, 0x00000000L), INF_P, 0 },
 
-	{ __LINE__, INF_P, QNAN_P, INF_P, FLAG_FAIL_ARANYM }, /* inline hypot in math-68881.h does not handle INF */
-	{ __LINE__, INF_M, QNAN_P, INF_P, FLAG_FAIL_ARANYM },
-	{ __LINE__, QNAN_P, INF_P, INF_P, FLAG_FAIL_ARANYM },
-	{ __LINE__, QNAN_P, INF_M, INF_P, FLAG_FAIL_ARANYM },
+	{ __LINE__, INF_P, QNAN_P, INF_P, FLAG_FAIL_HARDFLOAT }, /* inline hypot in math-68881.h does not handle INF */
+	{ __LINE__, INF_M, QNAN_P, INF_P, FLAG_FAIL_HARDFLOAT },
+	{ __LINE__, QNAN_P, INF_P, INF_P, FLAG_FAIL_HARDFLOAT },
+	{ __LINE__, QNAN_P, INF_M, INF_P, FLAG_FAIL_HARDFLOAT },
 
 	/* If x or y is a NaN, and the other argument is not an infinity, a NaN is returned. */
 	{ __LINE__, QNAN_P, QNAN_P, QNAN_P, 0 },
