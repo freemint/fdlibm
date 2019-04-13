@@ -124,7 +124,7 @@ OBJ = 	k_standard.o k_rem_pio2.o \
 	s_lround.o
 
 .c.o:
-	$(CC) -c $(DEFS) -I$(srcdir) $(CFLAGS) $< $(OUTPUT_OPTION)
+	$(CC) -c $(DEFS) -I$(srcdir)/include $(CFLAGS) $< $(OUTPUT_OPTION)
 
 all:
 	for i in $(CPU-FPU-TYPES); do \
@@ -182,7 +182,9 @@ install: all
 	  cp 5475.hard-float/libm.a $(DESTDIR)$(libdir)/m5475/libm.a; \
 	else true; fi
 	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)
-	cp math.h $(DESTDIR)$(incdir)/math.h
+	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)/bits
+	cp -a math.h $(DESTDIR)$(incdir)/math.h
+	cp -a bits/huge_val.h bits/inf.h bits/math-68881.h bits/math-cffpu.h bits/mathcall.h bits/mathdef.h bits/nan.h $(DESTDIR)$(incdir)/bits
 
 check: all
 	$(MAKE) -C tests $@
@@ -196,88 +198,4 @@ distclean: clean
 	rm -f config.cache config.status config.log Makefile
 	rm -rf autom4te.cache
 
-e_acos.o: $(srcdir)/e_acos.c $(srcdir)/fdlibm.h
-e_acosh.o: $(srcdir)/e_acosh.c $(srcdir)/fdlibm.h
-e_asin.o: $(srcdir)/e_asin.c $(srcdir)/fdlibm.h
-e_atan2.o: $(srcdir)/e_atan2.c $(srcdir)/fdlibm.h
-e_atanh.o: $(srcdir)/e_atanh.c $(srcdir)/fdlibm.h
-e_cosh.o: $(srcdir)/e_cosh.c $(srcdir)/fdlibm.h
-e_exp.o: $(srcdir)/e_exp.c $(srcdir)/fdlibm.h
-e_fmod.o: $(srcdir)/e_fmod.c $(srcdir)/fdlibm.h
-e_gamma.o: $(srcdir)/e_gamma.c $(srcdir)/fdlibm.h
-e_gamma_r.o: $(srcdir)/e_gamma_r.c $(srcdir)/fdlibm.h
-e_hypot.o: $(srcdir)/e_hypot.c $(srcdir)/fdlibm.h
-e_j0.o: $(srcdir)/e_j0.c $(srcdir)/fdlibm.h
-e_j1.o: $(srcdir)/e_j1.c $(srcdir)/fdlibm.h
-e_jn.o: $(srcdir)/e_jn.c $(srcdir)/fdlibm.h
-e_lgamma.o: $(srcdir)/e_lgamma.c $(srcdir)/fdlibm.h
-e_lgamma_r.o: $(srcdir)/e_lgamma_r.c $(srcdir)/fdlibm.h
-e_log.o: $(srcdir)/e_log.c $(srcdir)/fdlibm.h
-e_log10.o: $(srcdir)/e_log10.c $(srcdir)/fdlibm.h
-e_pow.o: $(srcdir)/e_pow.c $(srcdir)/fdlibm.h
-e_rem_pio2.o: $(srcdir)/e_rem_pio2.c $(srcdir)/fdlibm.h
-e_remainder.o: $(srcdir)/e_remainder.c $(srcdir)/fdlibm.h
-e_scalb.o: $(srcdir)/e_scalb.c $(srcdir)/fdlibm.h
-e_sinh.o: $(srcdir)/e_sinh.c $(srcdir)/fdlibm.h
-e_sqrt.o: $(srcdir)/e_sqrt.c $(srcdir)/fdlibm.h
-k_cos.o: $(srcdir)/k_cos.c $(srcdir)/fdlibm.h
-k_rem_pio2.o: $(srcdir)/k_rem_pio2.c $(srcdir)/fdlibm.h
-k_sin.o: $(srcdir)/k_sin.c $(srcdir)/fdlibm.h
-k_standard.o: $(srcdir)/k_standard.c $(srcdir)/fdlibm.h
-k_tan.o: $(srcdir)/k_tan.c $(srcdir)/fdlibm.h
-s_asinh.o: $(srcdir)/s_asinh.c $(srcdir)/fdlibm.h
-s_atan.o: $(srcdir)/s_atan.c $(srcdir)/fdlibm.h
-s_cbrt.o: $(srcdir)/s_cbrt.c $(srcdir)/fdlibm.h
-s_ceil.o: $(srcdir)/s_ceil.c $(srcdir)/fdlibm.h
-s_copysign.o: $(srcdir)/s_copysign.c $(srcdir)/fdlibm.h
-s_cos.o: $(srcdir)/s_cos.c $(srcdir)/fdlibm.h
-s_erf.o: $(srcdir)/s_erf.c $(srcdir)/fdlibm.h
-s_expm1.o: $(srcdir)/s_expm1.c $(srcdir)/fdlibm.h
-s_fabs.o: $(srcdir)/s_fabs.c $(srcdir)/fdlibm.h
-s_finite.o: $(srcdir)/s_finite.c $(srcdir)/fdlibm.h
-s_floor.o: $(srcdir)/s_floor.c $(srcdir)/fdlibm.h
-s_frexp.o: $(srcdir)/s_frexp.c $(srcdir)/fdlibm.h
-s_ilogb.o: $(srcdir)/s_ilogb.c $(srcdir)/fdlibm.h
-s_isnan.o: $(srcdir)/s_isnan.c $(srcdir)/fdlibm.h
-s_ldexp.o: $(srcdir)/s_ldexp.c $(srcdir)/fdlibm.h
-s_lib_version.o: $(srcdir)/s_lib_version.c $(srcdir)/fdlibm.h
-s_log1p.o: $(srcdir)/s_log1p.c $(srcdir)/fdlibm.h
-s_logb.o: $(srcdir)/s_logb.c $(srcdir)/fdlibm.h
-s_matherr.o: $(srcdir)/s_matherr.c $(srcdir)/fdlibm.h
-s_modf.o: $(srcdir)/s_modf.c $(srcdir)/fdlibm.h
-s_nextafter.o: $(srcdir)/s_nextafter.c $(srcdir)/fdlibm.h
-s_rint.o: $(srcdir)/s_rint.c $(srcdir)/fdlibm.h
-s_scalbn.o: $(srcdir)/s_scalbn.c $(srcdir)/fdlibm.h
-s_signgam.o: $(srcdir)/s_signgam.c $(srcdir)/fdlibm.h
-s_significand.o: $(srcdir)/s_significand.c $(srcdir)/fdlibm.h
-s_sin.o: $(srcdir)/s_sin.c $(srcdir)/fdlibm.h
-s_tan.o: $(srcdir)/s_tan.c $(srcdir)/fdlibm.h
-s_tanh.o: $(srcdir)/s_tanh.c $(srcdir)/fdlibm.h
-w_acos.o: $(srcdir)/w_acos.c $(srcdir)/fdlibm.h
-w_acosh.o: $(srcdir)/w_acosh.c $(srcdir)/fdlibm.h
-w_asin.o: $(srcdir)/w_asin.c $(srcdir)/fdlibm.h
-w_atan2.o: $(srcdir)/w_atan2.c $(srcdir)/fdlibm.h
-w_atanh.o: $(srcdir)/w_atanh.c $(srcdir)/fdlibm.h
-w_cosh.o: $(srcdir)/w_cosh.c $(srcdir)/fdlibm.h
-w_exp.o: $(srcdir)/w_exp.c $(srcdir)/fdlibm.h
-w_fmod.o: $(srcdir)/w_fmod.c $(srcdir)/fdlibm.h
-w_gamma.o: $(srcdir)/w_gamma.c $(srcdir)/fdlibm.h
-w_gamma_r.o: $(srcdir)/w_gamma_r.c $(srcdir)/fdlibm.h
-w_hypot.o: $(srcdir)/w_hypot.c $(srcdir)/fdlibm.h
-w_j0.o: $(srcdir)/w_j0.c $(srcdir)/fdlibm.h
-w_j1.o: $(srcdir)/w_j1.c $(srcdir)/fdlibm.h
-w_jn.o: $(srcdir)/w_jn.c $(srcdir)/fdlibm.h
-w_lgamma.o: $(srcdir)/w_lgamma.c $(srcdir)/fdlibm.h
-w_lgamma_r.o: $(srcdir)/w_lgamma_r.c $(srcdir)/fdlibm.h
-w_log.o: $(srcdir)/w_log.c $(srcdir)/fdlibm.h
-w_log10.o: $(srcdir)/w_log10.c $(srcdir)/fdlibm.h
-w_pow.o: $(srcdir)/w_pow.c $(srcdir)/fdlibm.h
-w_remainder.o: $(srcdir)/w_remainder.c $(srcdir)/fdlibm.h
-w_scalb.o: $(srcdir)/w_scalb.c $(srcdir)/fdlibm.h
-w_sinh.o: $(srcdir)/w_sinh.c $(srcdir)/fdlibm.h
-w_sqrt.o: $(srcdir)/w_sqrt.c $(srcdir)/fdlibm.h
-s_fmin.o: $(srcdir)/s_fmin.c $(srcdir)/fdlibm.h
-s_fmax.o: $(srcdir)/s_fmax.c $(srcdir)/fdlibm.h
-s_fpclassify.o: $(srcdir)/s_fpclassify.c $(srcdir)/fdlibm.h
-s_round.o: $(srcdir)/s_round.c $(srcdir)/fdlibm.h
-s_lround.o: $(srcdir)/s_lround.c $(srcdir)/fdlibm.h
+$(OBJ): $(srcdir)/include/fdlibm.h

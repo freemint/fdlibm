@@ -22,6 +22,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_remainder
+
 #ifdef __STDC__
 static const double zero = 0.0;
 #else
@@ -75,3 +77,5 @@ static double zero = 0.0;
 	__HI(x) ^= sx;
 	return x;
 }
+
+#endif

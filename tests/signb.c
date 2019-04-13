@@ -6,6 +6,7 @@ int __MATH_PRECNAME(__signbit)(REAL x);
 #define TEST_FUNC_F_I __MATH_PRECNAME(__signbit)
 #else
 /* FIXME: not declared */
+#undef signbit
 int __MATH_PRECNAME(signbit)(REAL x);
 #define TEST_FUNC_F_I __MATH_PRECNAME(signbit)
 #endif

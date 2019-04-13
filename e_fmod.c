@@ -19,6 +19,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_fmod
+
 #ifdef __STDC__
 static const double one = 1.0, Zero[] = {0.0, -0.0,};
 #else
@@ -138,3 +140,5 @@ static double one = 1.0, Zero[] = {0.0, -0.0,};
 	}
 	return x;		/* exact output */
 }
+
+#endif

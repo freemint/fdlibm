@@ -82,6 +82,8 @@ Lg7 = 1.479819860511658591e-01;  /* 3FC2F112 DF3E5244 */
 
 static double zero   =  0.0;
 
+#ifndef __have_fpu_log
+
 #ifdef __STDC__
 	double __ieee754_log(double x)
 #else
@@ -137,3 +139,5 @@ static double zero   =  0.0;
 		     return dk*ln2_hi-((s*(f-R)-dk*ln2_lo)-f);
 	}
 }
+
+#endif

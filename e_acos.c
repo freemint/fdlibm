@@ -37,6 +37,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_acos
+
 #ifdef __STDC__
 static const double 
 #else
@@ -103,3 +105,5 @@ qS4 =  7.70381505559019352791e-02; /* 0x3FB3B8C5, 0xB12E9282 */
 	    return 2.0*(df+w);
 	}
 }
+
+#endif

@@ -44,6 +44,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_asin
+
 #ifdef __STDC__
 static const double 
 #else
@@ -112,3 +114,5 @@ qS4 =  7.70381505559019352791e-02; /* 0x3FB3B8C5, 0xB12E9282 */
 	}    
 	if(hx>0) return t; else return -t;    
 }
+
+#endif

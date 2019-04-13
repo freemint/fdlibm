@@ -32,6 +32,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_atanh
+
 #ifdef __STDC__
 static const double one = 1.0, huge = 1e300;
 #else
@@ -66,3 +68,5 @@ static double zero = 0.0;
 	    t = 0.5*log1p((x+x)/(one-x));
 	if(hx>=0) return t; else return -t;
 }
+
+#endif

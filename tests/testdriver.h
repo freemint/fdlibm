@@ -3,7 +3,7 @@
 #include <string.h>
 #include <limits.h>
 #include "testconfig.h"
-#include "../fdlibm.h"
+#include "fdlibm.h"
 
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 struct float96 {

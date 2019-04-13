@@ -41,6 +41,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_atan2
+
 #ifdef __STDC__
 static const double 
 #else
@@ -121,3 +123,5 @@ pi_lo   = 1.2246467991473531772E-16; /* 0x3CA1A626, 0x33145C07 */
 	    	    return  (z-pi_lo)-pi;/* atan(-,-) */
 	}
 }
+
+#endif

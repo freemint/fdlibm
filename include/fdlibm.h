@@ -1,4 +1,3 @@
-
 /* @(#)fdlibm.h 1.5 04/04/22 */
 /*
  * ====================================================
@@ -9,6 +8,29 @@
  * is preserved.
  * ====================================================
  */
+
+#ifndef __FDLIBM_H__
+#define __FDLIBM_H__
+
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE 1
+#endif
+
+#ifdef _LIBC
+#include "lib.h"
+#endif
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+#include <errno.h>
+#include <stdint.h>
+#include <limits.h>
+
+#include <fenv.h>
+
+#ifndef __BYTE_ORDER__
+#  error "endianness not defined"
+#endif
 
 /* Sometimes it's necessary to define __LITTLE_ENDIAN explicitly
    but these catch some common cases. */
@@ -23,13 +45,6 @@
 #define __LO(x) *(1+(int*)&x)
 #define __HIp(x) *(int*)x
 #define __LOp(x) *(1+(int*)x)
-#endif
-
-#ifdef __STDC__
-#undef __P
-#define	__P(p)	p
-#else
-#define	__P(p)	()
 #endif
 
 #define IEEE754_FLOAT_MAXEXP	0xff
@@ -47,27 +62,29 @@
 /* A union which permits us to convert between a double and two 32 bit
    ints.  */
 
-#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#if __FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__
 
-typedef union 
+typedef union
 {
   double value;
-  struct 
+  struct
   {
-    unsigned long msw;
-    unsigned long lsw;
+    uint32_t msw;
+    uint32_t lsw;
   } parts;
 } ieee_double_shape_type;
 
-#else
+#endif
 
-typedef union 
+#if __FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__
+
+typedef union
 {
   double value;
-  struct 
+  struct
   {
-    unsigned long lsw;
-    unsigned long msw;
+    uint32_t lsw;
+    uint32_t msw;
   } parts;
 } ieee_double_shape_type;
 
@@ -106,6 +123,8 @@ do {                                                            \
  * ANSI/POSIX
  */
 
+extern int *__signgam (void);
+#undef signgam
 extern int signgam;
 
 #undef MAXFLOAT
@@ -133,12 +152,17 @@ extern  _LIB_VERSION_TYPE  _LIB_VERSION;
 #define _POSIX_ fdlibm_posix
 
 #if !defined(_MATH_H) && !defined(_MATH_H_)
-struct exception {
-	int type;
-	char *name;
-	double arg1;
-	double arg2;
-	double retval;
+#ifdef __cplusplus
+struct __exception
+#else
+struct exception
+#endif
+{
+	int			type;	/* exception type */
+	const char	*name;	/* function in which it occured */
+	double		arg1;	/* an arg */
+	double		arg2;	/* another arg */
+	double		retval; /* val to return */
 };
 #endif
 
@@ -162,19 +186,28 @@ enum
 };
 #endif
 
-/* 
+/*
  * set X_TLOSS = pi*2**52, which is possibly defined in <values.h>
  * (one may replace the following line by "#include <values.h>")
  */
+#undef X_TLOSS
+#define X_TLOSS	1.41484755040568800000e+16
 
-#define X_TLOSS		1.41484755040568800000e+16 
+#ifndef DOMAIN
+# define	DOMAIN		1
+# define	SING		2
+# define	OVERFLOW	3
+# define	UNDERFLOW	4
+# define	TLOSS		5
+# define	PLOSS		6
+#endif
 
-#define	DOMAIN		1
-#define	SING		2
-#define	OVERFLOW	3
-#define	UNDERFLOW	4
-#define	TLOSS		5
-#define	PLOSS		6
+#undef isinf
+#undef isnan
+#undef signbit
+#undef isfinite
+#undef issignaling
+#undef isnormal
 
 /*
  * ANSI/POSIX
@@ -268,6 +301,23 @@ extern double gamma_r __P((double, int *));
 extern double lgamma_r __P((double, int *));
 #endif	/* _REENTRANT */
 
+#undef __MATH_INLINE
+#define __MATH_INLINE static __inline
+
+#if defined(__GNUC__) && defined(__mcoldfire__)
+# include "asm/ieee754/m68k_cf.h"
+#elif defined(__GNUC__) && defined(__mc68000__)
+# include "asm/ieee754/m68k.h"
+#elif defined(__AHCC__)
+# include "asm/ieee754/m68k_ahcc.h"
+#elif defined(__PUREC__)
+# include "asm/ieee754/m68k_pc.h"
+#elif defined(__GNUC__) && defined(__i386__)
+# include "asm/ieee754/i386.h"
+#elif defined(__GNUC__) && defined(__x86_64__)
+# include "asm/ieee754/x86_64.h"
+#endif
+
 /* ieee style elementary functions */
 extern double __ieee754_sqrt __P((double));			
 extern double __ieee754_acos __P((double));			
@@ -307,3 +357,5 @@ extern double __kernel_sin __P((double,double,int));
 extern double __kernel_cos __P((double,double));
 extern double __kernel_tan __P((double,double,int));
 extern int    __kernel_rem_pio2 __P((double*,double*,int,int,int,const int*));
+
+#endif /* __FDLIBM_H__ */

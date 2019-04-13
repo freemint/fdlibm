@@ -1,7 +1,7 @@
 srcdir = .
 
 CC = m68k-atari-mint-gcc
-CPPFLAGS = -I.. -DTEST_DOUBLE
+CPPFLAGS = -I../include -DTEST_DOUBLE
 CFLAGS = -pipe -O2 -fomit-frame-pointer -fno-builtin
 LDFLAGS = -s
 WARN = -Wall -Wstrict-prototypes -Wmissing-prototypes -Wundef -Wdeclaration-after-statement -Werror

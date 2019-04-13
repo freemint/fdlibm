@@ -98,6 +98,7 @@ P3   =  6.61375632143793436117e-05, /* 0x3F11566A, 0xAF25DE2C */
 P4   = -1.65339022054652515390e-06, /* 0xBEBBBD41, 0xC5D26BF1 */
 P5   =  4.13813679705723846039e-08; /* 0x3E663769, 0x72BEA4D0 */
 
+#ifndef __have_fpu_exp
 
 #ifdef __STDC__
 	double __ieee754_exp(double x)	/* default IEEE double exp */
@@ -155,3 +156,5 @@ P5   =  4.13813679705723846039e-08; /* 0x3E663769, 0x72BEA4D0 */
 	    return y*twom1000;
 	}
 }
+
+#endif

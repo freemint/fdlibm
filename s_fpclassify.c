@@ -6,8 +6,9 @@
 
 #include "fdlibm.h"
 
-int
-fpclassify (double x)
+#undef fpclassify
+
+int __fpclassify (double x)
 {
   unsigned long msw, lsw;
 
@@ -29,3 +30,5 @@ fpclassify (double x)
   else
     return FP_NAN;
 }
+
+__typeof(__fpclassify) fpclassify __attribute__((weak, alias("__fpclassify")));

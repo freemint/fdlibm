@@ -34,6 +34,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_cosh
+
 #ifdef __STDC__
 static const double one = 1.0, half=0.5, huge = 1.0e300;
 #else
@@ -87,3 +89,5 @@ static double one = 1.0, half=0.5, huge = 1.0e300;
     /* |x| > overflowthresold, cosh(x) overflow */
 	return huge*huge;
 }
+
+#endif

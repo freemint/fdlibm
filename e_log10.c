@@ -46,6 +46,8 @@
 
 #include "fdlibm.h"
 
+#ifndef __have_fpu_acos
+
 #ifdef __STDC__
 static const double
 #else
@@ -89,3 +91,5 @@ static double zero   =  0.0;
 	z  = y*log10_2lo + ivln10*__ieee754_log(x);
 	return  z+y*log10_2hi;
 }
+
+#endif
