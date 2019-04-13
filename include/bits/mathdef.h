@@ -54,8 +54,8 @@ typedef long double double_t;	/* `double' expressions are evaluated as
 				   `long double'.  */
 #endif
 
-/* The values returned by `ilogb' for 0 and NaN respectively.  */
-# define FP_ILOGB0	(-__INT_MAX__ - 1)
-# define FP_ILOGBNAN	(__INT_MAX__)
-
 #endif	/* ISO C99 */
+
+/* The values returned by `ilogb' for 0 and NaN respectively.  */
+#define FP_ILOGB0	(-__INT_MAX__ - 1)
+#define FP_ILOGBNAN	(__INT_MAX__)
