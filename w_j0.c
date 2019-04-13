@@ -17,12 +17,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double j0(double x)		/* wrapper j0 */
-#else
-	double j0(x)			/* wrapper j0 */
-	double x;
-#endif
+double j0(double x)		/* wrapper j0 */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_j0(x);
@@ -36,12 +31,7 @@
 #endif
 }
 
-#ifdef __STDC__
-	double y0(double x)		/* wrapper y0 */
-#else
-	double y0(x)			/* wrapper y0 */
-	double x;
-#endif
+double y0(double x)		/* wrapper y0 */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_y0(x);

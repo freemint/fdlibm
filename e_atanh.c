@@ -34,20 +34,11 @@
 
 #ifndef __have_fpu_atanh
 
-#ifdef __STDC__
 static const double one = 1.0, huge = 1e300;
-#else
-static double one = 1.0, huge = 1e300;
-#endif
 
 static double zero = 0.0;
 
-#ifdef __STDC__
-	double __ieee754_atanh(double x)
-#else
-	double __ieee754_atanh(x)
-	double x;
-#endif
+double __ieee754_atanh(double x)
 {
 	double t;
 	int hx,ix;

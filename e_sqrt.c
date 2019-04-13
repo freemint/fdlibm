@@ -84,18 +84,9 @@
 
 #ifndef __have_fpu_sqrt
 
-#ifdef __STDC__
 static	const double	one	= 1.0, tiny=1.0e-300;
-#else
-static	double	one	= 1.0, tiny=1.0e-300;
-#endif
 
-#ifdef __STDC__
-	double __ieee754_sqrt(double x)
-#else
-	double __ieee754_sqrt(x)
-	double x;
-#endif
+double __ieee754_sqrt(double x)
 {
 	double z;
 	int 	sign = (int)0x80000000; 

@@ -17,12 +17,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double sinh(double x)		/* wrapper sinh */
-#else
-	double sinh(x)			/* wrapper sinh */
-	double x;
-#endif
+double sinh(double x)		/* wrapper sinh */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_sinh(x);

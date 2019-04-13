@@ -18,12 +18,7 @@
 #include "fdlibm.h"
 
 
-#ifdef __STDC__
-	double fmod(double x, double y)	/* wrapper fmod */
-#else
-	double fmod(x,y)		/* wrapper fmod */
-	double x,y;
-#endif
+double fmod(double x, double y)	/* wrapper fmod */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_fmod(x,y);

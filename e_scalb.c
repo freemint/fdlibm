@@ -20,19 +20,9 @@
 #include "fdlibm.h"
 
 #ifdef _SCALB_INT
-#ifdef __STDC__
-	double __ieee754_scalb(double x, int fn)
+double __ieee754_scalb(double x, int fn)
 #else
-	double __ieee754_scalb(x,fn)
-	double x; int fn;
-#endif
-#else
-#ifdef __STDC__
-	double __ieee754_scalb(double x, double fn)
-#else
-	double __ieee754_scalb(x,fn)
-	double x, fn;
-#endif
+double __ieee754_scalb(double x, double fn)
 #endif
 {
 #ifdef _SCALB_INT

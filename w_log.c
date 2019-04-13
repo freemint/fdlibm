@@ -18,12 +18,7 @@
 #include "fdlibm.h"
 
 
-#ifdef __STDC__
-	double log(double x)		/* wrapper log */
-#else
-	double log(x)			/* wrapper log */
-	double x;
-#endif
+double log(double x)		/* wrapper log */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_log(x);

@@ -43,12 +43,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double tan(double x)
-#else
-	double tan(x)
-	double x;
-#endif
+double tan(double x)
 {
 	double y[2],z=0.0;
 	int n, ix;

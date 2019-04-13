@@ -18,12 +18,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	int isnan(double x)
-#else
-	int isnan(x)
-	double x;
-#endif
+int isnan(double x)
 {
 	int hx,lx;
 	hx = (__HI(x)&0x7fffffff);

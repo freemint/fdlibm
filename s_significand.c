@@ -19,12 +19,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double significand(double x)
-#else
-	double significand(x)
-	double x;
-#endif
+double significand(double x)
 {
 	return __ieee754_scalb(x, -ilogb(x));
 }

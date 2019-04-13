@@ -78,11 +78,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
 static const double
-#else
-static double
-#endif
 ln2_hi  =  6.93147180369123816490e-01,	/* 3fe62e42 fee00000 */
 ln2_lo  =  1.90821492927058770002e-10,	/* 3dea39ef 35793c76 */
 two54   =  1.80143985094819840000e+16,  /* 43500000 00000000 */
@@ -96,12 +92,7 @@ Lp7 = 1.479819860511658591e-01;  /* 3FC2F112 DF3E5244 */
 
 static double zero = 0.0;
 
-#ifdef __STDC__
-	double log1p(double x)
-#else
-	double log1p(x)
-	double x;
-#endif
+double log1p(double x)
 {
 	double hfsq,f,c,s,z,R,u;
 	int k,hx,hu,ax;

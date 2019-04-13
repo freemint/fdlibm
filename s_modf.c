@@ -23,18 +23,9 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
 static const double one = 1.0;
-#else
-static double one = 1.0;
-#endif
 
-#ifdef __STDC__
-	double modf(double x, double *iptr)
-#else
-	double modf(x, iptr)
-	double x,*iptr;
-#endif
+double modf(double x, double *iptr)
 {
 	int i0,i1,j0;
 	unsigned i;

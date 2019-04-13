@@ -18,12 +18,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double acosh(double x)		/* wrapper acosh */
-#else
-	double acosh(x)			/* wrapper acosh */
-	double x;
-#endif
+double acosh(double x)		/* wrapper acosh */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_acosh(x);

@@ -33,18 +33,9 @@
 
 #ifndef __have_fpu_sinh
 
-#ifdef __STDC__
 static const double one = 1.0, shuge = 1.0e307;
-#else
-static double one = 1.0, shuge = 1.0e307;
-#endif
 
-#ifdef __STDC__
-	double __ieee754_sinh(double x)
-#else
-	double __ieee754_sinh(x)
-	double x;
-#endif
+double __ieee754_sinh(double x)
 {	
 	double t,w,h;
 	int ix,jx;

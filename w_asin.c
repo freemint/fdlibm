@@ -20,12 +20,7 @@
 #include "fdlibm.h"
 
 
-#ifdef __STDC__
-	double asin(double x)		/* wrapper asin */
-#else
-	double asin(x)			/* wrapper asin */
-	double x;
-#endif
+double asin(double x)		/* wrapper asin */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_asin(x);

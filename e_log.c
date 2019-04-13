@@ -64,11 +64,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
 static const double
-#else
-static double
-#endif
 ln2_hi  =  6.93147180369123816490e-01,	/* 3fe62e42 fee00000 */
 ln2_lo  =  1.90821492927058770002e-10,	/* 3dea39ef 35793c76 */
 two54   =  1.80143985094819840000e+16,  /* 43500000 00000000 */
@@ -84,12 +80,7 @@ static double zero   =  0.0;
 
 #ifndef __have_fpu_log
 
-#ifdef __STDC__
-	double __ieee754_log(double x)
-#else
-	double __ieee754_log(x)
-	double x;
-#endif
+double __ieee754_log(double x)
 {
 	double hfsq,f,s,z,R,w,t1,t2,dk;
 	int k,hx,i,j;

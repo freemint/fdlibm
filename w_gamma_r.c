@@ -18,12 +18,7 @@
 #include "fdlibm.h"
 
 
-#ifdef __STDC__
-	double gamma_r(double x, int *signgamp) /* wrapper lgamma_r */
-#else
-	double gamma_r(x,signgamp)              /* wrapper lgamma_r */
-        double x; int *signgamp;
-#endif
+double gamma_r(double x, int *signgamp) /* wrapper lgamma_r */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_gamma_r(x,signgamp);

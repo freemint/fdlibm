@@ -20,12 +20,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double nextafter(double x, double y)
-#else
-	double nextafter(x,y)
-	double x,y;
-#endif
+double nextafter(double x, double y)
 {
 	int	hx,hy,ix,iy;
 	unsigned lx,ly;

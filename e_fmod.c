@@ -21,18 +21,9 @@
 
 #ifndef __have_fpu_fmod
 
-#ifdef __STDC__
 static const double one = 1.0, Zero[] = {0.0, -0.0,};
-#else
-static double one = 1.0, Zero[] = {0.0, -0.0,};
-#endif
 
-#ifdef __STDC__
-	double __ieee754_fmod(double x, double y)
-#else
-	double __ieee754_fmod(x,y)
-	double x,y ;
-#endif
+double __ieee754_fmod(double x, double y)
 {
 	int n,hx,hy,hz,ix,iy,sx,i;
 	unsigned lx,ly,lz;

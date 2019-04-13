@@ -17,12 +17,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double sqrt(double x)		/* wrapper sqrt */
-#else
-	double sqrt(x)			/* wrapper sqrt */
-	double x;
-#endif
+double sqrt(double x)		/* wrapper sqrt */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_sqrt(x);

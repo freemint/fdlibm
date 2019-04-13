@@ -41,15 +41,9 @@ SEEALSO
 
 */
 
-#include <sys/types.h>
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double round(double x)
-#else
-	double round(x)
-	double x;
-#endif
+double round(double x)
 {
   /* Most significant word, least significant word. */
   __int32_t msw, exponent_less_1023;

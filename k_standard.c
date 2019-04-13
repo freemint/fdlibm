@@ -74,12 +74,7 @@ static double zero = 0.0;	/* used as const */
  */
 
 
-#ifdef __STDC__
-	double __kernel_standard(double x, double y, int type) 
-#else
-	double __kernel_standard(x,y,type) 
-	double x,y; int type;
-#endif
+double __kernel_standard(double x, double y, int type) 
 {
 	struct exception exc;
 #ifndef HUGE_VAL	/* this is the only routine that uses HUGE_VAL */ 

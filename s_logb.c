@@ -19,12 +19,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	double logb(double x)
-#else
-	double logb(x)
-	double x;
-#endif
+double logb(double x)
 {
 	int lx,ix;
 	ix = (__HI(x))&0x7fffffff;	/* high |x| */

@@ -19,12 +19,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	int ilogb(double x)
-#else
-	int ilogb(x)
-	double x;
-#endif
+int ilogb(double x)
 {
 	int hx,lx,ix;
 

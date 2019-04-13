@@ -17,12 +17,7 @@
 #include "fdlibm.h"
 
 
-#ifdef __STDC__
-	double atanh(double x)		/* wrapper atanh */
-#else
-	double atanh(x)			/* wrapper atanh */
-	double x;
-#endif
+double atanh(double x)		/* wrapper atanh */
 {
 #ifdef _IEEE_LIBM
 	return __ieee754_atanh(x);

@@ -18,12 +18,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	int finite(double x)
-#else
-	int finite(x)
-	double x;
-#endif
+int finite(double x)
 {
 	int hx; 
 	hx = __HI(x);
