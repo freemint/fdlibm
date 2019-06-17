@@ -26,10 +26,10 @@ static test_ff_f_data const fpow_data[] = {
 	{ __LINE__,  INF_M, INF_P, INF_P, FLAG_FAIL_ARANYM }, /* glibc returns NaN */
 	
 	/* If the absolute value of x is less than 1, and y is positive infinity, the result is +0. */
-	{ __LINE__,  HEXCONSTE(0.9L, 0x3ffe, 0xe6666666L, 0x66666666L), INF_P, ZERO_P, 0 },
-	{ __LINE__,  HEXCONSTE(1e-7L, 0x3fe7, 0xd6bf94d5L, 0xe57a42bcL), INF_P, ZERO_P, 0 }, /* inf treated as NaN? */
-	{ __LINE__,  HEXCONSTE(-0.9L, 0xbffe, 0xe6666666L, 0x66666666L), INF_P, ZERO_P, FLAG_IGNORE_ZEROSIGN },
-	{ __LINE__,  HEXCONSTE(-1e-7L, 0xbfe7, 0xd6bf94d5L, 0xe57a42bcL), INF_P, ZERO_P, FLAG_IGNORE_ZEROSIGN },
+	{ __LINE__,  HEXCONSTE(0.9L, 0x3ffe, 0xe6666666L, 0x66666666L), INF_P, ZERO_P, FLAG_FAIL_ARANYM },
+	{ __LINE__,  HEXCONSTE(1e-7L, 0x3fe7, 0xd6bf94d5L, 0xe57a42bcL), INF_P, ZERO_P, FLAG_FAIL_ARANYM }, /* inf treated as NaN? */
+	{ __LINE__,  HEXCONSTE(-0.9L, 0xbffe, 0xe6666666L, 0x66666666L), INF_P, ZERO_P, FLAG_IGNORE_ZEROSIGN|FLAG_FAIL_ARANYM },
+	{ __LINE__,  HEXCONSTE(-1e-7L, 0xbfe7, 0xd6bf94d5L, 0xe57a42bcL), INF_P, ZERO_P, FLAG_IGNORE_ZEROSIGN|FLAG_FAIL_ARANYM },
 	
 	/* If the absolute value of x is greater than 1, and y is negative infinity, the result is +0. */
 	{ __LINE__,  HEXCONSTE(1.1L, 0x3fff, 0x8cccccccL, 0xcccccccdL), INF_M, ZERO_P, FLAG_FAIL_ARANYM }, /* inf treated as NaN? */
