@@ -271,8 +271,8 @@ struct exception
 #ifdef __GNUC__
 # ifndef __cplusplus
 #  ifndef max
-#   define max(x,y) ({typeof(x) _x=(x); typeof(y) _y=(y); if (_x>_y) _y=_x; _y;})
-#   define min(x,y) ({typeof(x) _x=(x); typeof(y) _y=(y); if (_x<_y) _y=_x; _y;})
+#   define max(x,y) ({typeof(x) _x=(x); typeof(y) _y=(y); _x > _y ? _x : _y;})
+#   define min(x,y) ({typeof(x) _x=(x); typeof(y) _y=(y); _x < _y ? _x : _y;})
 #  endif
 # endif
 #endif
