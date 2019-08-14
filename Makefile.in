@@ -99,7 +99,9 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_signgam.c $(srcdir)/s_significand.c $(srcdir)/s_sin.c \
 	$(srcdir)/s_tan.c $(srcdir)/s_tanh.c $(srcdir)/s_fmin.c \
 	$(srcdir)/s_fmax.c $(srcdir)/s_fpclassify.c $(srcdir)/s_round.c \
-	$(srcdir)/s_lround.c
+	$(srcdir)/s_lround.c \
+	$(srcdir)/s_trunc.c $(srcdir)/s_truncf.c $(srcdir)/s_truncl.c \
+	$(empty)
 
 OBJ = 	k_standard.o k_rem_pio2.o \
 	k_cos.o k_sin.o k_tan.o \
@@ -121,7 +123,9 @@ OBJ = 	k_standard.o k_rem_pio2.o \
 	s_log1p.o s_logb.o s_matherr.o s_modf.o s_nextafter.o \
 	s_rint.o s_scalbn.o s_signgam.o s_significand.o s_sin.o \
 	s_tan.o s_tanh.o s_fmin.o s_fmax.o s_fpclassify.o s_round.o \
-	s_lround.o
+	s_lround.o \
+	s_trunc.o s_truncf.o s_truncl.o \
+	$(empty)
 
 .c.o:
 	$(CC) -c $(DEFS) -I$(srcdir)/include $(CFLAGS) $< $(OUTPUT_OPTION)

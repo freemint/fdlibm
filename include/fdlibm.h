@@ -74,6 +74,17 @@ typedef union
   } parts;
 } ieee_double_shape_type;
 
+typedef union
+{
+  long double value;
+  struct
+  {
+    int16_t sign_exponent;
+    uint32_t msw;
+    uint32_t lsw;
+  } parts;
+} ieee_long_double_shape_type;
+
 #endif
 
 #if __FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -88,7 +99,29 @@ typedef union
   } parts;
 } ieee_double_shape_type;
 
+typedef union
+{
+  long double value;
+  struct
+  {
+    uint32_t lsw;
+    uint32_t msw;
+    int sign_exponent:16;
+    unsigned int empty:16;
+  } parts;
+} ieee_long_double_shape_type;
+
 #endif
+
+/* A union which permits us to convert between a float and a 32 bit
+   int.  */
+
+typedef union
+{
+  float value;
+  uint32_t word;
+} ieee_float_shape_type;
+
 
 /* Get two 32 bit ints from a double.  */
 
@@ -100,6 +133,29 @@ do {								\
   (ix1) = ew_u.parts.lsw;					\
 } while (0)
 
+#define GET_DOUBLE_WORDS(ix0,ix1,d)				\
+{								\
+  const ieee_double_shape_type *ew_u = (const ieee_double_shape_type *)&(d);					\
+  (ix0) = ew_u->parts.msw;					\
+  (ix1) = ew_u->parts.lsw;					\
+}
+
+/* Get the more significant 32 bit int from a double.  */
+
+#define GET_HIGH_WORD(i,d)					\
+{								\
+  const ieee_double_shape_type *gh_u = (const ieee_double_shape_type *)&(d);					\
+  (i) = gh_u->parts.msw;						\
+}
+
+/* Get the less significant 32 bit int from a double.  */
+
+#define GET_LOW_WORD(i,d)					\
+{								\
+  const ieee_double_shape_type *gl_u = (const ieee_double_shape_type *)&(d);					\
+  (i) = gl_u->parts.lsw;						\
+}
+
 /* Set a double from two 32 bit ints.  */
 
 #define INSERT_WORDS(d,ix0,ix1)                                 \
@@ -110,6 +166,101 @@ do {                                                            \
   (d) = iw_u.value;                                             \
 } while (0)
 
+/* Get a 32 bit int from a float.  */
+
+#define GET_FLOAT_WORD(i,d)					\
+{								\
+  const ieee_float_shape_type *gf_u = (const ieee_float_shape_type *)&(d);					\
+  (i) = gf_u->word;						\
+}
+
+/* Set a float from a 32 bit int.  */
+
+#define SET_FLOAT_WORD(d,i)					\
+{								\
+  ieee_float_shape_type *sf_u = (ieee_float_shape_type *)&(d);					\
+  sf_u->word = (i);						\
+}
+
+/* Get three 32 bit ints from a long double.  */
+
+#define GET_LDOUBLE_WORDS(exp,ix0,ix1,d)			\
+do {								\
+  ieee_long_double_shape_type ew_u;				\
+  ew_u.value = (d);						\
+  (exp) = ew_u.parts.sign_exponent;				\
+  (ix0) = ew_u.parts.msw;					\
+  (ix1) = ew_u.parts.lsw;					\
+} while (0)
+
+/* Set a long double from two 32 bit ints.  */
+
+#define SET_LDOUBLE_WORDS(d,exp,ix0,ix1)			\
+do {								\
+  ieee_long_double_shape_type iw_u;				\
+  iw_u.parts.sign_exponent = (exp);				\
+  iw_u.parts.msw = (ix0);					\
+  iw_u.parts.lsw = (ix1);					\
+  (d) = iw_u.value;						\
+} while (0)
+
+/* Get the more significant 32 bits of a long double mantissa.  */
+
+#define GET_LDOUBLE_MSW(v,d)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  (v) = sh_u.parts.msw;						\
+} while (0)
+
+/* Get the less significant 32 bits of a long double mantissa.  */
+
+#define GET_LDOUBLE_LSW(v,d)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  (v) = sh_u.parts.lsw;						\
+} while (0)
+
+/* Set the more significant 32 bits of a long double mantissa from an int.  */
+
+#define SET_LDOUBLE_MSW(d,v)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  sh_u.parts.msw = (v);						\
+  (d) = sh_u.value;						\
+} while (0)
+
+/* Set the less significant 32 bits of a long double mantissa from an int.  */
+
+#define SET_LDOUBLE_LSW(d,v)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  sh_u.parts.lsw = (v);						\
+  (d) = sh_u.value;						\
+} while (0)
+
+/* Get int from the exponent of a long double.  */
+
+#define GET_LDOUBLE_EXP(exp,d)					\
+do {								\
+  ieee_long_double_shape_type ge_u;				\
+  ge_u.value = (d);						\
+  (exp) = ge_u.parts.sign_exponent;				\
+} while (0)
+
+/* Set exponent of a long double from an int.  */
+
+#define SET_LDOUBLE_EXP(d,exp)					\
+do {								\
+  ieee_long_double_shape_type se_u;				\
+  se_u.value = (d);						\
+  se_u.parts.sign_exponent = (exp);				\
+  (d) = se_u.value;						\
+} while (0)
+
 /* Macros to avoid undefined behaviour that can arise if the amount
    of a shift is exactly equal to the size of the shifted operand.  */
 
@@ -118,6 +269,14 @@ do {                                                            \
 
 #define SAFE_RIGHT_SHIFT(op,amt)                                \
   (((amt) < 8 * sizeof(op)) ? ((op) >> (amt)) : 0)
+
+#if INT_MAX > 32767
+#  define IC(x) ((int32_t) x)
+#  define UC(x) ((uint32_t) x)
+#else
+#  define IC(x) ((int32_t) x##L)
+#  define UC(x) ((uint32_t) x##UL)
+#endif
 
 /*
  * ANSI/POSIX
