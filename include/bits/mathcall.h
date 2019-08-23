@@ -1,5 +1,5 @@
 /* Prototype declarations for math functions; helper file for <math.h>.
-   Copyright (C) 1996-2013 Free Software Foundation, Inc.
+   Copyright (C) 1996-2019 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -46,6 +46,13 @@
 # error "Never include <bits/mathcalls.h> directly; include <math.h> instead."
 #endif
 
+#ifndef __GLIBC_USE_IEC_60559_BFP_EXT
+#if defined __USE_GNU || defined __STDC_WANT_IEC_60559_BFP_EXT__
+# define __GLIBC_USE_IEC_60559_BFP_EXT 1
+#else
+# define __GLIBC_USE_IEC_60559_BFP_EXT 0
+#endif
+#endif
 
 /* Trigonometric functions.  */
 
@@ -79,7 +86,7 @@ _Mdouble_END_NAMESPACE
 #if defined __USE_GNU || defined __USE_PUREC
 /* Cosine and sine of X.  */
 __MATHDECL (void,sincos,,
-	    (_Mdouble_ __x, _Mdouble_ *__sinx, _Mdouble_ *__cosx));
+		(_Mdouble_ __x, _Mdouble_ *__sinx, _Mdouble_ *__cosx));
 #endif
 
 #if defined __USE_MISC || defined __USE_XOPEN_EXTENDED || defined __USE_ISOC99 || defined __USE_PUREC
@@ -198,10 +205,16 @@ __MATHDECL_1 (int,__finite,, (_Mdouble_ __value)) __attribute__ ((__const__));
 _Mdouble_END_NAMESPACE
 
 #if defined __USE_MISC || defined __USE_PUREC
+# if ((!defined __cplusplus \
+       || __cplusplus < 201103L /* isinf conflicts with C++11.  */ \
+       || __MATH_DECLARING_DOUBLE == 0)) /* isinff or isinfl don't.  */ \
+      && !__MATH_DECLARING_FLOATN
 /* Return 0 if VALUE is finite or NaN, +1 if it
    is +Infinity, -1 if it is -Infinity.  */
 __MATHDECL_1 (int,isinf,, (_Mdouble_ __value)) __attribute__ ((__const__));
+# endif
 
+# if !__MATH_DECLARING_FLOATN
 /* Return nonzero if VALUE is finite and not NaN.  */
 __MATHDECL_1 (int,finite,, (_Mdouble_ __value)) __attribute__ ((__const__));
 
@@ -211,6 +224,8 @@ __MATHCALL (drem,, (_Mdouble_ __x, _Mdouble_ __y));
 
 /* Return the fractional part of X after dividing out `ilogb (X)'.  */
 __MATHCALL (significand,, (_Mdouble_ __x));
+# endif
+
 #endif /* Use misc.  */
 
 #if defined __USE_MISC || defined __USE_ISOC99 || defined __USE_PUREC
@@ -232,9 +247,16 @@ __END_NAMESPACE_C99
 __MATHDECL_1 (int,__isnan,, (_Mdouble_ __value)) __attribute__ ((__const__));
 
 #if defined __USE_MISC || defined __USE_XOPEN || defined __USE_PUREC
+# if ((!defined __cplusplus \
+       || __cplusplus < 201103L /* isnan conflicts with C++11.  */ \
+       || __MATH_DECLARING_DOUBLE == 0)) /* isnanf or isnanl don't.  */ \
+      && !__MATH_DECLARING_FLOATN
 /* Return nonzero if VALUE is not a number.  */
 __MATHDECL_1 (int,isnan,, (_Mdouble_ __value)) __attribute__ ((__const__));
+# endif
+#endif
 
+#if defined __USE_MISC || defined __USE_PUREC || (defined __USE_XOPEN && __MATH_DECLARING_DOUBLE)
 /* Bessel functions.  */
 __MATHCALL (j0,, (_Mdouble_));
 __MATHCALL (j1,, (_Mdouble_));
@@ -262,9 +284,11 @@ __END_NAMESPACE_C99
 #endif
 
 #if defined __USE_MISC || defined __USE_XOPEN || defined __USE_PUREC
+# if !__MATH_DECLARING_FLOATN
 /* Obsolete alias for `lgamma'.  */
 __MATHCALL (gamma,, (_Mdouble_));
 __MATHCALL (gamma,_r, (_Mdouble_, int *__signgamp));
+# endif
 #endif
 
 #if defined __USE_MISC || defined __USE_PUREC
@@ -283,8 +307,15 @@ __MATHCALL (rint,, (_Mdouble_ __x));
 
 /* Return X + epsilon if X < Y, X - epsilon if X > Y.  */
 __MATHCALLX (nextafter,, (_Mdouble_ __x, _Mdouble_ __y), (__const__));
-# if defined __USE_ISOC99 && !defined __LDBL_COMPAT
+# if defined __USE_ISOC99 && !defined __LDBL_COMPAT && !__MATH_DECLARING_FLOATN
 __MATHCALLX (nexttoward,, (_Mdouble_ __x, long double __y), (__const__));
+# endif
+
+# if __GLIBC_USE_IEC_60559_BFP_EXT || __MATH_DECLARING_FLOATN
+/* Return X - epsilon.  */
+__MATHCALL (nextdown,, (_Mdouble_ __x));
+/* Return X + epsilon.  */
+__MATHCALL (nextup,, (_Mdouble_ __x));
 # endif
 
 /* Return the remainder of integer divison X / Y with infinite precision.  */
@@ -297,6 +328,11 @@ __MATHCALL (scalbn,, (_Mdouble_ __x, int __n));
 
 /* Return the binary exponent of X, which must be nonzero.  */
 __MATHDECL (int,ilogb,, (_Mdouble_ __x));
+#endif
+
+#if __GLIBC_USE_IEC_60559_BFP_EXT || __MATH_DECLARING_FLOATN
+/* Like ilogb, but returning long int.  */
+__MATHDECL (long int, llogb,, (_Mdouble_ __x));
 #endif
 
 #if defined __USE_ISOC99 || defined __USE_PUREC
@@ -357,8 +393,10 @@ __MATHDECL_1 (int, __fpclassify,, (_Mdouble_ __value))
 /* Test for negative number.  */
 __MATHDECL_1 (int, __signbit,, (_Mdouble_ __value))
      __attribute__ ((__const__));
+#ifndef __cplusplus
 __MATHDECL_1 (int, signbit,, (_Mdouble_ __value))
      __attribute__ ((__const__));
+#endif
 
 
 /* Multiply-add function computed as a ternary operation.  */
@@ -369,6 +407,61 @@ __MATHCALL (fma,, (_Mdouble_ __x, _Mdouble_ __y, _Mdouble_ __z));
 __END_NAMESPACE_C99
 #endif
 
+#if __GLIBC_USE_IEC_60559_BFP_EXT || __MATH_DECLARING_FLOATN
+/* Round X to nearest integer value, rounding halfway cases to even.  */
+__MATHCALLX (roundeven,, (_Mdouble_ __x), (__const__));
+
+#ifdef ____intmax_t_defined
+/* Round X to nearest signed integer value, not raising inexact, with
+   control of rounding direction and width of result.  */
+__MATHDECL (__intmax_t, fromfp,, (_Mdouble_ __x, int __round,
+				  unsigned int __width));
+
+/* Round X to nearest unsigned integer value, not raising inexact,
+   with control of rounding direction and width of result.  */
+__MATHDECL (__uintmax_t, ufromfp,, (_Mdouble_ __x, int __round,
+				    unsigned int __width));
+
+/* Round X to nearest signed integer value, raising inexact for
+   non-integers, with control of rounding direction and width of
+   result.  */
+__MATHDECL (__intmax_t, fromfpx,, (_Mdouble_ __x, int __round,
+				   unsigned int __width));
+
+/* Round X to nearest unsigned integer value, raising inexact for
+   non-integers, with control of rounding direction and width of
+   result.  */
+__MATHDECL (__uintmax_t, ufromfpx,, (_Mdouble_ __x, int __round,
+				     unsigned int __width));
+#endif
+
+/* Return value with maximum magnitude.  */
+__MATHCALLX (fmaxmag,, (_Mdouble_ __x, _Mdouble_ __y), (__const__));
+
+/* Return value with minimum magnitude.  */
+__MATHCALLX (fminmag,, (_Mdouble_ __x, _Mdouble_ __y), (__const__));
+
+/* Total order operation.  */
+__MATHDECL_1 (int, totalorder,, (_Mdouble_ __x, _Mdouble_ __y))
+     __attribute__ ((__const__));
+
+/* Total order operation on absolute values.  */
+__MATHDECL_1 (int, totalordermag,, (_Mdouble_ __x, _Mdouble_ __y))
+     __attribute__ ((__const__));
+
+/* Canonicalize floating-point representation.  */
+__MATHDECL_1 (int, canonicalize,, (_Mdouble_ *__cx, const _Mdouble_ *__x));
+
+/* Get NaN payload.  */
+__MATHCALL (getpayload,, (const _Mdouble_ *__x));
+
+/* Set quiet NaN payload.  */
+__MATHDECL_1 (int, setpayload,, (_Mdouble_ *__x, _Mdouble_ __payload));
+
+/* Set signaling NaN payload.  */
+__MATHDECL_1 (int, setpayloadsig,, (_Mdouble_ *__x, _Mdouble_ __payload));
+#endif
+
 #if defined __USE_GNU
 /* Test for signaling NaN.  */
 __MATHDECL_1 (int, __issignaling,, (_Mdouble_ __value))
@@ -377,7 +470,7 @@ __MATHDECL_1 (int, issignaling,, (_Mdouble_ __value))
      __attribute__ ((__const__));
 #endif
 
-#if defined __USE_MISC || defined __USE_XOPEN_EXTENDED
+#if (defined __USE_MISC || (defined __USE_XOPEN_EXTENDED && __MATH_DECLARING_DOUBLE	&& !defined __USE_XOPEN2K8)) && !__MATH_DECLARING_FLOATN
 /* Return X times (2 to the Nth power).  */
 __MATHCALL (scalb,, (_Mdouble_ __x, _Mdouble_ __n));
 #endif

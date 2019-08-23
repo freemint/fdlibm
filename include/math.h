@@ -57,6 +57,9 @@
 
 __BEGIN_DECLS
 
+/* Get definitions of __intmax_t and __uintmax_t.  */
+#include <sys/types.h>
+
 /* Get machine-dependent HUGE_VAL value (returned on overflow).
    On all IEEE754 machines, this is +Infinity.  */
 #include <bits/huge_val.h>
@@ -95,11 +98,15 @@ __BEGIN_DECLS
 #define __MATH_PRECNAME(name,r)	__CONCAT(name,r)
 #define _Mdouble_BEGIN_NAMESPACE __BEGIN_NAMESPACE_STD
 #define _Mdouble_END_NAMESPACE   __END_NAMESPACE_STD
+#define __MATH_DECLARING_DOUBLE  1
+#define __MATH_DECLARING_FLOATN  0
 #include <bits/mathcall.h>
 #undef	_Mdouble_
+#undef	__MATH_PRECNAME
+#undef __MATH_DECLARING_DOUBLE
+#undef __MATH_DECLARING_FLOATN
 #undef _Mdouble_BEGIN_NAMESPACE
 #undef _Mdouble_END_NAMESPACE
-#undef	__MATH_PRECNAME
 
 #if defined __USE_MISC || defined __USE_ISOC99
 
@@ -114,11 +121,15 @@ __BEGIN_DECLS
 # define __MATH_PRECNAME(name,r) name##f##r
 # define _Mdouble_BEGIN_NAMESPACE __BEGIN_NAMESPACE_C99
 # define _Mdouble_END_NAMESPACE   __END_NAMESPACE_C99
+# define __MATH_DECLARING_DOUBLE  0
+# define __MATH_DECLARING_FLOATN  0
 # include <bits/mathcall.h>
 # undef	_Mdouble_
+# undef	__MATH_PRECNAME
+# undef __MATH_DECLARING_DOUBLE
+# undef __MATH_DECLARING_FLOATN
 # undef _Mdouble_BEGIN_NAMESPACE
 # undef _Mdouble_END_NAMESPACE
-# undef	__MATH_PRECNAME
 
 #  ifdef __LDBL_COMPAT
 
@@ -155,12 +166,16 @@ extern long double __REDIRECT_NTH (nexttowardl,
 #  define __MATH_PRECNAME(name,r) name##l##r
 #  define _Mdouble_BEGIN_NAMESPACE __BEGIN_NAMESPACE_C99
 #  define _Mdouble_END_NAMESPACE   __END_NAMESPACE_C99
+#  define __MATH_DECLARING_DOUBLE  0
+#  define __MATH_DECLARING_FLOATN  0
 #  define __MATH_DECLARE_LDOUBLE   1
 #  include <bits/mathcall.h>
 #  undef _Mdouble_
+#  undef __MATH_PRECNAME
+#  undef __MATH_DECLARING_DOUBLE
+#  undef __MATH_DECLARING_FLOATN
 #  undef _Mdouble_BEGIN_NAMESPACE
 #  undef _Mdouble_END_NAMESPACE
-#  undef __MATH_PRECNAME
 
 #endif	/* Use misc or ISO C99.  */
 #undef	__MATHDECL_1
@@ -348,7 +363,18 @@ enum
 # endif
 
 /* Return nonzero value if sign of X is negative.  */
-# ifdef __NO_LONG_DOUBLE_MATH
+# if __GNUC_PREREQ (6,0)
+#  define signbit(x) __builtin_signbit (x)
+# elif defined __cplusplus
+  /* In C++ mode, __MATH_TG cannot be used, because it relies on
+     __builtin_types_compatible_p, which is a C-only builtin.
+     The check for __cplusplus allows the use of the builtin instead of
+     __MATH_TG. This is provided for libstdc++, only to let its configure
+     test work. No further use of this definition of signbit is expected
+     in C++ mode, since libstdc++ provides its own version of signbit
+     in cmath (which undefines signbit). */
+#  define signbit(x) __builtin_signbitl (x)
+# elif defined(__NO_LONG_DOUBLE_MATH)
 #  define signbit(x) \
      (sizeof (x) == sizeof (float) ? __signbitf (x) : __signbit (x))
 # else
