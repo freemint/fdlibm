@@ -20,15 +20,10 @@
 
 double hypot(double x, double y)/* wrapper hypot */
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_hypot(x,y);
-#else
-	double z;
-	z = __ieee754_hypot(x,y);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if((!finite(z))&&finite(x)&&finite(y))
-	    return __kernel_standard(x,y,4); /* hypot overflow */
-	else
-	    return z;
-#endif
+	double z = __ieee754_hypot(x, y);
+
+	if (!isfinite(z) && isfinite(x) && isfinite(y) && _LIB_VERSION != _IEEE_)
+		return __kernel_standard(x, y, z, KMATHERR_HYPOT);	/* hypot overflow */
+
+	return z;
 }

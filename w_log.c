@@ -18,17 +18,21 @@
 #include "fdlibm.h"
 
 
-double log(double x)		/* wrapper log */
+/* wrapper log(x) */
+double log(double x)
 {
-#ifdef _IEEE_LIBM
+	if (_LIB_VERSION != _IEEE_ && islessequal(x, 0.0))
+	{
+		if (x == 0.0)
+		{
+			feraiseexcept(FE_DIVBYZERO);
+			return __kernel_standard(x, x, -HUGE_VAL, KMATHERR_LOG_ZERO);	/* log(0) */
+		} else
+		{
+			feraiseexcept(FE_INVALID);
+			return __kernel_standard(x, x, __builtin_nan(""), KMATHERR_LOG_MINUS);	/* log(x<0) */
+		}
+	}
+
 	return __ieee754_log(x);
-#else
-	double z;
-	z = __ieee754_log(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) || x > 0.0) return z;
-	if(x==0.0)
-	    return __kernel_standard(x,x,16); /* log(0) */
-	else 
-	    return __kernel_standard(x,x,17); /* log(x<0) */
-#endif
 }

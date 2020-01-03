@@ -18,17 +18,12 @@
 
 #include "fdlibm.h"
 
-double acosh(double x)		/* wrapper acosh */
+/* wrapper acosh */
+double acosh(double x)
 {
-#ifdef _IEEE_LIBM
+	if (_LIB_VERSION != _IEEE_ && isless(x, 1.0))
+		/* acosh(x<1) */
+		return __kernel_standard(x, x, __builtin_nan(""), KMATHERR_ACOSH);
+
 	return __ieee754_acosh(x);
-#else
-	double z;
-	z = __ieee754_acosh(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(x<1.0) {
-	        return __kernel_standard(x,x,29); /* acosh(x<1) */
-	} else
-	    return z;
-#endif
 }

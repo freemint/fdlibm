@@ -20,15 +20,8 @@
 
 double fmod(double x, double y)	/* wrapper fmod */
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_fmod(x,y);
-#else
-	double z;
-	z = __ieee754_fmod(x,y);
-	if(_LIB_VERSION == _IEEE_ ||isnan(y)||isnan(x)) return z;
-	if(y==0.0) {
-	        return __kernel_standard(x,y,27); /* fmod(x,0) */
-	} else
-	    return z;
-#endif
+	if (_LIB_VERSION != _IEEE_ && (isinf(x) || y == 0.0) && !isunordered(x, y))
+		/* fmod(+-Inf,y) or fmod(x,0) */
+		return __kernel_standard(x, y, y, KMATHERR_FMOD);
+	return __ieee754_fmod(x, y);
 }

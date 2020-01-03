@@ -1,4 +1,3 @@
-
 /* @(#)w_lgamma.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -22,18 +21,5 @@
 
 double lgamma(double x)
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_lgamma_r(x,&signgam);
-#else
-        double y;
-        y = __ieee754_lgamma_r(x,&signgam);
-        if(_LIB_VERSION == _IEEE_) return y;
-        if(!finite(y)&&finite(x)) {
-            if(floor(x)==x&&x<=0.0)
-                return __kernel_standard(x,x,15); /* lgamma pole */
-            else
-                return __kernel_standard(x,x,14); /* lgamma overflow */
-        } else
-            return y;
-#endif
+	return lgamma_r(x, &signgam);
 }             

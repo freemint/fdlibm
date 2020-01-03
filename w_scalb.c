@@ -21,27 +21,53 @@
 
 #include <errno.h>
 
+static double __attribute__ ((noinline)) sysv_scalb(double x, double fn)
+{
+	double z = __ieee754_scalb(x, fn);
+
+	if (isinf(z))
+	{
+		if (isfinite(x))
+			return __kernel_standard(x, fn, z, KMATHERR_SCALB_OVERFLOW);	/* scalb overflow */
+		else
+			__set_errno(ERANGE);
+	} else if (z == 0.0 && z != x)
+		return __kernel_standard(x, fn, z, KMATHERR_SCALB_UNDERFLOW);	/* scalb underflow */
+
+	return z;
+}
+
+
 #ifdef _SCALB_INT
 double scalb(double x, int fn)		/* wrapper scalb */
 #else
 double scalb(double x, double fn)	/* wrapper scalb */
 #endif
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_scalb(x,fn);
-#else
-	double z;
-	z = __ieee754_scalb(x,fn);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if(!(finite(z)||isnan(z))&&finite(x)) {
-	    return __kernel_standard(x,(double)fn,32); /* scalb overflow */
+	if (_LIB_VERSION == _SVID_)
+	{
+		return sysv_scalb(x, fn);
+	} else
+	{
+		double z = __ieee754_scalb(x, fn);
+
+		if (!isfinite(z) || z == 0.0)
+		{
+			if (isnan(z))
+			{
+				if (!isnan(x) && !isnan(fn))
+					z = __kernel_standard(x, fn, z, KMATHERR_SCALB_INVALID);
+			} else if (isinf(z))
+			{
+				if (!isinf(x) && !isinf(fn))
+					z = __kernel_standard(x, fn, z, KMATHERR_SCALB_OVERFLOW);
+			} else
+			{
+				/* z == 0.  */
+				if (x != 0.0 && !isinf(fn))
+					z = __kernel_standard(x, fn, z, KMATHERR_SCALB_UNDERFLOW);
+			}
+		}
+		return z;
 	}
-	if(z==0.0&&z!=x) {
-	    return __kernel_standard(x,(double)fn,33); /* scalb underflow */
-	} 
-#ifndef _SCALB_INT
-	if(!finite(fn)) errno = ERANGE;
-#endif
-	return z;
-#endif 
 }

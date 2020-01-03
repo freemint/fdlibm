@@ -19,19 +19,9 @@
 
 double atanh(double x)		/* wrapper atanh */
 {
-#ifdef _IEEE_LIBM
+	if (_LIB_VERSION != _IEEE_ && isgreaterequal(__ieee754_fabs(x), 1.0))
+		return __kernel_standard(x, x, HUGE_VAL, __ieee754_fabs(x) > 1.0 ? KMATHERR_ATANH_PLUSONE	/* atanh(|x|>1) */
+								 : KMATHERR_ATANH_ONE);	/* atanh(|x|==1) */
+
 	return __ieee754_atanh(x);
-#else
-	double z,y;
-	z = __ieee754_atanh(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	y = fabs(x);
-	if(y>=1.0) {
-	    if(y>1.0)
-	        return __kernel_standard(x,x,30); /* atanh(|x|>1) */
-	    else 
-	        return __kernel_standard(x,x,31); /* atanh(|x|==1) */
-	} else
-	    return z;
-#endif
 }

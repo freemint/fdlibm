@@ -18,20 +18,21 @@
 #include "fdlibm.h"
 
 
-double log10(double x)		/* wrapper log10 */
+/* wrapper log10(x) */
+double log10(double x)
 {
-#ifdef _IEEE_LIBM
+	if (_LIB_VERSION != _IEEE_ && islessequal(x, 0.0))
+	{
+		if (x == 0.0)
+		{
+			feraiseexcept(FE_DIVBYZERO);
+			return __kernel_standard(x, x, -HUGE_VAL, KMATHERR_LOG10_ZERO);	/* log10(0) */
+		} else
+		{
+			feraiseexcept(FE_INVALID);
+			return __kernel_standard(x, x, __builtin_nan(""), KMATHERR_LOG10_MINUS);	/* log10(x<0) */
+		}
+	}
+
 	return __ieee754_log10(x);
-#else
-	double z;
-	z = __ieee754_log10(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(x<=0.0) {
-	    if(x==0.0)
-	        return __kernel_standard(x,x,18); /* log10(0) */
-	    else 
-	        return __kernel_standard(x,x,19); /* log10(x<0) */
-	} else
-	    return z;
-#endif
 }

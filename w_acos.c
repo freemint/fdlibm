@@ -20,15 +20,12 @@
 
 double acos(double x)		/* wrapper acos */
 {
-#ifdef _IEEE_LIBM
+	if (_LIB_VERSION != _IEEE_ && isgreater(__ieee754_fabs(x), 1.0))
+	{
+		/* acos(|x|>1) */
+		feraiseexcept(FE_INVALID);
+		return __kernel_standard(x, x, __builtin_nan(""), KMATHERR_ACOS);
+	}
+
 	return __ieee754_acos(x);
-#else
-	double z;
-	z = __ieee754_acos(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(fabs(x)>1.0) {
-	        return __kernel_standard(x,x,1); /* acos(|x|>1) */
-	} else
-	    return z;
-#endif
 }

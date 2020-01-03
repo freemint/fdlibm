@@ -19,15 +19,10 @@
 
 double sinh(double x)		/* wrapper sinh */
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_sinh(x);
-#else
-	double z; 
-	z = __ieee754_sinh(x);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if(!finite(z)&&finite(x)) {
-	    return __kernel_standard(x,x,25); /* sinh overflow */
-	} else
-	    return z;
-#endif
+	double z = __ieee754_sinh(x);
+
+	if (_LIB_VERSION != _IEEE_ && !isfinite(z) && isfinite(x))
+		return __kernel_standard(x, x, z, KMATHERR_SINH);	/* sinh overflow */
+
+	return z;
 }

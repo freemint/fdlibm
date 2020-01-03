@@ -12,7 +12,7 @@ int __fpclassify (double x)
 {
   unsigned long msw, lsw;
 
-  EXTRACT_WORDS(msw,lsw,x);
+  GET_DOUBLE_WORDS(msw,lsw,x);
 
   if ((msw == 0x00000000 && lsw == 0x00000000) ||
       (msw == 0x80000000 && lsw == 0x00000000))

@@ -1,4 +1,3 @@
-
 /* @(#)s_lib_version.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -17,19 +16,17 @@
 
 #include "fdlibm.h"
 
+#undef _LIB_VERSION
+
 /*
  * define and initialize _LIB_VERSION
  */
-#ifdef _POSIX_MODE
+#if defined(_POSIX_MODE)
 _LIB_VERSION_TYPE _LIB_VERSION = _POSIX_;
-#else
-#ifdef _XOPEN_MODE
+#elif defined(_XOPEN_MODE)
 _LIB_VERSION_TYPE _LIB_VERSION = _XOPEN_;
-#else
-#ifdef _SVID3_MODE
+#elif defined(_SVID3_MODE)
 _LIB_VERSION_TYPE _LIB_VERSION = _SVID_;
 #else					/* default _IEEE_MODE */
 _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
-#endif
-#endif
 #endif

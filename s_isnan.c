@@ -17,6 +17,7 @@
  */
 
 #include "fdlibm.h"
+#undef isnan
 
 int isnan(double x)
 {

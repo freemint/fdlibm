@@ -57,7 +57,7 @@ long int lround(double x)
   __uint32_t msw, lsw;
   long int result;
   
-  EXTRACT_WORDS(msw, lsw, x);
+  GET_DOUBLE_WORDS(msw, lsw, x);
 
   /* Extract sign. */
   sign = ((msw & 0x80000000) ? -1 : 1);

@@ -19,15 +19,7 @@
 
 double sqrt(double x)		/* wrapper sqrt */
 {
-#ifdef _IEEE_LIBM
+	if (_LIB_VERSION != _IEEE_ && isless(x, 0.0))
+		return __kernel_standard(x, x, __builtin_nan(""), KMATHERR_SQRT); /* sqrt(negative) */
 	return __ieee754_sqrt(x);
-#else
-	double z;
-	z = __ieee754_sqrt(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(x<0.0) {
-	    return __kernel_standard(x,x,26); /* sqrt(negative) */
-	} else
-	    return z;
-#endif
 }

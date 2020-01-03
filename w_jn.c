@@ -39,40 +39,33 @@
 
 #include "fdlibm.h"
 
+/* wrapper jn */
 double jn(int n, double x)	/* wrapper jn */
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_jn(n,x);
-#else
-	double z;
-	z = __ieee754_jn(n,x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-	if(fabs(x)>X_TLOSS) {
-	    return __kernel_standard((double)n,x,38); /* jn(|x|>X_TLOSS,n) */
-	} else
-	    return z;
-#endif
+	if (isgreater(__ieee754_fabs(x), X_TLOSS) && _LIB_VERSION != _IEEE_ && _LIB_VERSION != _POSIX_)
+		/* jn(n,|x|>X_TLOSS) */
+		return __kernel_standard(n, x, 0.0, KMATHERR_JN_TLOSS);
+
+	return __ieee754_jn(n, x);
 }
 
+/* wrapper yn */
 double yn(int n, double x)	/* wrapper yn */
 {
-#ifdef _IEEE_LIBM
-	return __ieee754_yn(n,x);
-#else
-	double z;
-	z = __ieee754_yn(n,x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-        if(x <= 0.0){
-                if(x==0.0)
-                    /* d= -one/(x-x); */
-                    return __kernel_standard((double)n,x,12);
-                else
-                    /* d = zero/(x-x); */
-                    return __kernel_standard((double)n,x,13);
-        }
-	if(x>X_TLOSS) {
-	    return __kernel_standard((double)n,x,39); /* yn(x>X_TLOSS,n) */
-	} else
-	    return z;
-#endif
+	if ((islessequal(x, 0.0) || isgreater(x, X_TLOSS)) && _LIB_VERSION != _IEEE_)
+	{
+		if (x < 0.0)
+		{
+			/* d = zero/(x-x) */
+			feraiseexcept(FE_INVALID);
+			return __kernel_standard(n, x, -HUGE_VAL, KMATHERR_YN_MINUS);
+		} else if (x == 0.0)
+			/* d = -one/(x-x) */
+			return __kernel_standard(n, x, -HUGE_VAL, KMATHERR_YN_ZERO);
+		else if (_LIB_VERSION != _POSIX_)
+			/* yn(n,x>X_TLOSS) */
+			return __kernel_standard(n, x, 0.0, KMATHERR_YN_TLOSS);
+	}
+
+	return __ieee754_yn(n, x);
 }

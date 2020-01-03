@@ -49,7 +49,7 @@ double round(double x)
   __int32_t msw, exponent_less_1023;
   __uint32_t lsw;
 
-  EXTRACT_WORDS(msw, lsw, x);
+  GET_DOUBLE_WORDS(msw, lsw, x);
 
   /* Extract exponent field. */
   exponent_less_1023 = ((msw & 0x7ff00000) >> 20) - 1023;

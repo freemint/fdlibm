@@ -22,15 +22,12 @@
 
 double asin(double x)		/* wrapper asin */
 {
-#ifdef _IEEE_LIBM
+	if (_LIB_VERSION != _IEEE_ && isgreater(__ieee754_fabs(x), 1.0))
+	{
+		/* asin(|x|>1) */
+		feraiseexcept(FE_INVALID);
+		return __kernel_standard(x, x, __builtin_nan(""), KMATHERR_ASIN);
+	}
+
 	return __ieee754_asin(x);
-#else
-	double z;
-	z = __ieee754_asin(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(fabs(x)>1.0) {
-	        return __kernel_standard(x,x,2); /* asin(|x|>1) */
-	} else
-	    return z;
-#endif
 }

@@ -80,6 +80,10 @@ typedef union
   struct
   {
     int16_t sign_exponent;
+#if !defined(__PUREC__) || defined(__MATH_68881__)
+    uint16_t empty;
+#define SET_LDOUBLE_EMPTY(u) (u).parts.empty = 0
+#endif
     uint32_t msw;
     uint32_t lsw;
   } parts;
@@ -108,9 +112,14 @@ typedef union
     uint32_t msw;
     int sign_exponent:16;
     unsigned int empty:16;
+#define SET_LDOUBLE_EMPTY(u) (u).parts.empty = 0
   } parts;
 } ieee_long_double_shape_type;
 
+#endif
+
+#ifndef SET_LDOUBLE_EMPTY
+#define SET_LDOUBLE_EMPTY(u)
 #endif
 
 /* A union which permits us to convert between a float and a 32 bit
@@ -124,14 +133,6 @@ typedef union
 
 
 /* Get two 32 bit ints from a double.  */
-
-#define EXTRACT_WORDS(ix0,ix1,d)				\
-do {								\
-  ieee_double_shape_type ew_u;					\
-  ew_u.value = (d);						\
-  (ix0) = ew_u.parts.msw;					\
-  (ix1) = ew_u.parts.lsw;					\
-} while (0)
 
 #define GET_DOUBLE_WORDS(ix0,ix1,d)				\
 {								\
@@ -160,11 +161,26 @@ do {								\
 
 #define INSERT_WORDS(d,ix0,ix1)                                 \
 do {                                                            \
-  ieee_double_shape_type iw_u;                                  \
-  iw_u.parts.msw = (ix0);                                       \
-  iw_u.parts.lsw = (ix1);                                       \
-  (d) = iw_u.value;                                             \
+  ieee_double_shape_type *iw_u = (ieee_double_shape_type *)&(d);\
+  iw_u->parts.msw = (ix0);                                      \
+  iw_u->parts.lsw = (ix1);                                      \
 } while (0)
+
+/* Set the more significant 32 bits of a double from an int.  */
+
+#define SET_HIGH_WORD(d,v)                                      \
+{                                                               \
+  ieee_double_shape_type *sh_u = (ieee_double_shape_type *)&(d);\
+  sh_u->parts.msw = (v);                                        \
+}
+
+/* Set the less significant 32 bits of a double from an int.  */
+
+#define SET_LOW_WORD(d,v)                                       \
+{                                                               \
+  ieee_double_shape_type *sl_u = (ieee_double_shape_type *)&(d);\
+  sl_u->parts.lsw = (v);                                        \
+}
 
 /* Get a 32 bit int from a float.  */
 
@@ -186,79 +202,69 @@ do {                                                            \
 
 #define GET_LDOUBLE_WORDS(exp,ix0,ix1,d)			\
 do {								\
-  ieee_long_double_shape_type ew_u;				\
-  ew_u.value = (d);						\
-  (exp) = ew_u.parts.sign_exponent;				\
-  (ix0) = ew_u.parts.msw;					\
-  (ix1) = ew_u.parts.lsw;					\
+  const ieee_long_double_shape_type *ew_u = (const ieee_long_double_shape_type *)&(d);				\
+  (exp) = ew_u->parts.sign_exponent;				\
+  (ix0) = ew_u->parts.msw;					\
+  (ix1) = ew_u->parts.lsw;					\
 } while (0)
 
 /* Set a long double from two 32 bit ints.  */
 
 #define SET_LDOUBLE_WORDS(d,exp,ix0,ix1)			\
 do {								\
-  ieee_long_double_shape_type iw_u;				\
-  iw_u.parts.sign_exponent = (exp);				\
-  iw_u.parts.msw = (ix0);					\
-  iw_u.parts.lsw = (ix1);					\
-  (d) = iw_u.value;						\
+  ieee_long_double_shape_type *iw_u = (ieee_long_double_shape_type *)&(d);				\
+  iw_u->parts.sign_exponent = (exp);				\
+  SET_LDOUBLE_EMPTY(*iw_u); \
+  iw_u->parts.msw = (ix0);					\
+  iw_u->parts.lsw = (ix1);					\
 } while (0)
 
 /* Get the more significant 32 bits of a long double mantissa.  */
 
 #define GET_LDOUBLE_MSW(v,d)					\
 do {								\
-  ieee_long_double_shape_type sh_u;				\
-  sh_u.value = (d);						\
-  (v) = sh_u.parts.msw;						\
+  const ieee_long_double_shape_type *sh_u = (const ieee_long_double_shape_type *)&(d);				\
+  (v) = sh_u->parts.msw;						\
 } while (0)
 
 /* Get the less significant 32 bits of a long double mantissa.  */
 
 #define GET_LDOUBLE_LSW(v,d)					\
 do {								\
-  ieee_long_double_shape_type sh_u;				\
-  sh_u.value = (d);						\
-  (v) = sh_u.parts.lsw;						\
+  const ieee_long_double_shape_type *sh_u = (const ieee_long_double_shape_type *)&(d);				\
+  (v) = sh_u->parts.lsw;						\
 } while (0)
 
 /* Set the more significant 32 bits of a long double mantissa from an int.  */
 
 #define SET_LDOUBLE_MSW(d,v)					\
 do {								\
-  ieee_long_double_shape_type sh_u;				\
-  sh_u.value = (d);						\
-  sh_u.parts.msw = (v);						\
-  (d) = sh_u.value;						\
+  ieee_long_double_shape_type *sh_u = (ieee_long_double_shape_type *)&(d);				\
+  sh_u->parts.msw = (v);						\
 } while (0)
 
 /* Set the less significant 32 bits of a long double mantissa from an int.  */
 
 #define SET_LDOUBLE_LSW(d,v)					\
 do {								\
-  ieee_long_double_shape_type sh_u;				\
-  sh_u.value = (d);						\
-  sh_u.parts.lsw = (v);						\
-  (d) = sh_u.value;						\
+  ieee_long_double_shape_type *sh_u = (ieee_long_double_shape_type *)&(d);				\
+  sh_u->parts.lsw = (v);						\
 } while (0)
 
 /* Get int from the exponent of a long double.  */
 
 #define GET_LDOUBLE_EXP(exp,d)					\
 do {								\
-  ieee_long_double_shape_type ge_u;				\
-  ge_u.value = (d);						\
-  (exp) = ge_u.parts.sign_exponent;				\
+  const ieee_long_double_shape_type *ge_u = (const ieee_long_double_shape_type *)&(d);				\
+  (exp) = ge_u->parts.sign_exponent;				\
 } while (0)
 
 /* Set exponent of a long double from an int.  */
 
 #define SET_LDOUBLE_EXP(d,exp)					\
 do {								\
-  ieee_long_double_shape_type se_u;				\
-  se_u.value = (d);						\
-  se_u.parts.sign_exponent = (exp);				\
-  (d) = se_u.value;						\
+  ieee_long_double_shape_type *se_u = (ieee_long_double_shape_type *)&(d);				\
+  se_u->parts.sign_exponent = (exp);				\
 } while (0)
 
 /* Macros to avoid undefined behaviour that can arise if the amount
@@ -290,25 +296,20 @@ extern int signgam;
 #define	MAXFLOAT	((float)3.40282346638528860e+38)
 
 #ifndef _LIB_VERSION
-enum fdversion {fdlibm_ieee = -1, fdlibm_svid, fdlibm_xopen, fdlibm_posix};
-
-#define _LIB_VERSION_TYPE enum fdversion
-#define _LIB_VERSION _fdlib_version  
+/*
+ * define and initialize _LIB_VERSION
+ */
+#if defined(_POSIX_MODE)
+#define _LIB_VERSION _POSIX_
+#elif defined(_XOPEN_MODE)
+#define _LIB_VERSION _XOPEN_
+#elif defined(_SVID3_MODE)
+#define _LIB_VERSION _SVID_
+#else
+#define _LIB_VERSION _IEEE_
 #endif
 
-/* if global variable _LIB_VERSION is not desirable, one may 
- * change the following to be a constant by: 
- *	#define _LIB_VERSION_TYPE const enum version
- * In that case, after one initializes the value _LIB_VERSION (see
- * s_lib_version.c) during compile time, it cannot be modified
- * in the middle of a program
- */ 
-extern  _LIB_VERSION_TYPE  _LIB_VERSION;
-
-#define _IEEE_  fdlibm_ieee
-#define _SVID_  fdlibm_svid
-#define _XOPEN_ fdlibm_xopen
-#define _POSIX_ fdlibm_posix
+#endif
 
 #if !defined(_MATH_H) && !defined(_MATH_H_)
 #ifdef __cplusplus
@@ -327,6 +328,8 @@ struct exception
 
 #undef HUGE
 #define	HUGE		MAXFLOAT
+
+#include "k_stand.h"
 
 /* All floating-point numbers can be put in one of these categories.  */
 #ifndef FP_NAN
@@ -432,6 +435,67 @@ extern double scalb (double, double);
 
 extern int matherr (struct exception *);
 
+# ifdef __NO_LONG_DOUBLE_MATH
+#  define isnan(x) \
+     (sizeof (x) == sizeof (float) ? __isnanf (x) : __isnan (x))
+# else
+#  define isnan(x) \
+     (sizeof (x) == sizeof (float)					      \
+      ? __isnanf (x)							      \
+      : sizeof (x) == sizeof (double)					      \
+      ? __isnan (x) : __isnanl (x))
+# endif
+
+/* Return nonzero value if X is positive or negative infinity.  */
+# ifdef __NO_LONG_DOUBLE_MATH
+#  define isinf(x) \
+     (sizeof (x) == sizeof (float) ? __isinff (x) : __isinf (x))
+# else
+#  define isinf(x) \
+     (sizeof (x) == sizeof (float)					      \
+      ? __isinff (x)							      \
+      : sizeof (x) == sizeof (double)					      \
+      ? __isinf (x) : __isinfl (x))
+# endif
+
+/* Return nonzero value if sign of X is negative.  */
+# ifdef __NO_LONG_DOUBLE_MATH
+#  define signbit(x) \
+     (sizeof (x) == sizeof (float) ? __signbitf (x) : __signbit (x))
+# else
+#  define signbit(x) \
+     (sizeof (x) == sizeof (float)					      \
+      ? __signbitf (x)							      \
+      : sizeof (x) == sizeof (double)					      \
+      ? __signbit (x) : __signbitl (x))
+# endif
+
+/* Return nonzero value if X is not +-Inf or NaN.  */
+# ifdef __NO_LONG_DOUBLE_MATH
+#  define isfinite(x) \
+     (sizeof (x) == sizeof (float) ? __finitef (x) : __finite (x))
+# else
+#  define isfinite(x) \
+     (sizeof (x) == sizeof (float)					      \
+      ? __finitef (x)							      \
+      : sizeof (x) == sizeof (double)					      \
+      ? __finite (x) : __finitel (x))
+# endif
+
+/* Return nonzero value if X is neither zero, subnormal, Inf, nor NaN.  */
+# define isnormal(x) (fpclassify (x) == FP_NORMAL)
+
+# ifdef __NO_LONG_DOUBLE_MATH
+#  define issignaling(x) \
+     (sizeof (x) == sizeof (float) ? __issignalingf (x) : __issignaling (x))
+# else
+#  define issignaling(x) \
+     (sizeof (x) == sizeof (float)					      \
+      ? __issignalingf (x)						      \
+      : sizeof (x) == sizeof (double)					      \
+      ? __issignaling (x) : __issignalingl (x))
+# endif
+
 /*
  * IEEE Test Vector
  */
@@ -510,8 +574,25 @@ extern double __ieee754_scalb (double,int);
 extern double __ieee754_scalb (double,double);
 #endif
 
+#ifndef __have_fpu_fabs
+double      __ieee754_fabs (double x);
+float       __ieee754_fabsf (float x);
+long double __ieee754_fabsl (long double x);
+#endif
+#ifndef __have_fpu_floor
+double      __ieee754_floor (double x);
+float       __ieee754_floorf (float x);
+long double __ieee754_floorl (long double x);
+#endif
+
+#ifndef math_opt_barrier
+# define math_opt_barrier(x) \
+  ({ __typeof (x) __x = (x); __asm ("" : "+m" (__x)); __x; })
+# define math_force_eval(x) \
+  ({ __typeof (x) __x = (x); __asm __volatile__ ("" : : "m" (__x)); })
+#endif
+
 /* fdlibm kernel function */
-extern double __kernel_standard (double,double,int);	
 extern double __kernel_sin (double,double,int);
 extern double __kernel_cos (double,double);
 extern double __kernel_tan (double,double,int);

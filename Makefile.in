@@ -16,7 +16,7 @@ CC = @CC@
 #CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) $(FPU)
 # Remove explicit FPU parameter, let the compiler defines deal with this for 
 # CPU target
-CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) 
+CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) -Werror
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 libdir = $(prefix)/lib
@@ -70,7 +70,7 @@ CPU-FPU-TYPES = \
 		68020-60.68881  \
 		5475.hard-float 
 
-INCFILES = fdlibm.h
+INCFILES = fdlibm.h k_stand.h
 SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/k_sin.c $(srcdir)/k_tan.c $(srcdir)/e_acos.c \
 	$(srcdir)/e_acosh.c $(srcdir)/e_asin.c $(srcdir)/e_atan2.c \
@@ -191,6 +191,9 @@ install: all
 	cp -a include/math.h include/fenv.h $(DESTDIR)$(incdir)
 	cp -a include/bits/fenv.h include/bits/fenvinline.h include/bits/huge_val.h include/bits/inf.h include/bits/math-68881.h include/bits/math-cffpu.h include/bits/mathcall.h include/bits/mathdef.h include/bits/nan.h $(DESTDIR)$(incdir)/bits
 	cp -a include/bits/m68k/fenv.h $(DESTDIR)$(incdir)/bits/m68k
+
+Makefile: $(srcdir)/Makefile.in config.status
+	./config.status
 
 check: all
 	$(MAKE) -C tests $@
