@@ -1138,3 +1138,106 @@ double __kernel_standard(double x, double y, double retval, enum matherr type)
 	}
 	return exc.retval;
 }
+
+
+float __kernel_standard_f(float x, float y, float retval, enum matherr type)
+{
+	return __kernel_standard(x, y, retval, type);
+}
+
+
+#ifndef __NO_LONG_DOUBLE_MATH
+long double __kernel_standard_l(long double x, long double y, long double retval, enum matherr type)
+{
+	double dx, dy, dretval;
+	struct exception exc;
+
+	if (isfinite(x))
+	{
+		long double ax = __ieee754_fabsl(x);
+
+		if (ax > DBL_MAX)
+			dx = copysignl(DBL_MAX, x);
+		else if (ax > 0 && ax < DBL_MIN)
+			dx = copysignl(DBL_MIN, x);
+		else
+			dx = x;
+	} else
+	{
+		dx = x;
+	}
+	if (isfinite(y))
+	{
+		long double ay = __ieee754_fabsl(y);
+
+		if (ay > DBL_MAX)
+			dy = copysignl(DBL_MAX, y);
+		else if (ay > 0 && ay < DBL_MIN)
+			dy = copysignl(DBL_MIN, y);
+		else
+			dy = y;
+	} else
+	{
+		dy = y;
+	}
+	if (isfinite(retval))
+	{
+		long double az = __ieee754_fabsl(retval);
+
+		if (az > DBL_MAX)
+			dretval = copysignl(DBL_MAX, retval);
+		else if (az > 0 && az < DBL_MIN)
+			dretval = copysignl(DBL_MIN, retval);
+		else
+			dretval = retval;
+	} else
+	{
+		dretval = retval;
+	}
+	
+	switch (type)
+	{
+	case KMATHERRL_POW_OVERFLOW:
+		/* powl (x, y) overflow.  */
+		exc.arg1 = dx;
+		exc.arg2 = dy;
+		exc.type = OVERFLOW;
+		exc.name = funcname("pow");
+		reset_matherr_errno(exc);
+		if (_LIB_VERSION == _SVID_)
+		{
+			exc.retval = signbit(retval) ? -HUGE : HUGE;
+		} else
+		{
+			exc.retval = dretval;
+		}
+		if (_LIB_VERSION == _POSIX_)
+			__set_errno(ERANGE);
+		else if (!matherr(&exc))
+			__set_errno(ERANGE);
+		set_matherr_errno(exc);
+		return exc.retval;
+
+	case KMATHERRL_POW_UNDERFLOW:
+		/* powl (x, y) underflow.  */
+		exc.arg1 = dx;
+		exc.arg2 = dy;
+		exc.type = UNDERFLOW;
+		exc.name = funcname("pow");
+		exc.retval = dretval;
+		reset_matherr_errno(exc);
+		if (_LIB_VERSION == _POSIX_)
+			__set_errno(ERANGE);
+		else if (!matherr(&exc))
+			__set_errno(ERANGE);
+		set_matherr_errno(exc);
+		return exc.retval;
+
+	default:
+		break;
+	}
+	return __kernel_standard(dx, dy, dretval, type);
+}
+#endif
+
+#undef funcname

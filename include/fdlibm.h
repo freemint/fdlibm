@@ -355,6 +355,113 @@ enum
 #undef X_TLOSS
 #define X_TLOSS	1.41484755040568800000e+16
 
+
+/* Most routines need to check whether a float is finite, infinite, or not a
+   number, and many need to know whether the result of an operation will
+   overflow.  These conditions depend on whether the largest exponent is
+   used for NaNs & infinities, or whether it's used for finite numbers.  The
+   macros below wrap up that kind of information:
+
+   FLT_UWORD_IS_FINITE(X)
+	True if a positive float with bitmask X is finite.
+
+   FLT_UWORD_IS_NAN(X)
+	True if a positive float with bitmask X is not a number.
+
+   FLT_UWORD_IS_INFINITE(X)
+	True if a positive float with bitmask X is +infinity.
+
+   FLT_UWORD_MAX
+	The bitmask of FLT_MAX.
+
+   FLT_UWORD_HALF_MAX
+	The bitmask of FLT_MAX/2.
+
+   FLT_UWORD_EXP_MAX
+	The bitmask of the largest finite exponent (129 if the largest
+	exponent is used for finite numbers, 128 otherwise).
+
+   FLT_UWORD_LOG_MAX
+	The bitmask of log(FLT_MAX), rounded down.  This value is the largest
+	input that can be passed to exp() without producing overflow.
+
+   FLT_UWORD_LOG_2MAX
+	The bitmask of log(2*FLT_MAX), rounded down.  This value is the
+	largest input than can be passed to cosh() without producing
+	overflow.
+
+   FLT_LARGEST_EXP
+	The largest biased exponent that can be used for finite numbers
+	(255 if the largest exponent is used for finite numbers, 254
+	otherwise) */
+
+#ifdef _FLT_LARGEST_EXPONENT_IS_NORMAL
+#define FLT_UWORD_IS_FINITE(x) 1
+#define FLT_UWORD_IS_NAN(x) 0
+#define FLT_UWORD_IS_INFINITE(x) 0
+#define FLT_UWORD_MAX IC(0x7fffffff)
+#define FLT_UWORD_HALF_MAX IC(0x7f7fffff)
+#define FLT_UWORD_EXP_MAX IC(0x43010000)
+#define FLT_UWORD_LOG_MAX IC(0x42b2d4fc)
+#define FLT_UWORD_LOG_2MAX IC(0x42b437e0)
+/* #define HUGE ((float)0X1.FFFFFEP128) */
+#else
+#define FLT_UWORD_IS_FINITE(x) ((x) < IC(0x7f800000))
+#define FLT_UWORD_IS_NAN(x) ((x) > IC(0x7f800000))
+#define FLT_UWORD_IS_INFINITE(x) ((x) == IC(0x7f800000))
+#define FLT_UWORD_MAX IC(0x7f7fffff)
+#define FLT_UWORD_HALF_MAX IC(0x7effffff)
+#define FLT_UWORD_EXP_MAX IC(0x43000000)
+#define FLT_UWORD_LOG_MAX IC(0x42b17217)
+#define FLT_UWORD_LOG_2MAX IC(0x42b2d4fc)
+/* #define HUGE ((float)3.40282346638528860e+38) */
+#endif
+#define FLT_LARGEST_EXP (FLT_UWORD_MAX>>23)
+
+/* Many routines check for zero and subnormal numbers.  Such things depend
+   on whether the target supports denormals or not:
+
+   FLT_UWORD_IS_ZERO(X)
+	True if a positive float with bitmask X is +0.	Without denormals,
+	any float with a zero exponent is a +0 representation.	With
+	denormals, the only +0 representation is a 0 bitmask.
+
+   FLT_UWORD_IS_SUBNORMAL(X)
+	True if a non-zero positive float with bitmask X is subnormal.
+	(Routines should check for zeros first.)
+
+   FLT_UWORD_MIN
+	The bitmask of the smallest float above +0.  Call this number
+	REAL_FLT_MIN...
+
+   FLT_UWORD_EXP_MIN
+	The bitmask of the float representation of REAL_FLT_MIN's exponent.
+
+   FLT_UWORD_LOG_MIN
+	The bitmask of |log(REAL_FLT_MIN)|, rounding down.
+
+   FLT_SMALLEST_EXP
+	REAL_FLT_MIN's exponent - EXP_BIAS (1 if denormals are not supported,
+	-22 if they are).
+*/
+
+#ifdef _FLT_NO_DENORMALS
+#define FLT_UWORD_IS_ZERO(x) ((x) < IC(0x00800000))
+#define FLT_UWORD_IS_SUBNORMAL(x) 0
+#define FLT_UWORD_MIN IC(0x00800000)
+#define FLT_UWORD_EXP_MIN IC(0x42fc0000)
+#define FLT_UWORD_LOG_MIN IC(0x42aeac50)
+#define FLT_SMALLEST_EXP 1
+#else
+#define FLT_UWORD_IS_ZERO(x) ((x) == 0)
+#define FLT_UWORD_IS_SUBNORMAL(x) ((x) < IC(0x00800000))
+#define FLT_UWORD_MIN IC(0x00000001)
+#define FLT_UWORD_EXP_MIN IC(0x43160000)
+#define FLT_UWORD_LOG_MIN IC(0x42cff1b5)
+#define FLT_SMALLEST_EXP -22
+#endif
+
+
 #ifndef DOMAIN
 # define	DOMAIN		1
 # define	SING		2
@@ -542,48 +649,297 @@ extern double lgamma_r (double, int *);
 #endif
 
 /* ieee style elementary functions */
-extern double __ieee754_sqrt (double);			
-extern double __ieee754_acos (double);			
-extern double __ieee754_acosh (double);			
-extern double __ieee754_log (double);			
-extern double __ieee754_atanh (double);			
-extern double __ieee754_asin (double);			
-extern double __ieee754_atan2 (double,double);			
-extern double __ieee754_exp (double);
-extern double __ieee754_cosh (double);
-extern double __ieee754_fmod (double,double);
-extern double __ieee754_pow (double,double);
-extern double __ieee754_lgamma_r (double,int *);
-extern double __ieee754_gamma_r (double,int *);
-extern double __ieee754_lgamma (double);
-extern double __ieee754_gamma (double);
-extern double __ieee754_log10 (double);
-extern double __ieee754_sinh (double);
-extern double __ieee754_hypot (double,double);
-extern double __ieee754_j0 (double);
-extern double __ieee754_j1 (double);
-extern double __ieee754_y0 (double);
-extern double __ieee754_y1 (double);
-extern double __ieee754_jn (int,double);
-extern double __ieee754_yn (int,double);
-extern double __ieee754_remainder (double,double);
-extern int    __ieee754_rem_pio2 (double,double*);
-#ifdef _SCALB_INT
-extern double __ieee754_scalb (double,int);
-#else
-extern double __ieee754_scalb (double,double);
+/* ieee style elementary functions */
+#ifndef __have_fpu_sin
+double      __ieee754_sin (double x);
+float       __ieee754_sinf (float x);
+long double __ieee754_sinl (long double x);
 #endif
-
+#ifndef __have_fpu_cos
+double      __ieee754_cos (double x);
+float       __ieee754_cosf (float x);
+long double __ieee754_cosl (long double x);
+#endif
+#ifndef __have_fpu_sincos
+void        __ieee754_sincos (double __x, double *__sin, double *__cos);
+void        __ieee754_sincosf (float __x, float *__sin, float *__cos);
+void        __ieee754_sincosl (long double __x, long double *__sin, long double *__cos);
+#endif
+#ifndef __have_fpu_tan
+double      __ieee754_tan (double x);
+float       __ieee754_tanf (float x);
+long double __ieee754_tanl (long double x);
+#endif
+#ifndef __have_fpu_asin
+double      __ieee754_asin (double x);
+float       __ieee754_asinf (float x);
+long double __ieee754_asinl (long double x);
+#endif
+#ifndef __have_fpu_acos
+double      __ieee754_acos (double x);
+float       __ieee754_acosf (float x);
+long double __ieee754_acosl (long double x);
+#endif
+#ifndef __have_fpu_atan
+double      __ieee754_atan (double x);
+float       __ieee754_atanf (float x);
+long double __ieee754_atanl (long double x);
+#endif
+#ifndef __have_fpu_atan2
+double      __ieee754_atan2 (double y, double x);
+float       __ieee754_atan2f (float y, float x);
+long double __ieee754_atan2l (long double y, long double x);
+#endif
+#ifndef __have_fpu_sinh
+double      __ieee754_sinh (double x);
+float       __ieee754_sinhf (float x);
+long double __ieee754_sinhl (long double x);
+#endif
+#ifndef __have_fpu_cosh
+double      __ieee754_cosh (double x);
+float       __ieee754_coshf (float x);
+long double __ieee754_coshl (long double x);
+#endif
+#ifndef __have_fpu_tanh
+double      __ieee754_tanh (double x);
+float       __ieee754_tanhf (float x);
+long double __ieee754_tanhl (long double x);
+#endif
+#ifndef __have_fpu_acosh
+double      __ieee754_acosh(double x);
+float       __ieee754_acoshf(float x);
+long double __ieee754_acoshl(long double x);
+#endif
+#ifndef __have_fpu_asinh
+double      __ieee754_asinh(double x);
+float       __ieee754_asinhf(float x);
+long double __ieee754_asinhl(long double x);
+#endif
+#ifndef __have_fpu_atanh
+double      __ieee754_atanh (double x);
+float       __ieee754_atanhf (float x);
+long double __ieee754_atanhl (long double x);
+#endif
+#ifndef __have_fpu_exp
+double      __ieee754_exp (double x);
+float       __ieee754_expf (float x);
+long double __ieee754_expl (long double x);
+#endif
+#ifndef __have_fpu_expm1
+double      __ieee754_expm1 (double x);
+float       __ieee754_expm1f (float x);
+long double __ieee754_expm1l (long double x);
+#endif
+#ifndef __have_fpu_exp2
+double      __ieee754_exp2 (double x);
+float       __ieee754_exp2f (float x);
+long double __ieee754_exp2l (long double x);
+#endif
+#ifndef __have_fpu_pow2
+double      __ieee754_pow2 (double x);
+float       __ieee754_pow2f (float x);
+long double __ieee754_pow2l (long double x);
+#endif
+#ifndef __have_fpu_exp10
+double      __ieee754_exp10 (double x);
+float       __ieee754_exp10f (float x);
+long double __ieee754_exp10l (long double x);
+#endif
+#ifndef __have_fpu_pow10
+double      __ieee754_pow10 (double x);
+float       __ieee754_pow10f (float x);
+long double __ieee754_pow10l (long double x);
+#endif
+#ifndef __have_fpu_log
+double      __ieee754_log (double x);
+float       __ieee754_logf (float x);
+long double __ieee754_logl (long double x);
+#endif
+#ifndef __have_fpu_log1p
+double      __ieee754_log1p (double x);
+float       __ieee754_log1pf (float x);
+long double __ieee754_log1pl (long double x);
+#endif
+#ifndef __have_fpu_log10
+double      __ieee754_log10 (double x);
+float       __ieee754_log10f (float x);
+long double __ieee754_log10l (long double x);
+#endif
+#ifndef __have_fpu_log2
+double      __ieee754_log2 (double x);
+float       __ieee754_log2f (float x);
+long double __ieee754_log2l (long double x);
+#endif
+#ifndef __have_fpu_sqrt
+double      __ieee754_sqrt (double x);
+float       __ieee754_sqrtf (float x);
+long double __ieee754_sqrtl (long double x);
+#endif
+#ifndef __have_fpu_hypot
+double      __ieee754_hypot (double x, double y);
+float       __ieee754_hypotf (float x, float y);
+long double __ieee754_hypotl (long double x, long double y);
+#endif
+#ifndef __have_fpu_pow
+double      __ieee754_pow (double x, double y);
+float       __ieee754_powf (float x, float y);
+long double __ieee754_powl (long double x, long double y);
+#endif
+double      __ieee754_powi (double x, int y);
+float       __ieee754_powif (float x, int y);
+long double __ieee754_powil (long double x, int y);
 #ifndef __have_fpu_fabs
 double      __ieee754_fabs (double x);
 float       __ieee754_fabsf (float x);
 long double __ieee754_fabsl (long double x);
+#endif
+#ifndef __have_fpu_ceil
+double      __ieee754_ceil (double x);
+float       __ieee754_ceilf (float x);
+long double __ieee754_ceill (long double x);
 #endif
 #ifndef __have_fpu_floor
 double      __ieee754_floor (double x);
 float       __ieee754_floorf (float x);
 long double __ieee754_floorl (long double x);
 #endif
+#ifndef __have_fpu_trunc
+double      __ieee754_trunc (double x);
+float       __ieee754_truncf (float x);
+long double __ieee754_truncl (long double x);
+#endif
+#ifndef __have_fpu_rint
+double      __ieee754_rint (double x);
+float       __ieee754_rintf (float x);
+long double __ieee754_rintl (long double x);
+#endif
+#ifndef __have_fpu_lrint
+long int    __ieee754_lrint(double x);
+long int    __ieee754_lrintf(float x);
+long int    __ieee754_lrintl(long double x);
+#endif
+#ifndef __have_fpu_llrint
+#ifndef __NO_LONGLONG
+long long int    __ieee754_llrint(double x);
+long long int    __ieee754_llrintf(float x);
+long long int    __ieee754_llrintl(long double x);
+#endif
+#endif
+#ifndef __have_fpu_round
+double      __ieee754_round (double x);
+float       __ieee754_roundf (float x);
+long double __ieee754_roundl (long double x);
+#endif
+#ifndef __have_fpu_lround
+long int    __ieee754_lround (double x);
+long int    __ieee754_lroundf (float x);
+long int    __ieee754_lroundl (long double x);
+#endif
+#ifndef __have_fpu_llround
+#ifndef __NO_LONGLONG
+long long int    __ieee754_llround (double x);
+long long int    __ieee754_llroundf (float x);
+long long int    __ieee754_llroundl (long double x);
+#endif
+#endif
+#ifndef __have_fpu_fmod
+double      __ieee754_fmod (double x, double y);
+float       __ieee754_fmodf (float x, float y);
+long double __ieee754_fmodl (long double x, long double y);
+#endif
+#ifndef __have_fpu_drem
+double      __ieee754_drem (double x, double y);
+float       __ieee754_dremf (float x, float y);
+long double __ieee754_dreml (long double x, long double y);
+#endif
+#ifndef __have_fpu_remainder
+double      __ieee754_remainder (double x, double y);
+float       __ieee754_remainderf (float x, float y);
+long double __ieee754_remainderl (long double x, long double y);
+#endif
+#ifndef __have_fpu_remquo
+double      __ieee754_remquo (double x, double y, int *quo);
+float       __ieee754_remquof (float x, float y, int *quo);
+long double __ieee754_remquol (long double x, long double y, int *quo);
+#endif
+#ifndef __have_fpu_scalb
+#ifdef _SCALB_INT
+double      __ieee754_scalb (double x, int n);
+float       __ieee754_scalbf (float x, int n);
+long double __ieee754_scalbl (long double x, int n);
+#else
+double      __ieee754_scalb (double x, double n);
+float       __ieee754_scalbf (float x, float n);
+long double __ieee754_scalbl (long double x, long double n);
+#endif
+#endif
+#ifndef __have_fpu_scalbn
+double      __ieee754_scalbn (double x, int n);
+float       __ieee754_scalbnf (float x, int n);
+long double __ieee754_scalbnl (long double x, int n);
+#endif
+#ifndef __have_fpu_scalbln
+double      __ieee754_scalbln (double x, long n);
+float       __ieee754_scalblnf (float x, long n);
+long double __ieee754_scalblnl (long double x, long n);
+#endif
+#ifndef __have_fpu_logb
+double      __ieee754_logb (double x);
+float       __ieee754_logbf (float x);
+long double __ieee754_logbl (long double x);
+#endif
+#ifndef __have_fpu_ilogb
+int __ieee754_ilogb (double x);
+int __ieee754_ilogbf (float x);
+int __ieee754_ilogbl (long double x);
+#endif
+#ifndef __have_fpu_ldexp
+double      __ieee754_ldexp (double x, int n);
+float       __ieee754_ldexpf (float x, int n);
+long double __ieee754_ldexpl (long double x, int n);
+#endif
+#ifndef __have_fpu_frexp
+double      __ieee754_frexp (double x, int *exp);
+float       __ieee754_frexpf (float x, int *exp);
+long double __ieee754_frexpl (long double x, int *exp);
+#endif
+#ifndef __have_fpu_significand
+double      __ieee754_significand(double x);
+float       __ieee754_significandf(float x);
+long double __ieee754_significandl(long double x);
+#endif
+#ifndef __have_fpu_modf
+double      __ieee754_modf (double x, double *ip);
+float       __ieee754_modff (float x, float *ip);
+long double __ieee754_modfl (long double x, long double *ip);
+#endif
+double      __ieee754_lgamma_r(double x, int *sign);
+float       __ieee754_lgammaf_r(float x, int *sign);
+long double __ieee754_lgammal_r(long double x, int *sign);
+double      __ieee754_tgamma_r(double x, int *sign);
+float       __ieee754_tgammaf_r(float x, int *sign);
+long double __ieee754_tgammal_r(long double x, int *sign);
+
+double __ieee754_j0(double x);
+float __ieee754_j0f(float x);
+long double __ieee754_j0l(long double x);
+double __ieee754_y0(double x);
+float __ieee754_y0f(float x);
+long double __ieee754_y0l(long double x);
+
+double __ieee754_j1(double x);
+float __ieee754_j1f(float x);
+long double __ieee754_j1l(long double x);
+double __ieee754_y1(double x);
+float __ieee754_y1f(float x);
+long double __ieee754_y1l(long double x);
+
+double __ieee754_jn(int n, double x);
+float __ieee754_jnf(int n, float x);
+long double __ieee754_jnl(int n, long double x);
+double __ieee754_yn(int n, double x);
+float __ieee754_ynf(int n, float x);
+long double __ieee754_ynl(int n, long double x);
 
 #ifndef math_opt_barrier
 # define math_opt_barrier(x) \
@@ -593,9 +949,27 @@ long double __ieee754_floorl (long double x);
 #endif
 
 /* fdlibm kernel function */
-extern double __kernel_sin (double,double,int);
-extern double __kernel_cos (double,double);
-extern double __kernel_tan (double,double,int);
-extern int    __kernel_rem_pio2 (double*,double*,int,int,int,const int*);
+double __kernel_sin(double x, double y, int iy);
+float __kernel_sinf(float x, float y, int iy);
+long double __kernel_sinl(long double x, long double y, int iy);
+
+double __kernel_cos(double x, double y);
+float __kernel_cosf(float x, float y);
+long double __kernel_cosl(long double x, long double y);
+
+double __kernel_tan(double x, double y, int iy);
+float __kernel_tanf(float x, float y, int iy);
+long double __kernel_tanl(long double x, long double y, int iy);
+
+int32_t __ieee754_rem_pio2(double x, double *y);
+int32_t __ieee754_rem_pio2f(float x, float *y);
+int32_t __ieee754_rem_pio2l(long double x, long double *y);
+
+int32_t __kernel_rem_pio2(double *x, double *y, int32_t e0, int32_t nx, int prec);
+int32_t __kernel_rem_pio2f(float *x, float *y, int32_t e0, int32_t nx, int prec);
+int32_t __kernel_rem_pio2l(double *x, double *y, int32_t e0, int32_t nx, int prec);
+
+/* NYI */
+#define feraiseexcept(x)
 
 #endif /* __FDLIBM_H__ */
