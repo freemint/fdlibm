@@ -398,7 +398,14 @@ enum
 # endif
 
 /* Return nonzero value if X is neither zero, subnormal, Inf, nor NaN.  */
-# define isnormal(x) (fpclassify (x) == FP_NORMAL)
+# if (__GNUC_PREREQ (4,4) && !defined __SUPPORT_SNAN__)
+#  define isnormal(x) __builtin_isnormal (x)
+# else
+#  define isnormal(x) (fpclassify (x) == FP_NORMAL)
+# endif
+
+/* Return nonzero value if X is subnormal.  */
+# define issubnormal(x) (fpclassify (x) == FP_SUBNORMAL)
 
 /* Return nonzero value if X is a NaN.  We could use `fpclassify' but
    we already have this functions `__isnan' and it is faster.  */
