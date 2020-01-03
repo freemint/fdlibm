@@ -102,6 +102,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_fmax.c $(srcdir)/s_fpclassify.c $(srcdir)/s_round.c \
 	$(srcdir)/s_lround.c \
 	$(srcdir)/s_trunc.c $(srcdir)/s_truncf.c $(srcdir)/s_truncl.c \
+	$(srcdir)/s_issig.c $(srcdir)/s_issigf.c $(srcdir)/s_issigl.c \
 	$(empty)
 
 OBJ = 	$(addsuffix .o, $(basename $(notdir $(SRC))))
