@@ -114,6 +114,10 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_lround.c \
 	$(srcdir)/s_trunc.c $(srcdir)/s_truncf.c $(srcdir)/s_truncl.c \
 	$(srcdir)/s_issig.c $(srcdir)/s_issigf.c $(srcdir)/s_issigl.c \
+	\
+	$(srcdir)/fpu_ctrl.c \
+	$(srcdir)/fesetround.c \
+	$(srcdir)/fegetround.c \
 	$(empty)
 
 OBJ = 	$(addsuffix .o, $(basename $(notdir $(SRC))))
@@ -179,9 +183,9 @@ install: all
 	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)
 	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)/bits
 	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)/bits/m68k
-	cp -a include/math.h include/fenv.h $(DESTDIR)$(incdir)
-	cp -a include/bits/fenv.h include/bits/fenvinline.h include/bits/huge_val.h include/bits/inf.h include/bits/math-68881.h include/bits/math-cffpu.h include/bits/mathcall.h include/bits/mathdef.h include/bits/nan.h $(DESTDIR)$(incdir)/bits
-	cp -a include/bits/m68k/fenv.h $(DESTDIR)$(incdir)/bits/m68k
+	cp -a include/math.h include/fenv.h include/fpu_control.h $(DESTDIR)$(incdir)
+	cp -a include/bits/fenv.h include/bits/fenvinline.h include/bits/huge_val.h include/bits/inf.h include/bits/math-68881.h include/bits/math-cffpu.h include/bits/mathcall.h include/bits/mathdef.h include/bits/nan.h include/bits/fpu_control.h $(DESTDIR)$(incdir)/bits
+	cp -a include/bits/m68k/fenv.h include/bits/m68k/fpu_control.h $(DESTDIR)$(incdir)/bits/m68k
 
 Makefile: $(srcdir)/Makefile.in config.status
 	./config.status

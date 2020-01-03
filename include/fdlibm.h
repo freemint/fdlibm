@@ -948,6 +948,23 @@ long double __ieee754_ynl(int n, long double x);
   ({ __typeof (x) __x = (x); __asm __volatile__ ("" : : "m" (__x)); })
 #endif
 
+#ifndef FP_ILOGB0
+/* The values returned by `ilogb' for 0 and NaN respectively.  */
+# define FP_ILOGB0	(-INT_MAX - 1)
+# define FP_ILOGBNAN	(INT_MAX)
+#endif
+
+#define SAVE_AND_SET_ROUND(RM) \
+  int __round, __oldround; \
+  __round = (RM); \
+  __oldround = fegetround(); \
+  if (__round != __oldround) \
+  { \
+  	 fesetround(__round); \
+  }
+#define RESTORE_ROUND() \
+  if (__round != __oldround) fesetround(__oldround)
+
 /* fdlibm kernel function */
 double __kernel_sin(double x, double y, int iy);
 float __kernel_sinf(float x, float y, int iy);
