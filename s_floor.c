@@ -5,7 +5,7 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -19,7 +19,9 @@
  *	Inexact flag raised if x not equal to floor(x).
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
 #ifndef __have_fpu_floor
 
@@ -88,7 +90,13 @@ double __ieee754_floor(double x)
 
 #endif
 
-double floor(double x)
+double __floor(double x)
 {
 	return __ieee754_floor(x);
 }
+
+__typeof(__floor) floor __attribute__((weak, alias("__floor")));
+#ifdef __NO_LONG_DOUBLE_MATH
+long double __floorl(long double x) __attribute__((alias("__floor")));
+__typeof(__floorl) floorl __attribute__((weak, alias("__floor")));
+#endif
