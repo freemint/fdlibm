@@ -80,7 +80,8 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/e_jn.c $(srcdir)/e_lgamma.c $(srcdir)/e_lgamma_r.c \
 	$(srcdir)/e_log.c $(srcdir)/e_log10.c \
 	$(srcdir)/e_pow.c $(srcdir)/e_powl.c $(srcdir)/e_powf.c \
-	$(srcdir)/e_rem_pio2.c $(srcdir)/e_remainder.c $(srcdir)/e_scalb.c \
+	$(srcdir)/e_rem_pio2.c $(srcdir)/e_remainder.c \
+	$(srcdir)/e_scalb.c $(srcdir)/e_scalbf.c $(srcdir)/e_scalbl.c \
 	$(srcdir)/e_sinh.c \
 	$(srcdir)/e_sqrt.c $(srcdir)/e_sqrtf.c $(srcdir)/e_sqrtl.c \
 	$(srcdir)/w_acos.c \
@@ -90,7 +91,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/w_hypot.c $(srcdir)/w_j0.c $(srcdir)/w_j1.c \
 	$(srcdir)/w_jn.c $(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
 	$(srcdir)/w_log.c $(srcdir)/w_log10.c \
-	$(srcdir)/w_remainder.c $(srcdir)/w_scalb.c $(srcdir)/w_sinh.c \
+	$(srcdir)/w_remainder.c $(srcdir)/w_sinh.c \
 	$(srcdir)/s_asinh.c $(srcdir)/s_atan.c \
 	$(srcdir)/s_cbrt.c $(srcdir)/s_ceil.c $(srcdir)/s_copysign.c \
 	$(srcdir)/s_cos.c $(srcdir)/s_erf.c $(srcdir)/s_expm1.c \
