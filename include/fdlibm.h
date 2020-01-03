@@ -948,6 +948,12 @@ long double __ieee754_ynl(int n, long double x);
   ({ __typeof (x) __x = (x); __asm __volatile__ ("" : : "m" (__x)); })
 #endif
 
+#ifndef __have_fpu_fabs
+#define __ieee754_fabs(x) fabs(x)
+#define __ieee754_fabsf(x) fabsf(x)
+#define __ieee754_fabsl(x) fabsl(x)
+#endif
+
 #ifndef FP_ILOGB0
 /* The values returned by `ilogb' for 0 and NaN respectively.  */
 # define FP_ILOGB0	(-INT_MAX - 1)

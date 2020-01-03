@@ -74,7 +74,8 @@ INCFILES = fdlibm.h k_stand.h
 SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/k_sin.c $(srcdir)/k_tan.c $(srcdir)/e_acos.c \
 	$(srcdir)/e_acosh.c $(srcdir)/e_asin.c $(srcdir)/e_atan2.c \
-	$(srcdir)/e_atanh.c $(srcdir)/e_cosh.c $(srcdir)/e_exp.c \
+	$(srcdir)/e_atanh.c $(srcdir)/e_cosh.c \
+	$(srcdir)/e_exp.c $(srcdir)/e_expf.c $(srcdir)/e_expl.c \
 	$(srcdir)/e_fmod.c $(srcdir)/e_gamma_r.c \
 	$(srcdir)/e_hypot.c $(srcdir)/e_hypotf.c $(srcdir)/e_hypotl.c \
 	$(srcdir)/e_j0.c $(srcdir)/e_j1.c \
@@ -87,7 +88,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/e_sqrt.c $(srcdir)/e_sqrtf.c $(srcdir)/e_sqrtl.c \
 	$(srcdir)/w_acos.c \
 	$(srcdir)/w_acosh.c $(srcdir)/w_asin.c $(srcdir)/w_atan2.c \
-	$(srcdir)/w_atanh.c $(srcdir)/w_cosh.c $(srcdir)/w_exp.c \
+	$(srcdir)/w_atanh.c $(srcdir)/w_cosh.c \
 	$(srcdir)/w_fmod.c $(srcdir)/w_gamma.c $(srcdir)/w_gamma_r.c \
 	$(srcdir)/w_j0.c $(srcdir)/w_j1.c \
 	$(srcdir)/w_jn.c $(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
