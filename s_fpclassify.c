@@ -10,25 +10,25 @@
 
 int __fpclassify (double x)
 {
-  unsigned long msw, lsw;
+	int retval = FP_NORMAL;
+	uint32_t msw, lsw;
 
-  GET_DOUBLE_WORDS(msw,lsw,x);
+	GET_DOUBLE_WORDS(msw, lsw, x);
 
-  if ((msw == 0x00000000 && lsw == 0x00000000) ||
-      (msw == 0x80000000 && lsw == 0x00000000))
-    return FP_ZERO;
-  else if ((msw >= 0x00100000 && msw <= 0x7fefffff) ||
-           (msw >= 0x80100000 && msw <= 0xffefffff))
-    return FP_NORMAL;
-  else if ((msw >= 0x00000000 && msw <= 0x000fffff) ||
-           (msw >= 0x80000000 && msw <= 0x800fffff))
-    /* zero is already handled above */
-    return FP_SUBNORMAL;
-  else if ((msw == 0x7ff00000 && lsw == 0x00000000) ||
-           (msw == 0xfff00000 && lsw == 0x00000000))
-    return FP_INFINITE;
-  else
-    return FP_NAN;
+	lsw |= msw & UC(0xfffff);
+	msw &= UC(0x7ff00000);
+	if ((msw | lsw) == 0)
+		retval = FP_ZERO;
+	else if (msw == 0)
+		retval = FP_SUBNORMAL;
+	else if (msw == UC(0x7ff00000))
+		retval = lsw != 0 ? FP_NAN : FP_INFINITE;
+
+	return retval;
 }
 
 __typeof(__fpclassify) fpclassify __attribute__((weak, alias("__fpclassify")));
+#ifdef __NO_LONG_DOUBLE_MATH
+int __fpclassifyl(long double x) __attribute__((alias("__fpclassify")));
+__typeof(__fpclassifyl) fpclassifyl __attribute__((weak, alias("__fpclassifyl")));
+#endif
