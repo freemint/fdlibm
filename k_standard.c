@@ -10,8 +10,9 @@
  * ====================================================
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
-#include <errno.h>
+#endif
 
 #ifndef _USE_WRITE
 #include <stdio.h>						/* fputs(), stderr */
@@ -543,13 +544,13 @@ double __kernel_standard(double x, double y, double retval, enum matherr type)
 		{
 			exc.retval = HUGE;
 			y *= 0.5;
-			if (x < zero && rint(y) != y)
+			if (x < zero && __ieee754_rint(y) != y)
 				exc.retval = -HUGE;
 		} else
 		{
 			exc.retval = HUGE_VAL;
 			y *= 0.5;
-			if (x < zero && rint(y) != y)
+			if (x < zero && __ieee754_rint(y) != y)
 				exc.retval = -HUGE_VAL;
 		}
 		if (_LIB_VERSION == _POSIX_)
@@ -567,7 +568,7 @@ double __kernel_standard(double x, double y, double retval, enum matherr type)
 		exc.name = funcname("pow");
 		exc.retval = zero;
 		y *= 0.5;
-		if (x < zero && rint(y) != y)
+		if (x < zero && __ieee754_rint(y) != y)
 			exc.retval = -zero;
 		if (_LIB_VERSION == _POSIX_)
 			__set_errno(ERANGE);
@@ -739,7 +740,7 @@ double __kernel_standard(double x, double y, double retval, enum matherr type)
 		exc.name = funcname("atanh");
 		exc.retval = x / zero;			/* sign(x)*inf */
 		if (_LIB_VERSION == _POSIX_)
-			__set_errno(EDOM);
+			__set_errno(ERANGE);
 		else if (!matherr(&exc))
 		{
 			if (_LIB_VERSION == _SVID_)
@@ -951,9 +952,7 @@ double __kernel_standard(double x, double y, double retval, enum matherr type)
 		if (_LIB_VERSION != _SVID_ && _LIB_VERSION != _XOPEN_)
 			exc.retval = 1.0;
 		else if (!matherr(&exc))
-		{
 			__set_errno(EDOM);
-		}
 		break;
 
 	case KMATHERR_POW_ZEROMINUS:
@@ -1136,6 +1135,7 @@ double __kernel_standard(double x, double y, double retval, enum matherr type)
 	case KMATHERRL_FIRST:
 		break;
 	}
+	set_matherr_errno(exc);
 	return exc.retval;
 }
 

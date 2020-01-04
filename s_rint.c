@@ -5,7 +5,7 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -20,72 +20,98 @@
  *	Inexact flag raised if x not equal to rint(x).
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
 #ifndef __have_fpu_rint
 
-double __ieee754_rint(double x)
+static double __ieee754_roundeven(double x)
 {
-	int32_t i0, j0, sx;
-	uint32_t i, i1;
-	double w, t;
+	int32_t i0, j0;
+	uint32_t i1;
 
-	static const double TWO52[2] = {
-		4.50359962737049600000e+15,			/* 0x43300000, 0x00000000 */
-		-4.50359962737049600000e+15,		/* 0xC3300000, 0x00000000 */
-	};
-
+	static const double hugeval = 1.0e300;
+	
 	GET_DOUBLE_WORDS(i0, i1, x);
-	sx = (i0 >> 31) & 1;
-	j0 = ((i0 >> 20) & 0x7ff) - 0x3ff;
-	if (j0 < 20)
+	j0 = ((i0 >> IEEE754_DOUBLE_SHIFT) & IEEE754_DOUBLE_MAXEXP) - IEEE754_DOUBLE_BIAS;
+	if (j0 < IEEE754_DOUBLE_SHIFT)
 	{
 		if (j0 < 0)
 		{
-			if (((i0 & 0x7fffffff) | i1) == 0)
-				return x;
-			i1 |= (i0 & 0x0fffff);
-			i0 &= 0xfffe0000;
-			i0 |= ((i1 | -i1) >> 12) & 0x80000;
-			__HI(x) = i0;
-			w = TWO52[sx] + x;
-			t = w - TWO52[sx];
-			i0 = __HI(t);
-			__HI(t) = (i0 & 0x7fffffff) | (sx << 31);
-			return t;
+			math_force_eval(hugeval + x);
+			if (j0 == -1 && (i0 & IC(0x000fffff)) != 0)
+			{
+				i0 &= UC(0x80000000);
+				i0 |= UC(0x3ff00000);
+			} else
+			{
+				i0 &= UC(0x80000000);
+			}
+			i1 = 0;
 		} else
 		{
-			i = (0x000fffff) >> j0;
+			uint32_t i = UC(0x000fffff) >> j0;
+
 			if (((i0 & i) | i1) == 0)
-				return x;				/* x is integral */
-			i >>= 1;
-			if (((i0 & i) | i1) != 0)
+				/* X is integral.  */
+				return x;
+
+			/* Raise inexact if x != 0.  */
+			math_force_eval(hugeval + x);
+
+			if ((i0 & (i >> 1)) != 0 || i1 != 0 || (i0 & (UC(0x00100000) >> j0)))
 			{
-				if (j0 == 19)
-					i1 = 0x40000000;
-				else
-					i0 = (i0 & (~i)) | ((0x20000) >> j0);
+				i0 += UC(0x00080000) >> j0;
 			}
+			i0 &= ~i;
+			i1 = 0;
 		}
 	} else if (j0 > 51)
 	{
-		if (j0 == 0x400)
-			return x + x;				/* inf or NaN */
+		if (j0 == (IEEE754_DOUBLE_MAXEXP - IEEE754_DOUBLE_BIAS))
+			return x + x;				/* Inf or NaN */
 		else
 			return x;					/* x is integral */
 	} else
 	{
-		i = ((unsigned) (0xffffffff)) >> (j0 - 20);
+		uint32_t i = UC(0xffffffff) >> (j0 - IEEE754_DOUBLE_SHIFT);
+		uint32_t j;
+
 		if ((i1 & i) == 0)
 			return x;					/* x is integral */
-		i >>= 1;
-		if ((i1 & i) != 0)
-			i1 = (i1 & (~i)) | ((0x40000000) >> (j0 - 20));
+
+		/* Raise inexact if x != 0. */
+		math_force_eval(hugeval + x);
+
+		if ((i1 & (i >> 1)) != 0 || (j0 == IEEE754_DOUBLE_SHIFT && (i0 & 1)) || (i1 & (UC(1) << (52 - j0))))
+		{
+			j = i1 + (UC(1) << (51 - j0));
+			if (j < i1)
+				i0 += 1;
+			i1 = j;
+		}
+		i1 &= ~i;
 	}
-	__HI(x) = i0;
-	__LO(x) = i1;
-	w = TWO52[sx] + x;
-	return w - TWO52[sx];
+
+	INSERT_WORDS(x, i0, i1);
+	return x;
+}
+
+double __ieee754_rint(double x)
+{
+	/*
+	 * above code relies on a FPU doing the rounding,
+	 * and using round-to-even for FE_TONEAREST
+	 */
+	switch (fegetround())
+	{
+		case FE_UPWARD: return __ieee754_ceil(x);
+		case FE_DOWNWARD: return __ieee754_floor(x);
+		case FE_TOWARDZERO: return __ieee754_trunc(x);
+	}
+	/* case FE_TONEAREST: */
+	return __ieee754_roundeven(x);
 }
 
 #endif

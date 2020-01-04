@@ -16,7 +16,7 @@
 
 #ifndef __have_fpu_rint
 
-long double __ieee754_rintl(long double x)
+static long double __ieee754_roundevenl(long double x)
 {
 	int32_t j0;
 	uint32_t se, i1, i0;
@@ -103,6 +103,22 @@ long double __ieee754_rintl(long double x)
 
 	SET_LDOUBLE_WORDS(x, se, i0, i1);
 	return x;
+}
+
+long double __ieee754_rintl(long double x)
+{
+	/*
+	 * above code relies on a FPU doing the rounding,
+	 * and using round-to-even for FE_TONEAREST
+	 */
+	switch (fegetround())
+	{
+		case FE_UPWARD: return __ieee754_ceill(x);
+		case FE_DOWNWARD: return __ieee754_floorl(x);
+		case FE_TOWARDZERO: return __ieee754_truncl(x);
+	}
+	/* case FE_TONEAREST: */
+	return __ieee754_roundevenl(x);
 }
 
 #endif

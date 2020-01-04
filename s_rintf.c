@@ -4,7 +4,7 @@
 
 #ifndef __have_fpu_rint
 
-float __ieee754_rintf(float x)
+static float __ieee754_roundevenf(float x)
 {
 	int32_t i0, j0;
 
@@ -54,6 +54,23 @@ float __ieee754_rintf(float x)
 
 	SET_FLOAT_WORD(x, i0);
 	return x;
+}
+
+
+float __ieee754_rintf(float x)
+{
+	/*
+	 * above code relies on a FPU doing the rounding,
+	 * and using round-to-even for FE_TONEAREST
+	 */
+	switch (fegetround())
+	{
+		case FE_UPWARD: return __ieee754_ceilf(x);
+		case FE_DOWNWARD: return __ieee754_floorf(x);
+		case FE_TOWARDZERO: return __ieee754_truncf(x);
+	}
+	/* case FE_TONEAREST: */
+	return __ieee754_roundevenf(x);
 }
 
 #endif
