@@ -47,80 +47,92 @@ ANSI C, POSIX
 
 */
 
-#include <sys/types.h>
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-long int lround(double x)
+#ifndef __have_fpu_lround
+
+long int __ieee754_lround(double x)
 {
-  __int32_t sign, exponent_less_1023;
-  /* Most significant word, least significant word. */
-  __uint32_t msw, lsw;
-  long int result;
-  
-  GET_DOUBLE_WORDS(msw, lsw, x);
+	int32_t j0;
+	uint32_t i1, i0;
+	long int result;
+	int32_t sign;
 
-  /* Extract sign. */
-  sign = ((msw & 0x80000000) ? -1 : 1);
-  /* Extract exponent field. */
-  exponent_less_1023 = ((msw & 0x7ff00000) >> 20) - 1023;
-  msw &= 0x000fffff;
-  msw |= 0x00100000;
-  /* exponent_less_1023 in [-1023,1024] */
-  if (exponent_less_1023 < 20)
-    {
-      /* exponent_less_1023 in [-1023,19] */
-      if (exponent_less_1023 < 0)
-        {
-          if (exponent_less_1023 < -1)
-            return 0;
-          else
-            return sign;
-        }
-      else
-        {
-          /* exponent_less_1023 in [0,19] */
-	  /* shift amt in [0,19] */
-          msw += 0x80000 >> exponent_less_1023;
-	  /* shift amt in [20,1] */
-          result = msw >> (20 - exponent_less_1023);
-        }
-    }
-  else if (exponent_less_1023 < (8 * sizeof (long int)) - 1)
-    {
-      /* 32bit long: exponent_less_1023 in [20,30] */
-      /* 64bit long: exponent_less_1023 in [20,62] */
-      if (exponent_less_1023 >= 52)
-	/* 64bit long: exponent_less_1023 in [52,62] */
-	/* 64bit long: shift amt in [32,42] */
-        result = ((long int) msw << (exponent_less_1023 - 20))
-		/* 64bit long: shift amt in [0,10] */
-                | (lsw << (exponent_less_1023 - 52));
-      else
-        {
-	  /* 32bit long: exponent_less_1023 in [20,30] */
-	  /* 64bit long: exponent_less_1023 in [20,51] */
-          unsigned int tmp = lsw
-		    /* 32bit long: shift amt in [0,10] */
-		    /* 64bit long: shift amt in [0,31] */
-                    + (0x80000000 >> (exponent_less_1023 - 20));
-          if (tmp < lsw)
-            ++msw;
-	  /* 32bit long: shift amt in [0,10] */
-	  /* 64bit long: shift amt in [0,31] */
-          result = ((long int) msw << (exponent_less_1023 - 20))
-		    /* ***32bit long: shift amt in [32,22] */
-		    /* ***64bit long: shift amt in [32,1] */
-                    | SAFE_RIGHT_SHIFT (tmp, (52 - exponent_less_1023));
-        }
-    }
-  else
-    /* Result is too large to be represented by a long int. */
-    return (long int)x;
+	GET_DOUBLE_WORDS(i0, i1, x);
+	/* Extract exponent field. */
+	j0 = ((i0 >> IEEE754_DOUBLE_SHIFT) & IEEE754_DOUBLE_MAXEXP) - IEEE754_DOUBLE_BIAS;
+	/* Extract sign. */
+	sign = (i0 & IC(0x80000000)) != 0 ? -1 : 1;
+	i0 &= UC(0x000fffff);
+	i0 |= UC(0x00100000);
 
-  return sign * result;
+	/* j0 in [-1023,1024] */
+	if (j0 < IEEE754_DOUBLE_SHIFT)
+	{
+		/* j0 in [-1023,19] */
+		if (j0 < 0)
+		{
+			return j0 < -1 ? 0 : sign;
+		} else
+		{
+			/* j0 in [0,19] */
+
+			/* shift amt in [0,19] */
+			i0 += UC(0x80000) >> j0;
+			/* shift amt in [20,1] */
+			result = i0 >> (IEEE754_DOUBLE_SHIFT - j0);
+		}
+	} else if (j0 < (int32_t) (8 * sizeof(long int)) - 1)
+	{
+		/* 32bit long: j0 in [20,30] */
+		/* 64bit long: j0 in [20,62] */
+		if (j0 >= 52)
+		{
+			/* 64bit long: j0 in [52,62] */
+			/* 64bit long: shift amt in [32,42] */
+			if ((j0 - IEEE754_DOUBLE_SHIFT) >= (int32_t) (8 * sizeof(long int)))
+				result = 0;
+			else
+				result = (long int) i0 << (j0 - IEEE754_DOUBLE_SHIFT);
+			if ((j0 - 52) < 32)
+				result |= (unsigned long int)i1 << (j0 - 52);
+		} else
+		{
+			/* 32bit long: j0 in [20,30] */
+			/* 64bit long: j0 in [20,51] */
+			uint32_t j = i1 + (UC(0x80000000) >> (j0 - IEEE754_DOUBLE_SHIFT));
+
+			if (j < i1)
+				++i0;
+
+			if (j0 == IEEE754_DOUBLE_SHIFT)
+				result = (long int) i0;
+			else
+				result = ((long int) i0 << (j0 - IEEE754_DOUBLE_SHIFT)) | (j >> (52 - j0));
+		}
+	} else
+	{
+		/* The number is too large.  It is left implementation defined
+		   what happens.  */
+		return (long int) x;
+	}
+
+	if (sign < 0)
+		result = -result;
+	return result;
 }
 
-long int lroundf(float x)
+#endif
+
+long int __lround(double x)
 {
-    return lround((double) x);
+	return __ieee754_lround(x);
 }
+
+__typeof(__lround) lround __attribute__((weak, alias("__lround")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__lroundl) __lroundl __attribute__((alias("__lround")));
+__typeof(__lroundl) lroundl __attribute__((weak, alias("__lround")));
+#endif
