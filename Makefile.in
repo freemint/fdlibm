@@ -85,7 +85,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/e_log.c $(srcdir)/e_logf.c $(srcdir)/e_logl.c \
 	$(srcdir)/e_log2.c $(srcdir)/e_log2f.c $(srcdir)/e_log2l.c \
 	$(srcdir)/e_log10.c $(srcdir)/e_log10f.c $(srcdir)/e_log10l.c \
-	$(srcdir)/e_pow.c $(srcdir)/e_powl.c $(srcdir)/e_powf.c \
+	$(srcdir)/e_pow.c $(srcdir)/e_powf.c $(srcdir)/e_powl.c \
 	$(srcdir)/e_rem_pio2.c \
 	$(srcdir)/e_remainder.c $(srcdir)/e_remainderf.c $(srcdir)/e_remainderl.c \
 	$(srcdir)/e_scalb.c $(srcdir)/e_scalbf.c $(srcdir)/e_scalbl.c \
@@ -119,7 +119,9 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_nextafter.c \
 	$(srcdir)/s_rint.c $(srcdir)/s_rintf.c $(srcdir)/s_rintl.c \
 	$(srcdir)/s_scalbn.c $(srcdir)/s_scalbnf.c $(srcdir)/s_scalbnl.c \
-	$(srcdir)/s_signgam.c $(srcdir)/s_significand.c $(srcdir)/s_sin.c \
+	$(srcdir)/s_signgam.c \
+	$(srcdir)/s_significand.c $(srcdir)/s_significandf.c $(srcdir)/s_significandl.c \
+	$(srcdir)/s_sin.c \
 	$(srcdir)/s_tan.c $(srcdir)/s_tanh.c $(srcdir)/s_fmin.c \
 	$(srcdir)/s_fmax.c \
 	$(srcdir)/s_fpclassify.c $(srcdir)/s_fpclassifyf.c $(srcdir)/s_fpclassifyl.c \
