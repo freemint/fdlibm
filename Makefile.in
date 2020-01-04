@@ -77,6 +77,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/e_atanh.c $(srcdir)/e_cosh.c \
 	$(srcdir)/e_exp.c $(srcdir)/e_expf.c $(srcdir)/e_expl.c \
 	$(srcdir)/e_exp2.c $(srcdir)/e_exp2f.c $(srcdir)/e_exp2l.c \
+	$(srcdir)/e_exp10.c $(srcdir)/e_exp10f.c $(srcdir)/e_exp10l.c \
 	$(srcdir)/e_fmod.c $(srcdir)/e_gamma_r.c \
 	$(srcdir)/e_hypot.c $(srcdir)/e_hypotf.c $(srcdir)/e_hypotl.c \
 	$(srcdir)/e_j0.c $(srcdir)/e_j1.c \
