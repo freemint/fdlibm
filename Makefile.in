@@ -109,7 +109,8 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_frexp.c $(srcdir)/s_frexpf.c $(srcdir)/s_frexpl.c \
 	$(srcdir)/s_ilogb.c $(srcdir)/s_isnan.c \
 	$(srcdir)/s_ldexp.c $(srcdir)/s_ldexpf.c $(srcdir)/s_ldexpl.c \
-	$(srcdir)/s_lib_version.c $(srcdir)/s_log1p.c \
+	$(srcdir)/s_lib_version.c \
+	$(srcdir)/s_log1p.c $(srcdir)/s_log1pf.c $(srcdir)/s_log1pl.c \
 	$(srcdir)/s_logb.c $(srcdir)/s_matherr.c \
 	$(srcdir)/s_modf.c $(srcdir)/s_modff.c $(srcdir)/s_modfl.c \
 	$(srcdir)/s_nextafter.c \
