@@ -1,4 +1,3 @@
-
 /* @(#)s_ldexp.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -11,13 +10,31 @@
  * ====================================================
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
-#include <errno.h>
+#endif
 
-double ldexp(double value, int exp)
+#ifndef __have_fpu_ldexp
+
+double __ieee754_ldexp(double value, int exp)
 {
-	if(!finite(value)||value==0.0) return value;
-	value = scalbn(value,exp);
-	if(!finite(value)||value==0.0) errno = ERANGE;
-	return value;
+	if (!isfinite(value) || value == 0.0)
+		return value;
+	return __ieee754_scalbn(value, exp);
 }
+
+#endif
+
+double __ldexp(double x, int n)
+{
+	x = __ieee754_ldexp(x, n);
+	if (!isfinite(x) || x == 0.0)
+		__set_errno(ERANGE);
+	return x;
+}
+
+__typeof(__ldexp) ldexp __attribute__((weak, alias("__ldexp")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__ldexpl) __ldexpl __attribute__((alias("__ldexp")));
+__typeof(__ldexpl) ldexpl __attribute__((weak, alias("__ldexp")));
+#endif
