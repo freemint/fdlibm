@@ -41,71 +41,86 @@ SEEALSO
 
 */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-double round(double x)
+#ifndef __have_fpu_round
+
+double __ieee754_round(double x)
 {
-  /* Most significant word, least significant word. */
-  __int32_t msw, exponent_less_1023;
-  __uint32_t lsw;
+	int32_t i0, j0;
+	uint32_t i1;
 
-  GET_DOUBLE_WORDS(msw, lsw, x);
+	static const double hugeval = 1.0e300;
+	
+	GET_DOUBLE_WORDS(i0, i1, x);
+	j0 = ((i0 >> IEEE754_DOUBLE_SHIFT) & IEEE754_DOUBLE_MAXEXP) - IEEE754_DOUBLE_BIAS;
+	if (j0 < IEEE754_DOUBLE_SHIFT)
+	{
+		if (j0 < 0)
+		{
+			math_force_eval(hugeval + x);
+			i0 &= UC(0x80000000);
+			if (j0 == -1)				/* Result is +1.0 or -1.0. */
+				i0 |= UC(0x3ff00000);
+			i1 = 0;
+		} else
+		{
+			uint32_t i = UC(0x000fffff) >> j0;
 
-  /* Extract exponent field. */
-  exponent_less_1023 = ((msw & 0x7ff00000) >> 20) - 1023;
+			if (((i0 & i) | i1) == 0)
+				/* X is integral.  */
+				return x;
 
-  if (exponent_less_1023 < 20)
-    {
-      if (exponent_less_1023 < 0)
-        {
-          msw &= 0x80000000;
-          if (exponent_less_1023 == -1)
-            /* Result is +1.0 or -1.0. */
-            msw |= (1023 << 20);
-          lsw = 0;
-        }
-      else
-        {
-          __uint32_t exponent_mask = 0x000fffff >> exponent_less_1023;
-          if ((msw & exponent_mask) == 0 && lsw == 0)
-            /* x in an integral value. */
-            return x;
+			/* Raise inexact if x != 0.  */
+			math_force_eval(hugeval + x);
 
-          msw += 0x00080000 >> exponent_less_1023;
-          msw &= ~exponent_mask;
-          lsw = 0;
-        }
-    }
-  else if (exponent_less_1023 > 51)
-    {
-      if (exponent_less_1023 == 1024)
-        /* x is NaN or infinite. */
-        return x + x;
-      else
-        return x;
-    }
-  else
-    {
-      __uint32_t exponent_mask = 0xffffffff >> (exponent_less_1023 - 20);
-      __uint32_t tmp;
+			i0 += UC(0x00080000) >> j0;
+			i0 &= ~i;
+			i1 = 0;
+		}
+	} else if (j0 > 51)
+	{
+		if (j0 == (IEEE754_DOUBLE_MAXEXP - IEEE754_DOUBLE_BIAS))
+			/* Inf or NaN.  */
+			return x + x;
+		else
+			return x;
+	} else
+	{
+		uint32_t i = UC(0xffffffff) >> (j0 - IEEE754_DOUBLE_SHIFT);
+		uint32_t j;
 
-      if ((lsw & exponent_mask) == 0)
-        /* x is an integral value. */
-        return x;
+		if ((i1 & i) == 0)
+			/* X is integral.  */
+			return x;
 
-      tmp = lsw + (1 << (51 - exponent_less_1023));
-      if (tmp < lsw)
-        msw += 1;
-      lsw = tmp;
+		/* Raise inexact if x != 0.  */
+		math_force_eval(hugeval + x);
 
-      lsw &= ~exponent_mask;
-    }
-  INSERT_WORDS(x, msw, lsw);
+		j = i1 + (UC(1) << (51 - j0));
 
-  return x;
+		if (j < i1)
+			i0 += 1;
+		i1 = j;
+		i1 &= ~i;
+	}
+
+	INSERT_WORDS(x, i0, i1);
+
+	return x;
 }
 
-float roundf(float x)
+#endif
+
+double __round(double x)
 {
-    return round((double) x);
+	return __ieee754_round(x);
 }
+
+__typeof(__round) round __attribute__((weak, alias("__round")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__roundl) __roundl __attribute__((alias("__round")));
+__typeof(__roundl) roundl __attribute__((weak, alias("__round")));
+#endif
