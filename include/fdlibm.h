@@ -32,6 +32,10 @@
 #  error "endianness not defined"
 #endif
 
+#ifndef __FLOAT_WORD_ORDER__
+#define __FLOAT_WORD_ORDER__ __BYTE_ORDER__
+#endif
+
 /* Sometimes it's necessary to define __LITTLE_ENDIAN explicitly
    but these catch some common cases. */
 
@@ -649,7 +653,6 @@ extern double lgamma_r (double, int *);
 #endif
 
 /* ieee style elementary functions */
-/* ieee style elementary functions */
 #ifndef __have_fpu_sin
 double      __ieee754_sin (double x);
 float       __ieee754_sinf (float x);
@@ -913,6 +916,7 @@ double      __ieee754_modf (double x, double *ip);
 float       __ieee754_modff (float x, float *ip);
 long double __ieee754_modfl (long double x, long double *ip);
 #endif
+
 double      __ieee754_lgamma_r(double x, int *sign);
 float       __ieee754_lgammaf_r(float x, int *sign);
 long double __ieee754_lgammal_r(long double x, int *sign);
