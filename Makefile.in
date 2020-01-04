@@ -83,6 +83,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/e_j0.c $(srcdir)/e_j1.c \
 	$(srcdir)/e_jn.c $(srcdir)/e_lgamma.c $(srcdir)/e_lgamma_r.c \
 	$(srcdir)/e_log.c $(srcdir)/e_logf.c $(srcdir)/e_logl.c \
+	$(srcdir)/e_log2.c $(srcdir)/e_log2f.c $(srcdir)/e_log2l.c \
 	$(srcdir)/e_log10.c $(srcdir)/e_log10f.c $(srcdir)/e_log10l.c \
 	$(srcdir)/e_pow.c $(srcdir)/e_powl.c $(srcdir)/e_powf.c \
 	$(srcdir)/e_rem_pio2.c $(srcdir)/e_remainder.c \
