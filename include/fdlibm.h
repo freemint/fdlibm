@@ -475,6 +475,48 @@ enum
 # define	PLOSS		6
 #endif
 
+#if defined(__GNUC__) && defined (__mc68020__) && !defined (__mcpu32__)
+static __inline__ int32_t count_leading_zeros(uint32_t x)
+{
+	int32_t count;
+	__asm__ ("bfffo %1{%b2:%b2},%0"
+		: "=d" (count)
+		: "od" (x), "n" (0));
+	if (count == 32) count = 0;
+	return count;
+}
+#elif defined(__GNUC__)
+static __inline__ int32_t count_leading_zeros(uint32_t x)
+{
+	return __builtin_clz(x);
+}
+#else
+static int32_t count_leading_zeros(uint32_t x)
+{
+	uint32_t __xr = (x);
+    uint32_t __a, count;
+
+static unsigned char const __clz_tab[256] =
+{
+  0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+  6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+  8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+  8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+  8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+  8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
+};
+
+	__a = __xr < ((uint32_t)1<<16)
+	  ? (__xr < ((uint32_t)8) ? 0 : 8)
+	  : (__xr < ((uint32_t)1<<24) ? 16 : 24);
+	count = 32 - (__clz_tab[__xr >> __a] + __a);
+	if (count == 32) count = 0;
+	return count;
+}
+#endif
+
 #undef isinf
 #undef isnan
 #undef signbit
