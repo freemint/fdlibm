@@ -123,6 +123,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_lrint.c $(srcdir)/s_lrintf.c $(srcdir)/s_lrintl.c \
 	$(srcdir)/s_llrint.c $(srcdir)/s_llrintf.c $(srcdir)/s_llrintl.c \
 	$(srcdir)/s_scalbn.c $(srcdir)/s_scalbnf.c $(srcdir)/s_scalbnl.c \
+	$(srcdir)/s_scalbln.c $(srcdir)/s_scalblnf.c $(srcdir)/s_scalblnl.c \
 	$(srcdir)/s_signgam.c \
 	$(srcdir)/s_significand.c $(srcdir)/s_significandf.c $(srcdir)/s_significandl.c \
 	$(srcdir)/s_sin.c \
