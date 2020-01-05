@@ -406,6 +406,12 @@ double __pow(double x, double y)
 
 	if (!isfinite(z))
 	{
+#ifdef __have_fpu_pow
+		if (isnan(y) && x == 1.0)
+		{
+			z = 1.0;
+		} else
+#endif
 		if (_LIB_VERSION != _IEEE_)
 		{
 			if (isnan(x))

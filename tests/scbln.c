@@ -105,7 +105,7 @@ static test_fl_f_data const scalbln_data[] = {
 #endif
 	
 	{ __LINE__, ONE_M, INT_MAX, minus_oflow, FLAG_FAIL_ARANYM }, /* glibc returns nan */
-	{ __LINE__, ONE_M, INT_MIN, minus_uflow, 0 },
+	{ __LINE__, ONE_M, INT_MIN, minus_uflow, FLAG_IGNORE_ZEROSIGN },
 #ifdef TEST_LDOUBLE
 	{ __LINE__, MAX_M, INT_MAX, minus_oflow, 0 },
 	{ __LINE__, MAX_M, INT_MIN, minus_uflow, 0 },
@@ -131,7 +131,7 @@ static test_fl_f_data const scalbln_data[] = {
 #endif
 	
 	{ __LINE__, ONE_M, LONG_MAX, minus_oflow, FLAG_FAIL_ARANYM }, /* glibc returns nan */
-	{ __LINE__, ONE_M, LONG_MIN, minus_uflow, FLAG_FAIL_SOFTFLOAT },
+	{ __LINE__, ONE_M, LONG_MIN, minus_uflow, FLAG_IGNORE_ZEROSIGN },
 #ifdef TEST_LDOUBLE
 	{ __LINE__, MAX_M, LONG_MAX, minus_oflow, 0 },
 	{ __LINE__, MAX_M, LONG_MIN, minus_uflow, 0 },
