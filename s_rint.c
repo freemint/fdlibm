@@ -124,6 +124,6 @@ double __rint(double x)
 
 __typeof(__rint) rint __attribute__((weak, alias("__rint")));
 #ifdef __NO_LONG_DOUBLE_MATH
-long double __rintl(long double x) __attribute__((alias("__rint")));
+__typeof(rintl) __rintl __attribute__((alias("__rint")));
 __typeof(__rintl) rintl __attribute__((weak, alias("__rint")));
 #endif
