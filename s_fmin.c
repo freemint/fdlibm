@@ -18,11 +18,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-
-double
-fmin (double x, double y)
+double __fmin(double x, double y)
 {
-  return ((x <= y) || isnan (y)) ? x : y;
+	return (islessequal (x, y) || isnan (y)) ? x : y;
 }
+
+__typeof(__fmin) fmin __attribute__((weak, alias("__fmin")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(fminl) __fminl __attribute__((alias("__fmin")));
+__typeof(__fminl) fminl __attribute__((weak, alias("__fmin")));
+#endif
