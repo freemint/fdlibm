@@ -117,6 +117,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_logb.c $(srcdir)/s_logbf.c $(srcdir)/s_logbl.c \
 	$(srcdir)/s_matherr.c \
 	$(srcdir)/s_modf.c $(srcdir)/s_modff.c $(srcdir)/s_modfl.c \
+	$(srcdir)/s_remquof.c $(srcdir)/s_remquof.c $(srcdir)/s_remquol.c \
 	$(srcdir)/s_nextafter.c $(srcdir)/s_nextafterf.c $(srcdir)/s_nextafterl.c \
 	$(srcdir)/s_nexttoward.c $(srcdir)/s_nexttowardf.c \
 	$(srcdir)/s_rint.c $(srcdir)/s_rintf.c $(srcdir)/s_rintl.c \
