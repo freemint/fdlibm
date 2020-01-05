@@ -142,6 +142,10 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/fpu_ctrl.c \
 	$(srcdir)/fesetround.c \
 	$(srcdir)/fegetround.c \
+	$(srcdir)/fesetenv.c \
+	$(srcdir)/fegetenv.c \
+	$(srcdir)/feholdexcept.c \
+	$(srcdir)/feupdateenv.c \
 	$(empty)
 
 OBJ = 	$(addsuffix .o, $(basename $(notdir $(SRC))))
