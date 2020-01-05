@@ -138,6 +138,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_llround.c $(srcdir)/s_llroundf.c $(srcdir)/s_llroundl.c \
 	$(srcdir)/s_trunc.c $(srcdir)/s_truncf.c $(srcdir)/s_truncl.c \
 	$(srcdir)/s_issig.c $(srcdir)/s_issigf.c $(srcdir)/s_issigl.c \
+	$(srcdir)/s_nearbyint.c $(srcdir)/s_nearbyintf.c $(srcdir)/s_nearbyintl.c \
 	\
 	$(srcdir)/fpu_ctrl.c \
 	$(srcdir)/fesetround.c \
