@@ -18,11 +18,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-
-double
-fmax (double x, double y)
+double __fmax(double x, double y)
 {
-  return ((x >= y) || isnan (y)) ? x : y;
+	return (isgreaterequal (x, y) || isnan (y)) ? x : y;
 }
+
+__typeof(__fmax) fmax __attribute__((weak, alias("__fmax")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(fmaxl) __fmaxl __attribute__((alias("__fmax")));
+__typeof(__fmaxl) fmaxl __attribute__((weak, alias("__fmax")));
+#endif

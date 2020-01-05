@@ -128,7 +128,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_sin.c \
 	$(srcdir)/s_tan.c $(srcdir)/s_tanh.c \
 	$(srcdir)/s_fmin.c $(srcdir)/s_fminf.c $(srcdir)/s_fminl.c \
-	$(srcdir)/s_fmax.c \
+	$(srcdir)/s_fmax.c $(srcdir)/s_fmaxf.c $(srcdir)/s_fmaxl.c \
 	$(srcdir)/s_fdim.c $(srcdir)/s_fdimf.c $(srcdir)/s_fdiml.c \
 	$(srcdir)/s_fpclassify.c $(srcdir)/s_fpclassifyf.c $(srcdir)/s_fpclassifyl.c \
 	$(srcdir)/s_round.c $(srcdir)/s_roundf.c $(srcdir)/s_roundl.c \
