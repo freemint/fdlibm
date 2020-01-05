@@ -137,4 +137,7 @@ long double __nextafterl(long double x, long double y)
 
 __typeof(__nextafterl) nextafterl __attribute__((weak, alias("__nextafterl")));
 
+__typeof(__nexttowardl) __nexttowardl __attribute__((alias("__nextafterl")));
+__typeof(nexttowardl) nexttowardl __attribute__((weak, alias("__nextafterl")));
+
 #endif
