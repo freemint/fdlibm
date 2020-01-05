@@ -1,4 +1,4 @@
-/* Compute cubic root of double value.
+/* Compute cubic root of float value.
    Copyright (C) 1997-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Dirk Alboth <dirka@uni-paderborn.de> and
@@ -22,14 +22,13 @@
 #include "fdlibm.h"
 #endif
 
-
-double __cbrt(double x)
+float __cbrtf(float x)
 {
-	double xm, ym, u, t2;
+	float xm, ym, u, t2;
 	int xe;
 	int x_class;
 	
-	static const double factor[5] = {
+	static const float factor[5] = {
 		0.62996052494743658238361,			/* 1 / 2^(2/3) */
 		0.79370052598409973737585,			/* 1 / 2^(1/3) */
 		1.0,
@@ -37,9 +36,8 @@ double __cbrt(double x)
 		1.5874010519681994747517			/* 2^(2/3) */
 	};
 	
-	
 	/* Reduce X.  XM now is an range 1.0 to 0.5.  */
-	xm = __ieee754_frexp(__ieee754_fabs(x), &xe);
+	xm = __ieee754_frexpf(__ieee754_fabsf(x), &xe);
 
 	/* If X is not finite or is null return it (with raising exceptions
 	   if necessary.
@@ -48,22 +46,13 @@ double __cbrt(double x)
 	if (xe == 0 && ((x_class = fpclassify(x)) == FP_ZERO || x_class == FP_NAN || x_class == FP_INFINITE))
 		return x + x;
 
-	u = (0.354895765043919860
-		 + ((1.50819193781584896
-			 + ((-2.11499494167371287
-				 + ((2.44693122563534430
-					 + ((-1.83469277483613086
-						 + (0.784932344976639262 - 0.145263899385486377 * xm) * xm) * xm)) * xm)) * xm)) * xm));
+	u = (0.492659620528969547F + (0.697570460207922770F - 0.191502161678719066F * xm) * xm);
 
 	t2 = u * u * u;
 
-	ym = u * (t2 + 2.0 * xm) / (2.0 * t2 + xm) * factor[2 + xe % 3];
+	ym = u * (t2 + 2.0F * xm) / (2.0F * t2 + xm) * factor[2 + xe % 3];
 
-	return __ieee754_ldexp(x > 0.0 ? ym : -ym, xe / 3);
+	return __ieee754_ldexpf(x > 0.0F ? ym : -ym, xe / 3);
 }
 
-__typeof(__cbrt) cbrt __attribute__((weak, alias("__cbrt")));
-#ifdef __NO_LONG_DOUBLE_MATH
-__typeof(cbrtl) __cbrtl __attribute__((alias("__cbrt")));
-__typeof(__cbrtl) cbrtl __attribute__((weak, alias("__cbrt")));
-#endif
+__typeof(__cbrtf) cbrtf __attribute__((weak, alias("__cbrtf")));
