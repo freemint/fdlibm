@@ -1,4 +1,3 @@
-
 /* @(#)s_nextafter.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -6,7 +5,7 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -18,56 +17,85 @@
  *   Special cases:
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-double nextafter(double x, double y)
+double __nextafter(double x, double y)
 {
-	int	hx,hy,ix,iy;
-	unsigned lx,ly;
+	int32_t hx, hy, ix, iy;
+	uint32_t lx, ly;
 
-	hx = __HI(x);		/* high word of x */
-	lx = __LO(x);		/* low  word of x */
-	hy = __HI(y);		/* high word of y */
-	ly = __LO(y);		/* low  word of y */
-	ix = hx&0x7fffffff;		/* |x| */
-	iy = hy&0x7fffffff;		/* |y| */
+	GET_DOUBLE_WORDS(hx, lx, x);
+	GET_DOUBLE_WORDS(hy, ly, y);
+	ix = hx & IC(0x7fffffff);				/* |x| */
+	iy = hy & IC(0x7fffffff);				/* |y| */
 
-	if(((ix>=0x7ff00000)&&((ix-0x7ff00000)|lx)!=0) ||   /* x is nan */ 
-	   ((iy>=0x7ff00000)&&((iy-0x7ff00000)|ly)!=0))     /* y is nan */ 
-	   return x+y;				
-	if(x==y) return x;		/* x=y, return x */
-	if((ix|lx)==0) {			/* x == 0 */
-	    __HI(x) = hy&0x80000000;	/* return +-minsubnormal */
-	    __LO(x) = 1;
-	    y = x*x;
-	    if(y==x) return y; else return x;	/* raise underflow flag */
-	} 
-	if(hx>=0) {				/* x > 0 */
-	    if(hx>hy||((hx==hy)&&(lx>ly))) {	/* x > y, x -= ulp */
-		if(lx==0) hx -= 1;
-		lx -= 1;
-	    } else {				/* x < y, x += ulp */
-		lx += 1;
-		if(lx==0) hx += 1;
-	    }
-	} else {				/* x < 0 */
-	    if(hy>=0||hx>hy||((hx==hy)&&(lx>ly))){/* x < y, x -= ulp */
-		if(lx==0) hx -= 1;
-		lx -= 1;
-	    } else {				/* x > y, x += ulp */
-		lx += 1;
-		if(lx==0) hx += 1;
-	    }
+	if (((ix >= IC(0x7ff00000)) && ((ix - IC(0x7ff00000)) | lx) != 0) ||	/* x is nan */
+		((iy >= IC(0x7ff00000)) && ((iy - IC(0x7ff00000)) | ly) != 0))	/* y is nan */
+		return x + y;
+	if (x == y)
+		return x;						/* x=y, return x */
+	if ((ix | lx) == 0)
+	{									/* x == 0 */
+		double u;
+
+		INSERT_WORDS(x, hy & UC(0x80000000), 1);	/* return +-minsubnormal */
+		u = math_opt_barrier(x);
+		u = u * u;
+		math_force_eval(u);				/* raise underflow flag */
+		return x;
 	}
-	hy = hx&0x7ff00000;
-	if(hy>=0x7ff00000) return x+x;	/* overflow  */
-	if(hy<0x00100000) {		/* underflow */
-	    y = x*x;
-	    if(y!=x) {		/* raise underflow flag */
-		__HI(y) = hx; __LO(y) = lx;
-		return y;
-	    }
+	if (hx >= 0)
+	{									/* x > 0 */
+		if (hx > hy || ((hx == hy) && (lx > ly)))
+		{								/* x > y, x -= ulp */
+			if (lx == 0)
+				hx -= 1;
+			lx -= 1;
+		} else
+		{								/* x < y, x += ulp */
+			lx += 1;
+			if (lx == 0)
+				hx += 1;
+		}
+	} else
+	{									/* x < 0 */
+		if (hy >= 0 || hx > hy || ((hx == hy) && (lx > ly)))
+		{								/* x < y, x -= ulp */
+			if (lx == 0)
+				hx -= 1;
+			lx -= 1;
+		} else
+		{								/* x > y, x += ulp */
+			lx += 1;
+			if (lx == 0)
+				hx += 1;
+		}
 	}
-	__HI(x) = hx; __LO(x) = lx;
+	hy = hx & IC(0x7ff00000);
+	if (hy >= IC(0x7ff00000))
+	{
+		x = x + x;						/* overflow  */
+		math_force_eval(x);
+		return x;						/* overflow  */
+	}
+	if (hy < IC(0x00100000))
+	{
+		double u = x * x;				/* underflow */
+		math_force_eval(u);				/* raise underflow flag */
+	}
+	INSERT_WORDS(x, hx, lx);
 	return x;
 }
+
+
+__typeof(__nextafter) nextafter __attribute__((weak, alias("__nextafter")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(nextafterl) __nextafterl __attribute__((alias("__nextafter")));
+__typeof(__nextafterl) nextafterl __attribute__((weak, alias("__nextafter")));
+__typeof(__nexttoward) __nexttoward __attribute__((alias("__nextafter")));
+__typeof(nexttoward) nexttoward __attribute__((weak, alias("__nextafter")));
+__typeof(__nexttowardl) __nexttowardl __attribute__((alias("__nextafterl")));
+__typeof(nexttowardl) nexttowardl __attribute__((weak, alias("__nextafterl")));
+#endif
