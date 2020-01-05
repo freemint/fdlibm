@@ -1,4 +1,3 @@
-
 /* @(#)s_finite.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -16,11 +15,20 @@
  * no branching!
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-int finite(double x)
+int __finite(double x)
 {
-	int hx; 
-	hx = __HI(x);
-	return  (unsigned)((hx&0x7fffffff)-0x7ff00000)>>31;
+	uint32_t hx;
+
+	GET_HIGH_WORD(hx, x);
+	return (int) (((hx & UC(0x7fffffff)) - UC(0x7ff00000)) >> 31);
 }
+
+__typeof(__finite) finite __attribute__((weak, alias("__finite")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(finitel) __finitel __attribute__((alias("__finite")));
+__typeof(__finitel) finitel __attribute__((weak, alias("__finite")));
+#endif

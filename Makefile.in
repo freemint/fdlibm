@@ -106,7 +106,7 @@ SRC = 	$(srcdir)/k_standard.c $(srcdir)/k_rem_pio2.c $(srcdir)/k_cos.c \
 	$(srcdir)/s_cos.c $(srcdir)/s_erf.c \
 	$(srcdir)/s_expm1.c $(srcdir)/s_expm1f.c $(srcdir)/s_expm1l.c \
 	$(srcdir)/s_fabs.c $(srcdir)/s_fabsf.c $(srcdir)/s_fabsl.c \
-	$(srcdir)/s_finite.c \
+	$(srcdir)/s_finite.c $(srcdir)/s_finitef.c $(srcdir)/s_finitel.c \
 	$(srcdir)/s_floor.c $(srcdir)/s_floorf.c $(srcdir)/s_floorl.c \
 	$(srcdir)/s_frexp.c $(srcdir)/s_frexpf.c $(srcdir)/s_frexpl.c \
 	$(srcdir)/e_ilogb.c $(srcdir)/e_ilogbf.c $(srcdir)/e_ilogbl.c \
