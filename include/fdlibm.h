@@ -202,6 +202,90 @@ do {                                                            \
   sf_u->word = (i);						\
 }
 
+#if __GNUC__ <= 4 /* work around an internal compiler error */
+
+/* Get three 32 bit ints from a long double.  */
+
+#define GET_LDOUBLE_WORDS(exp,ix0,ix1,d)			\
+do {								\
+  ieee_long_double_shape_type ew_u;				\
+  ew_u.value = (d);						\
+  (exp) = ew_u.parts.sign_exponent;				\
+  (ix0) = ew_u.parts.msw;					\
+  (ix1) = ew_u.parts.lsw;					\
+} while (0)
+
+/* Set a long double from two 32 bit ints.  */
+
+#define SET_LDOUBLE_WORDS(d,exp,ix0,ix1)			\
+do {								\
+  ieee_long_double_shape_type iw_u;				\
+  iw_u.parts.sign_exponent = (exp);				\
+  SET_LDOUBLE_EMPTY(iw_u); \
+  iw_u.parts.msw = (ix0);					\
+  iw_u.parts.lsw = (ix1);					\
+  (d) = iw_u.value;						\
+} while (0)
+
+/* Get the more significant 32 bits of a long double mantissa.  */
+
+#define GET_LDOUBLE_MSW(v,d)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  (v) = sh_u.parts.msw;						\
+} while (0)
+
+/* Get the less significant 32 bits of a long double mantissa.  */
+
+#define GET_LDOUBLE_LSW(v,d)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  (v) = sh_u.parts.lsw;						\
+} while (0)
+
+/* Set the more significant 32 bits of a long double mantissa from an int.  */
+
+#define SET_LDOUBLE_MSW(d,v)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  sh_u.parts.msw = (v);						\
+  (d) = sh_u.value;						\
+} while (0)
+
+/* Set the less significant 32 bits of a long double mantissa from an int.  */
+
+#define SET_LDOUBLE_LSW(d,v)					\
+do {								\
+  ieee_long_double_shape_type sh_u;				\
+  sh_u.value = (d);						\
+  sh_u.parts.lsw = (v);						\
+  (d) = sh_u.value;						\
+} while (0)
+
+/* Get int from the exponent of a long double.  */
+
+#define GET_LDOUBLE_EXP(exp,d)					\
+do {								\
+  ieee_long_double_shape_type ge_u;				\
+  ge_u.value = (d);						\
+  (exp) = ge_u.parts.sign_exponent;				\
+} while (0)
+
+/* Set exponent of a long double from an int.  */
+
+#define SET_LDOUBLE_EXP(d,exp)					\
+do {								\
+  ieee_long_double_shape_type se_u;				\
+  se_u.value = (d);						\
+  se_u.parts.sign_exponent = (exp);				\
+  (d) = se_u.value;						\
+} while (0)
+
+#else
+
 /* Get three 32 bit ints from a long double.  */
 
 #define GET_LDOUBLE_WORDS(exp,ix0,ix1,d)			\
@@ -270,6 +354,8 @@ do {								\
   ieee_long_double_shape_type *se_u = (ieee_long_double_shape_type *)&(d);				\
   se_u->parts.sign_exponent = (exp);				\
 } while (0)
+
+#endif
 
 /* Macros to avoid undefined behaviour that can arise if the amount
    of a shift is exactly equal to the size of the shifted operand.  */
