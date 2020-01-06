@@ -5,7 +5,7 @@
 
 
 
-static test_ff_f_data const fsincos_data[] = {
+static test_f_ff_data const fsincos_data[] = {
 	{ __LINE__, ZERO_P, ZERO_P, HEXCONSTE(1.00000000000000000000e+00, 0x3fff, 0x80000000L, 0x00000000L), 0 },
 	{ __LINE__, ZERO_M, ZERO_M, HEXCONSTE(1.00000000000000000000e+00, 0x3fff, 0x80000000L, 0x00000000L), 0 },
 	{ __LINE__, INF_P, QNAN_P, QNAN_P, 0 },
@@ -133,15 +133,15 @@ int main(int argc, char **argv)
 	
 	test_init(argc, argv);
 	
-	status |= test_table_ff_f(fsincos_data, ARRAY_SIZE(fsincos_data), __FILE__);
+	status |= test_table_f_ff(fsincos_data, ARRAY_SIZE(fsincos_data), __FILE__);
 
 #if defined(__mc68000__) && (defined(__HAVE_68881__))
 	{
-		union ld_union fp0;
-		union ld_union fp1;
+		ld_union fp0;
+		ld_union fp1;
 		int this_fail;
 		int i;
-		static union ld_union const pi_2 = HEXCONST_PI_2;
+		static ld_union const pi_2 = HEXCONST_PI_2;
 		
 		/* test that we get the sin in the result when using the same register */
 		numtests++;

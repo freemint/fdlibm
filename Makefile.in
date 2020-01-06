@@ -139,7 +139,7 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/s_scalbln.c $(srcdir)/s_scalblnf.c $(srcdir)/s_scalblnl.c \
 	$(srcdir)/s_signgam.c \
 	$(srcdir)/s_significand.c $(srcdir)/s_significandf.c $(srcdir)/s_significandl.c \
-	$(srcdir)/s_sin.c \
+	$(srcdir)/s_sin.c $(srcdir)/s_sinf.c $(srcdir)/s_sinl.c \
 	$(srcdir)/s_sincos.c $(srcdir)/s_sincosf.c $(srcdir)/s_sincosl.c \
 	$(srcdir)/s_tan.c $(srcdir)/s_tanh.c \
 	$(srcdir)/s_fmin.c $(srcdir)/s_fminf.c $(srcdir)/s_fminl.c \
