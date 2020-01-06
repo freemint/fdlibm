@@ -1,4 +1,3 @@
-
 /* @(#)s_cos.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -42,32 +41,62 @@
  *	TRIG(x) returns trig(x) nearly rounded 
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-double cos(double x)
+#ifndef __have_fpu_cos
+
+double __ieee754_cos(double x)
 {
-	double y[2],z=0.0;
-	int n, ix;
+	double y[2];
+	double z = 0.0;
+	int32_t n, ix;
 
-    /* High word of x. */
-	ix = __HI(x);
+	/* High word of x. */
+	GET_HIGH_WORD(ix, x);
 
-    /* |x| ~< pi/4 */
-	ix &= 0x7fffffff;
-	if(ix <= 0x3fe921fb) return __kernel_cos(x,z);
+	/* |x| ~< pi/4 */
+	ix &= IC(0x7fffffff);
+	if (ix <= IC(0x3fe921fb))
+		return __kernel_cos(x, z);
 
-    /* cos(Inf or NaN) is NaN */
-	else if (ix>=0x7ff00000) return x-x;
+	/* cos(Inf or NaN) is NaN */
+	else if (ix >= IC(0x7ff00000))
+		return x - x;
 
-    /* argument reduction needed */
-	else {
-	    n = __ieee754_rem_pio2(x,y);
-	    switch(n&3) {
-		case 0: return  __kernel_cos(y[0],y[1]);
-		case 1: return -__kernel_sin(y[0],y[1],1);
-		case 2: return -__kernel_cos(y[0],y[1]);
+	/* argument reduction needed */
+	else
+	{
+		n = __ieee754_rem_pio2(x, y);
+		switch ((int)(n & 3))
+		{
+		case 0:
+			return __kernel_cos(y[0], y[1]);
+		case 1:
+			return -__kernel_sin(y[0], y[1], 1);
+		case 2:
+			return -__kernel_cos(y[0], y[1]);
 		default:
-		        return  __kernel_sin(y[0],y[1],1);
-	    }
+			return __kernel_sin(y[0], y[1], 1);
+		}
 	}
 }
+
+#endif
+
+double __cos(double x)
+{
+	double ret;
+	
+	ret = __ieee754_cos(x);
+	if (isnan(ret) && !isnan(x))
+		ret = __kernel_standard(x, x, ret, KMATHERR_COS_INF);
+	return ret;
+}
+
+__typeof(__cos) cos __attribute__((weak, alias("__cos")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__cosl) __cosl __attribute__((alias("__cos")));
+__typeof(__cosl) cosl __attribute__((weak, alias("__cos")));
+#endif
