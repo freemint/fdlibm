@@ -201,8 +201,10 @@ config.h: $(LIB_000) $(LIB_020) $(LIB_V4E) Makefile
 	   fn=`echo $$i | tr '[a-z]' '[A-Z]'`; \
 	   if $(CC) $(CFLAGS) $(CPU_FLAGS_000) $(CPPFLAGS) $(LDFLAGS) $$tmp $(LIB_000) 2>/dev/null; then \
 	      echo "#define HAVE_$${fn} 1"; \
+	      echo "#define HAVE_$${fn} 1" >&2; \
 	   else \
 	      echo "#undef HAVE_$${fn}"; \
+	      echo "#undef HAVE_$${fn}" >&2; \
 	   fi; \
 	   $(RM) $$tmp; \
 	 done; \
