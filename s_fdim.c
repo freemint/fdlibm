@@ -23,20 +23,14 @@
 
 double __fdim(double x, double y)
 {
-	int clsx = fpclassify(x);
-	int clsy = fpclassify(y);
 	double r;
 
-	if (clsx == FP_NAN || clsy == FP_NAN || (y < 0 && clsx == FP_INFINITE && clsy == FP_INFINITE))
-		/* Raise invalid flag.  */
-		return x - y;
-
-	if (x <= y)
+	if (islessequal(x, y))
 		return 0.0;
 
 	r = x - y;
 
-	if (isinf(r))
+	if (isinf(r) && !isinf(x) && !isinf(y))
 		__set_errno(ERANGE);
 
 	return r;

@@ -24,20 +24,14 @@
 #ifndef __NO_LONG_DOUBLE_MATH
 long double __fdiml(long double x, long double y)
 {
-	int clsx = fpclassify(x);
-	int clsy = fpclassify(y);
 	long double r;
 
-	if (clsx == FP_NAN || clsy == FP_NAN || (y < 0 && clsx == FP_INFINITE && clsy == FP_INFINITE))
-		/* Raise invalid flag.  */
-		return x - y;
-
-	if (x <= y)
+	if (islessequal(x, y))
 		return 0.0L;
 
 	r = x - y;
 
-	if (isinf(r))
+	if (isinf(r) && !isinf(x) && !isinf(y))
 		__set_errno(ERANGE);
 
 	return r;
