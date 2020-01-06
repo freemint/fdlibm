@@ -1124,6 +1124,24 @@ int32_t __kernel_rem_pio2(double *x, double *y, int32_t e0, int32_t nx, int prec
 int32_t __kernel_rem_pio2f(float *x, float *y, int32_t e0, int32_t nx, int prec);
 int32_t __kernel_rem_pio2l(double *x, double *y, int32_t e0, int32_t nx, int prec);
 
+double __j0_y0_pzero(double);
+double __j0_y0_qzero(double);
+float __j0_y0_pzerof(float);
+float __j0_y0_qzerof(float);
+long double __j0_y0_pzerol(long double);
+long double __j0_y0_qzerol(long double);
+
+double __j1_y1_pone(double);
+double __j1_y1_qone(double);
+float __j1_y1_ponef(float);
+float __j1_y1_qonef(float);
+long double __j1_y1_ponel(long double);
+long double __j1_y1_qonel(long double);
+
+double __x2y2m1(double x, double y);
+float __x2y2m1f(float x, float y);
+long double __x2y2m1l(long double x, long double y);
+
 extern const long double __sincosl_table[];
 
 /* NYI */

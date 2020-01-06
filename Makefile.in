@@ -84,8 +84,15 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/e_fmod.c $(srcdir)/e_fmodf.c $(srcdir)/e_fmodl.c \
 	$(srcdir)/e_gamma_r.c \
 	$(srcdir)/e_hypot.c $(srcdir)/e_hypotf.c $(srcdir)/e_hypotl.c \
-	$(srcdir)/e_j0.c $(srcdir)/e_j1.c \
-	$(srcdir)/e_jn.c $(srcdir)/e_lgamma.c $(srcdir)/e_lgamma_r.c \
+	$(srcdir)/e_j0.c $(srcdir)/e_j0f.c $(srcdir)/e_j0l.c \
+	$(srcdir)/e_j1.c $(srcdir)/e_j1f.c $(srcdir)/e_j1l.c \
+	$(srcdir)/e_jn.c $(srcdir)/e_jnf.c $(srcdir)/e_jnl.c \
+	$(srcdir)/e_y0.c $(srcdir)/e_y0f.c $(srcdir)/e_y0l.c \
+	$(srcdir)/e_y1.c $(srcdir)/e_y1f.c $(srcdir)/e_y1l.c \
+	$(srcdir)/e_yn.c $(srcdir)/e_ynf.c $(srcdir)/e_ynl.c \
+	$(srcdir)/s_pzero.c $(srcdir)/s_pzerof.c $(srcdir)/s_pzerol.c \
+	$(srcdir)/s_pone.c $(srcdir)/s_pone.c $(srcdir)/s_ponel.c \
+	$(srcdir)/e_lgamma.c $(srcdir)/e_lgamma_r.c \
 	$(srcdir)/e_log.c $(srcdir)/e_logf.c $(srcdir)/e_logl.c \
 	$(srcdir)/e_log2.c $(srcdir)/e_log2f.c $(srcdir)/e_log2l.c \
 	$(srcdir)/e_log10.c $(srcdir)/e_log10f.c $(srcdir)/e_log10l.c \
@@ -99,8 +106,7 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/w_acosh.c $(srcdir)/w_asin.c $(srcdir)/w_atan2.c \
 	$(srcdir)/w_atanh.c $(srcdir)/w_cosh.c \
 	$(srcdir)/w_gamma.c $(srcdir)/w_gamma_r.c \
-	$(srcdir)/w_j0.c $(srcdir)/w_j1.c \
-	$(srcdir)/w_jn.c $(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
+	$(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
 	$(srcdir)/w_sinh.c \
 	$(srcdir)/s_asinh.c $(srcdir)/s_atan.c \
 	$(srcdir)/s_cbrt.c $(srcdir)/s_cbrtf.c $(srcdir)/s_cbrtl.c \
