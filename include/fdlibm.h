@@ -1124,6 +1124,8 @@ int32_t __kernel_rem_pio2(double *x, double *y, int32_t e0, int32_t nx, int prec
 int32_t __kernel_rem_pio2f(float *x, float *y, int32_t e0, int32_t nx, int prec);
 int32_t __kernel_rem_pio2l(double *x, double *y, int32_t e0, int32_t nx, int prec);
 
+extern const long double __sincosl_table[];
+
 /* NYI */
 #define feraiseexcept(x)
 
