@@ -668,7 +668,7 @@ static int check_fp(uint16_t exponent, uint32_t mant0, uint32_t mant1, const ld_
 
 
 
-#if defined(TEST_FUNC_F_I) || defined(TEST_FUNC_FF_I) || defined(TEST_FUNC_FIP_F)
+#if defined(TEST_FUNC_F_I) || defined(TEST_FUNC_FF_I) || defined(TEST_FUNC_FIP_F) || defined(TEST_FUNC_FF_FI)
 __attribute__((__noinline__))
 static int check_int(int e, int f, int flags, int i, const char *file, int line)
 {
