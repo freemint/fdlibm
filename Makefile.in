@@ -110,7 +110,8 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/w_gamma.c $(srcdir)/w_gamma_r.c \
 	$(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
 	$(srcdir)/w_sinh.c \
-	$(srcdir)/s_asinh.c $(srcdir)/s_atan.c \
+	$(srcdir)/s_asinh.c \
+	$(srcdir)/s_atan.c $(srcdir)/s_atanf.c $(srcdir)/s_atanl.c \
 	$(srcdir)/s_cbrt.c $(srcdir)/s_cbrtf.c $(srcdir)/s_cbrtl.c \
 	$(srcdir)/s_ceil.c $(srcdir)/s_ceilf.c $(srcdir)/s_ceill.c \
 	$(srcdir)/s_copysign.c $(srcdir)/s_copysignf.c $(srcdir)/s_copysignl.c \
