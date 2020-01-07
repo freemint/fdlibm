@@ -167,6 +167,9 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/fegetenv.c \
 	$(srcdir)/feholdexcept.c \
 	$(srcdir)/feupdateenv.c \
+	\
+	$(srcdir)/truncxfdf2.c \
+	\
 	$(empty)
 
 OBJ = 	$(addsuffix .o, $(basename $(notdir $(SRC))))
