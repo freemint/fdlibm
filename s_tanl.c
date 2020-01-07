@@ -1,25 +1,29 @@
-/* @(#)s_tan.c 1.3 95/01/18 */
+/* s_tanl.c -- long double version of s_tan.c.
+ * Conversion to long double by Ulrich Drepper,
+ * Cygnus Support, drepper@cygnus.com.
+ */
+
 /*
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
- * Developed at SunSoft, a Sun Microsystems, Inc. business.
+ * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
-/* tan(x)
+/* tanl(x)
  * Return tangent function of x.
  *
  * kernel function:
- *	__kernel_tan		... tangent function on [-pi/4,pi/4]
- *	__ieee754_rem_pio2	... argument reduction routine
+ *	__kernel_tanl		... tangent function on [-pi/4,pi/4]
+ *	__ieee754_rem_pio2l	... argument reduction routine
  *
  * Method.
- *      Let S,C and T denote the sin, cos and tan respectively on 
- *	[-PI/4, +PI/4]. Reduce the argument x to y1+y2 = x-k*pi/2 
+ *      Let S,C and T denote the sin, cos and tan respectively on
+ *	[-PI/4, +PI/4]. Reduce the argument x to y1+y2 = x-k*pi/2
  *	in [-pi/4 , +pi/4], and let n = k mod 4.
  *	We have
  *
@@ -37,56 +41,55 @@
  *      trig(NaN)    is that NaN;
  *
  * Accuracy:
- *	TRIG(x) returns trig(x) nearly rounded 
+ *	TRIG(x) returns trig(x) nearly rounded
  */
 
 #ifndef __FDLIBM_H__
 #include "fdlibm.h"
 #endif
 
+#ifndef __NO_LONG_DOUBLE_MATH
+
 #ifndef __have_fpu_tan
 
-double __ieee754_tan(double x)
+long double __ieee754_tanl(long double x)
 {
-	double y[2], z = 0.0;
-	int32_t n, ix;
+	long double y[2], z = 0.0;
+	int32_t n, se;
 
 	/* High word of x. */
-	GET_HIGH_WORD(ix, x);
+	GET_LDOUBLE_EXP(se, x);
 
 	/* |x| ~< pi/4 */
-	ix &= IC(0x7fffffff);
-	if (ix <= IC(0x3fe921fb))
-		return __kernel_tan(x, z, 1);
+	se &= 0x7fff;
+	if (se <= 0x3ffe)
+		return __kernel_tanl(x, z, 1);
 
 	/* tan(Inf or NaN) is NaN */
-	else if (ix >= IC(0x7ff00000))
-		return x - x;					/* NaN */
+	else if (se == 0x7fff)
+		return x - x;
 
 	/* argument reduction needed */
 	else
 	{
-		n = __ieee754_rem_pio2(x, y);
-		return __kernel_tan(y[0], y[1], (int)(1 - ((n & 1) << 1)));	/*   1 -- n even
-																   -1 -- n odd */
+		n = __ieee754_rem_pio2l(x, y);
+		return __kernel_tanl(y[0], y[1], (int)(1 - ((n & 1) << 1)));	/*   1 -- n even -1 -- n odd */
 	}
 }
 
 #endif
 
 
-double __tan(double x)
+long double __tanl(long double x)
 {
-	double ret;
+	long double ret;
 	
-	ret = __ieee754_tan(x);
+	ret = __ieee754_tanl(x);
 	if (isnan(ret) && isinf(x))
-		ret = __kernel_standard(x, x, ret, KMATHERR_TAN_INF);
+		ret = __kernel_standard_l(x, x, ret, KMATHERRL_TAN_INF);
 	return ret;
 }
 
-__typeof(__tan) tan __attribute__((weak, alias("__tan")));
-#ifdef __NO_LONG_DOUBLE_MATH
-__typeof(__tanl) __tanl __attribute__((alias("__tan")));
-__typeof(__tanl) tanl __attribute__((weak, alias("__tan")));
+__typeof(__tanl) tanl __attribute__((weak, alias("__tanl")));
+
 #endif
