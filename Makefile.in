@@ -104,13 +104,12 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/e_rem_pio2.c $(srcdir)/e_rem_pio2f.c $(srcdir)/e_rem_pio2l.c \
 	$(srcdir)/e_remainder.c $(srcdir)/e_remainderf.c $(srcdir)/e_remainderl.c \
 	$(srcdir)/e_scalb.c $(srcdir)/e_scalbf.c $(srcdir)/e_scalbl.c \
-	$(srcdir)/e_sinh.c \
+	$(srcdir)/e_sinh.c $(srcdir)/e_sinhf.c $(srcdir)/e_sinhl.c \
 	$(srcdir)/e_sqrt.c $(srcdir)/e_sqrtf.c $(srcdir)/e_sqrtl.c \
 	$(srcdir)/w_acosh.c \
 	$(srcdir)/w_atanh.c \
 	$(srcdir)/w_gamma.c $(srcdir)/w_gamma_r.c \
 	$(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
-	$(srcdir)/w_sinh.c \
 	$(srcdir)/s_asinh.c \
 	$(srcdir)/s_atan.c $(srcdir)/s_atanf.c $(srcdir)/s_atanl.c \
 	$(srcdir)/s_cbrt.c $(srcdir)/s_cbrtf.c $(srcdir)/s_cbrtl.c \
