@@ -77,7 +77,7 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/k_sin.c $(srcdir)/k_sinf.c $(srcdir)/k_sinl.c \
 	$(srcdir)/k_tan.c $(srcdir)/k_tanf.c $(srcdir)/k_tanl.c \
 	$(srcdir)/e_acos.c $(srcdir)/e_acosf.c $(srcdir)/e_acosf.c \
-	$(srcdir)/e_acosh.c \
+	$(srcdir)/e_acosh.c $(srcdir)/e_acoshf.c $(srcdir)/e_acoshl.c \
 	$(srcdir)/e_asin.c $(srcdir)/e_asinf.c $(srcdir)/e_asinl.c \
 	$(srcdir)/e_atan2.c $(srcdir)/e_atan2f.c $(srcdir)/e_atan2l.c \
 	$(srcdir)/e_atanh.c \
@@ -106,7 +106,6 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/e_scalb.c $(srcdir)/e_scalbf.c $(srcdir)/e_scalbl.c \
 	$(srcdir)/e_sinh.c $(srcdir)/e_sinhf.c $(srcdir)/e_sinhl.c \
 	$(srcdir)/e_sqrt.c $(srcdir)/e_sqrtf.c $(srcdir)/e_sqrtl.c \
-	$(srcdir)/w_acosh.c \
 	$(srcdir)/w_atanh.c \
 	$(srcdir)/w_gamma.c $(srcdir)/w_gamma_r.c \
 	$(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
