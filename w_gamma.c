@@ -1,4 +1,3 @@
-
 /* @(#)w_gamma.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -6,7 +5,7 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  *
@@ -18,9 +17,17 @@
  * Method: call gamma_r
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-double gamma(double x)
+double __gamma(double x)
 {
 	return gamma_r(x, &signgam);
-}             
+}
+
+__typeof(__gamma) gamma __attribute__((weak, alias("__gamma")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__gammal) __gammal __attribute__((alias("__gamma")));
+__typeof(__gammal) gammal __attribute__((weak, alias("__gamma")));
+#endif

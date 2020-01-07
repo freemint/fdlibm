@@ -86,7 +86,6 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/e_exp2.c $(srcdir)/e_exp2f.c $(srcdir)/e_exp2l.c \
 	$(srcdir)/e_exp10.c $(srcdir)/e_exp10f.c $(srcdir)/e_exp10l.c \
 	$(srcdir)/e_fmod.c $(srcdir)/e_fmodf.c $(srcdir)/e_fmodl.c \
-	$(srcdir)/e_gamma_r.c \
 	$(srcdir)/e_hypot.c $(srcdir)/e_hypotf.c $(srcdir)/e_hypotl.c \
 	$(srcdir)/e_j0.c $(srcdir)/e_j0f.c $(srcdir)/e_j0l.c \
 	$(srcdir)/e_j1.c $(srcdir)/e_j1f.c $(srcdir)/e_j1l.c \
@@ -96,7 +95,6 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/e_yn.c $(srcdir)/e_ynf.c $(srcdir)/e_ynl.c \
 	$(srcdir)/s_pzero.c $(srcdir)/s_pzerof.c $(srcdir)/s_pzerol.c \
 	$(srcdir)/s_pone.c $(srcdir)/s_pone.c $(srcdir)/s_ponel.c \
-	$(srcdir)/e_lgamma.c $(srcdir)/e_lgamma_r.c \
 	$(srcdir)/e_log.c $(srcdir)/e_logf.c $(srcdir)/e_logl.c \
 	$(srcdir)/e_log2.c $(srcdir)/e_log2f.c $(srcdir)/e_log2l.c \
 	$(srcdir)/e_log10.c $(srcdir)/e_log10f.c $(srcdir)/e_log10l.c \
@@ -106,8 +104,6 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/e_scalb.c $(srcdir)/e_scalbf.c $(srcdir)/e_scalbl.c \
 	$(srcdir)/e_sinh.c $(srcdir)/e_sinhf.c $(srcdir)/e_sinhl.c \
 	$(srcdir)/e_sqrt.c $(srcdir)/e_sqrtf.c $(srcdir)/e_sqrtl.c \
-	$(srcdir)/w_gamma.c $(srcdir)/w_gamma_r.c \
-	$(srcdir)/w_lgamma.c $(srcdir)/w_lgamma_r.c \
 	$(srcdir)/s_asinh.c $(srcdir)/s_asinhf.c $(srcdir)/s_asinhl.c \
 	$(srcdir)/s_atan.c $(srcdir)/s_atanf.c $(srcdir)/s_atanl.c \
 	$(srcdir)/s_cbrt.c $(srcdir)/s_cbrtf.c $(srcdir)/s_cbrtl.c \
@@ -130,7 +126,7 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/s_logb.c $(srcdir)/s_logbf.c $(srcdir)/s_logbl.c \
 	$(srcdir)/s_matherr.c \
 	$(srcdir)/s_modf.c $(srcdir)/s_modff.c $(srcdir)/s_modfl.c \
-	$(srcdir)/s_remquof.c $(srcdir)/s_remquof.c $(srcdir)/s_remquol.c \
+	$(srcdir)/s_remquo.c $(srcdir)/s_remquof.c $(srcdir)/s_remquol.c \
 	$(srcdir)/s_nextafter.c $(srcdir)/s_nextafterf.c $(srcdir)/s_nextafterl.c \
 	$(srcdir)/s_nexttoward.c $(srcdir)/s_nexttowardf.c \
 	$(srcdir)/s_rint.c $(srcdir)/s_rintf.c $(srcdir)/s_rintl.c \
@@ -154,6 +150,15 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/s_trunc.c $(srcdir)/s_truncf.c $(srcdir)/s_truncl.c \
 	$(srcdir)/s_issig.c $(srcdir)/s_issigf.c $(srcdir)/s_issigl.c \
 	$(srcdir)/s_nearbyint.c $(srcdir)/s_nearbyintf.c $(srcdir)/s_nearbyintl.c \
+	\
+	$(srcdir)/e_lgamma.c $(srcdir)/e_lgammaf.c $(srcdir)/e_lgammal.c \
+	$(srcdir)/e_lgamma_r.c $(srcdir)/e_lgammaf_r.c $(srcdir)/e_lgammal_r.c \
+	$(srcdir)/e_tgamma_r.c $(srcdir)/e_tgammaf_r.c $(srcdir)/e_tgammal_r.c \
+	$(srcdir)/w_gamma.c $(srcdir)/w_gammaf.c $(srcdir)/w_gammal.c \
+	$(srcdir)/w_gamma_r.c $(srcdir)/w_gammaf_r.c $(srcdir)/w_gammal_r.c \
+	$(srcdir)/w_lgamma.c $(srcdir)/w_lgammaf.c $(srcdir)/w_lgammal.c \
+	$(srcdir)/w_lgamma_r.c $(srcdir)/w_lgammaf_r.c $(srcdir)/w_lgammal_r.c \
+	$(srcdir)/w_tgamma.c $(srcdir)/w_tgammaf.c $(srcdir)/w_tgammal.c \
 	\
 	$(srcdir)/fpu_ctrl.c \
 	$(srcdir)/fesetround.c \

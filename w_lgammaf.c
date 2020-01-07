@@ -1,9 +1,8 @@
-/* @(#)e_lgamma.c 1.3 95/01/18 */
 /*
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
- * Developed at SunSoft, a Sun Microsystems, Inc. business.
+ * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
  * software is freely granted, provided that this notice 
  * is preserved.
@@ -11,15 +10,19 @@
  *
  */
 
-/* __ieee754_lgamma(x)
+/* float lgammaf(double x)
  * Return the logarithm of the Gamma function of x.
  *
- * Method: call __ieee754_lgamma_r
+ * Method: call lgammaf_r
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-double __ieee754_lgamma(double x)
+float __lgammaf(float x)
 {
-	return __ieee754_lgamma_r(x, &signgam);
+	return lgammaf_r(x, &signgam);
 }
+
+__typeof(__lgammaf) lgammaf __attribute__((weak, alias("__lgammaf")));

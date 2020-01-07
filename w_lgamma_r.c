@@ -1,4 +1,3 @@
-
 /* @(#)w_lgamma_r.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -6,7 +5,7 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -15,10 +14,11 @@
  * wrapper double lgamma_r(double x, int *signgamp)
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-
-double lgamma_r(double x, int *signgamp) /* wrapper lgamma_r */
+double __lgamma_r(double x, int *signgamp)
 {
 	double y = __ieee754_lgamma_r(x, signgamp);
 
@@ -27,4 +27,10 @@ double lgamma_r(double x, int *signgamp) /* wrapper lgamma_r */
 								 : KMATHERR_LGAMMA_OVERFLOW);	/* lgamma overflow */
 
 	return y;
-}             
+}
+
+__typeof(__lgamma_r) lgamma_r __attribute__((weak, alias("__lgamma_r")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__lgammal_r) __lgammal_r __attribute__((alias("__lgamma_r")));
+__typeof(__lgammal_r) lgammal_r __attribute__((weak, alias("__lgamma_r")));
+#endif

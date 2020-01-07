@@ -1,4 +1,3 @@
-
 /* @(#)w_gamma_r.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -18,7 +17,7 @@
 #include "fdlibm.h"
 
 
-double gamma_r(double x, int *signgamp) /* wrapper lgamma_r */
+double __gamma_r(double x, int *signgamp) /* wrapper lgamma_r */
 {
 	double y = __ieee754_lgamma_r(x, signgamp);
 
@@ -28,3 +27,9 @@ double gamma_r(double x, int *signgamp) /* wrapper lgamma_r */
 
 	return y;
 }             
+
+__typeof(__gamma_r) gamma_r __attribute__((weak, alias("__gamma_r")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__gammal_r) __gammal_r __attribute__((alias("__gamma_r")));
+__typeof(__gammal_r) gammal_r __attribute__((weak, alias("__gamma_r")));
+#endif
