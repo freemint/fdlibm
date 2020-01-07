@@ -1053,6 +1053,36 @@ static int check_longlong(long long e, long long f, int flags, int i, const char
 #endif
 
 
+#ifdef TEST_FUNC_FFL_F
+/*
+ * body for dyadic operations, with long double 2nd arg:
+ * nexttoward
+ */
+#ifdef TEST_LDOUBLE
+#define TEST_OP_BODY_FFL_F(_x, _y) fp0.x = TEST_FUNC_FFL_F(_x.x, _y.x)
+#endif
+#ifdef TEST_DOUBLE
+#define TEST_OP_BODY_FFL_F(_x, _y) fp0.x = my_extenddfxf2(TEST_FUNC_FFL_F(my_truncxfdf2(_x.x), _y.x))
+#endif
+#ifdef TEST_FLOAT
+#define TEST_OP_BODY_FFL_F(_x, _y) fp0.x = my_extendsfxf2(TEST_FUNC_FFL_F(my_truncxfsf2(_x.x), _y.x))
+#endif
+
+#define TEST_CONST_FLAGS(_x, _y, e, flags) \
+	++numtests; \
+	if (!SKIP_TEST(_x, flags) && !SKIP_TEST(_y, flags)) \
+	{ \
+		for (i = 0; i < jit_loops; i++) \
+		{ \
+			TEST_OP_BODY_FFL_F(_x, _y); \
+			EXPECT_FP_CONST_FLAGS(fp0, e, flags); \
+			if (this_fail) break; \
+		} \
+	}
+
+#endif
+
+
 #ifdef TEST_FUNC_FFF_F
 /*
  * body for triadic operations:
@@ -1393,6 +1423,42 @@ static int test_table_ff_f(const test_ff_f_data *data, size_t n, const char *fil
 				for (i = 0; i < jit_loops; i++)
 				{
 					TEST_OP_BODY_FF_F(data[l].x, data[l].y);
+					this_fail = check_fp(data[l].e.v.exponent, data[l].e.v.mantissa0, data[l].e.v.mantissa1, &fp0, data[l].flags, i, file, data[l].line);
+					if (this_fail)
+					{
+						status |= this_fail != 0;
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	return status;
+}
+
+#endif
+	
+
+#if defined(TEST_FUNC_FFL_F)
+
+static int test_table_ffl_f(const test_ff_f_data *data, size_t n, const char *file)
+{
+	size_t l;
+	int i;
+	int status = 0, this_fail;
+	ld_union fp0;
+	
+	for (l = 0; l < n; l++)
+	{
+		numtests++;
+		if (!SKIP_TEST(data[l].x, data[l].flags) && !SKIP_TEST(data[l].y, data[l].flags))
+		{
+			if (testonly == 0 || testonly == numtests)
+			{
+				for (i = 0; i < jit_loops; i++)
+				{
+					TEST_OP_BODY_FFL_F(data[l].x, data[l].y);
 					this_fail = check_fp(data[l].e.v.exponent, data[l].e.v.mantissa0, data[l].e.v.mantissa1, &fp0, data[l].flags, i, file, data[l].line);
 					if (this_fail)
 					{

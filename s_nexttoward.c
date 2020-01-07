@@ -42,7 +42,7 @@ double __nexttoward(double x, long double y)
 	   present.  Sigh!  */
 	if (((ix >= IC(0x7ff00000)) && ((ix - IC(0x7ff00000)) | lx) != 0) ||	/* x is nan */
 		((iy >= IEEE854_LONG_DOUBLE_MAXEXP) && ((hy & UC(0x7fffffff)) | ly) != 0))	/* y is nan */
-		return x + y;
+		return __builtin_nan("");
 	if ((long double) x == y)
 		return y;						/* x=y, return y */
 	if ((ix | lx) == 0)
@@ -100,6 +100,6 @@ double __nexttoward(double x, long double y)
 }
 
 __typeof(__nexttoward) nexttoward __attribute__((weak, alias("__nexttoward")));
-/* aliases for long double versions already done in nexttoward */
+/* aliases for long double versions already done in nextafter */
 
 #endif
