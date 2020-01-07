@@ -30,9 +30,9 @@ long double __ieee754_scalblnl(long double x, long n)
 	if (k == IEEE854_LONG_DOUBLE_MAXEXP)
 		return x + x;					/* NaN or Inf */
 	if (n < IC(-50000))
-		return tiny * libc_hiddencall(copysignl)(tiny, x);
+		return tiny * __copysignl(tiny, x);
 	if (n > IC(50000) || k + n > 0x7ffe)
-		return hugeval * libc_hiddencall(copysignl)(hugeval, x);	/* overflow  */
+		return hugeval * __copysignl(hugeval, x);	/* overflow  */
 	/* Now k and n are bounded we know that k = k+n does not
 	   overflow.  */
 	k = k + n;
@@ -42,7 +42,7 @@ long double __ieee754_scalblnl(long double x, long n)
 		return x;
 	}
 	if (k <= -64)
-		return tiny * libc_hiddencall(copysignl)(tiny, x);	/* underflow */
+		return tiny * __copysignl(tiny, x);	/* underflow */
 	k += 64;							/* subnormal result */
 	SET_LDOUBLE_EXP(x, (es & 0x8000) | k);
 	return x * twom64;
