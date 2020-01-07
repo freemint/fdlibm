@@ -145,7 +145,7 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/s_sin.c $(srcdir)/s_sinf.c $(srcdir)/s_sinl.c \
 	$(srcdir)/s_sincos.c $(srcdir)/s_sincosf.c $(srcdir)/s_sincosl.c \
 	$(srcdir)/s_tan.c $(srcdir)/s_tanf.c $(srcdir)/s_tanl.c \
-	$(srcdir)/s_tanh.c \
+	$(srcdir)/s_tanh.c $(srcdir)/s_tanhf.c $(srcdir)/s_tanhl.c \
 	$(srcdir)/s_fmin.c $(srcdir)/s_fminf.c $(srcdir)/s_fminl.c \
 	$(srcdir)/s_fmax.c $(srcdir)/s_fmaxf.c $(srcdir)/s_fmaxl.c \
 	$(srcdir)/s_fdim.c $(srcdir)/s_fdimf.c $(srcdir)/s_fdiml.c \

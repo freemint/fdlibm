@@ -1,4 +1,3 @@
-
 /* @(#)s_tanh.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -6,7 +5,7 @@
  *
  * Developed at SunSoft, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -35,39 +34,67 @@
  *	only tanh(0)=0 is exact for finite argument.
  */
 
+#ifndef __FDLIBM_H__
 #include "fdlibm.h"
+#endif
 
-static const double one=1.0, two=2.0, tiny = 1.0e-300;
+#ifndef __have_fpu_tanh
 
-double tanh(double x)
+double __ieee754_tanh(double x)
 {
-	double t,z;
-	int jx,ix;
+	double t, z;
+	int32_t jx, ix, lx;
 
-    /* High word of |x|. */
-	jx = __HI(x);
-	ix = jx&0x7fffffff;
+	static const double one = 1.0;
+	static const double two = 2.0;
+	static const double tiny = 1.0e-300;
 
-    /* x is INF or NaN */
-	if(ix>=0x7ff00000) { 
-	    if (jx>=0) return one/x+one;    /* tanh(+-inf)=+-1 */
-	    else       return one/x-one;    /* tanh(NaN) = NaN */
+	/* High word of |x|. */
+	GET_DOUBLE_WORDS(jx, lx, x);
+	ix = jx & IC(0x7fffffff);
+
+	/* x is INF or NaN */
+	if (ix >= IC(0x7ff00000))
+	{
+		if (jx >= 0)
+			return one / x + one;		/* tanh(+-inf)=+-1 */
+		else
+			return one / x - one;		/* tanh(NaN) = NaN */
 	}
 
-    /* |x| < 22 */
-	if (ix < 0x40360000) {		/* |x|<22 */
-	    if (ix<0x3c800000) 		/* |x|<2**-55 */
-		return x*(one+x);    	/* tanh(small) = small */
-	    if (ix>=0x3ff00000) {	/* |x|>=1  */
-		t = expm1(two*fabs(x));
-		z = one - two/(t+two);
-	    } else {
-	        t = expm1(-two*fabs(x));
-	        z= -t/(t+two);
-	    }
-    /* |x| > 22, return +-1 */
-	} else {
-	    z = one - tiny;		/* raised inexact flag */
+	/* |x| < 22 */
+	if (ix < IC(0x40360000))
+	{									/* |x|<22 */
+		if ((ix | lx) == 0)
+			return x;					/* x == +-0 */
+		if (ix < IC(0x3c800000))		/* |x|<2**-55 */
+			return x * (one + x);		/* tanh(small) = small */
+		if (ix >= IC(0x3ff00000))
+		{								/* |x|>=1  */
+			t = __ieee754_expm1(two * __ieee754_fabs(x));
+			z = one - two / (t + two);
+		} else
+		{
+			t = __ieee754_expm1(-two * __ieee754_fabs(x));
+			z = -t / (t + two);
+		}
+		/* |x| > 22, return +-1 */
+	} else
+	{
+		z = one - tiny;					/* raised inexact flag */
 	}
-	return (jx>=0)? z: -z;
+	return (jx >= 0) ? z : -z;
 }
+
+#endif
+
+double __tanh(double x)
+{
+	return __ieee754_tanh(x);
+}
+
+__typeof(__tanh) tanh __attribute__((weak, alias("__tanh")));
+#ifdef __NO_LONG_DOUBLE_MATH
+__typeof(__tanhl) __tanhl __attribute__((alias("__tanh")));
+__typeof(__tanhl) tanhl __attribute__((weak, alias("__tanh")));
+#endif
