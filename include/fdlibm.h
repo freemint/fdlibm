@@ -36,21 +36,6 @@
 #define __FLOAT_WORD_ORDER__ __BYTE_ORDER__
 #endif
 
-/* Sometimes it's necessary to define __LITTLE_ENDIAN explicitly
-   but these catch some common cases. */
-
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define __HI(x) *(1+(int*)&x)
-#define __LO(x) *(int*)&x
-#define __HIp(x) *(1+(int*)x)
-#define __LOp(x) *(int*)x
-#else
-#define __HI(x) *(int*)&x
-#define __LO(x) *(1+(int*)&x)
-#define __HIp(x) *(int*)x
-#define __LOp(x) *(1+(int*)x)
-#endif
-
 #define IEEE754_FLOAT_MAXEXP	0xff
 #define IEEE754_FLOAT_BIAS	0x7f /* Added to exponent.  */
 #define IEEE754_FLOAT_SHIFT 23
@@ -356,15 +341,6 @@ do {								\
 } while (0)
 
 #endif
-
-/* Macros to avoid undefined behaviour that can arise if the amount
-   of a shift is exactly equal to the size of the shifted operand.  */
-
-#define SAFE_LEFT_SHIFT(op,amt)                                 \
-  (((amt) < 8 * sizeof(op)) ? ((op) << (amt)) : 0)
-
-#define SAFE_RIGHT_SHIFT(op,amt)                                \
-  (((amt) < 8 * sizeof(op)) ? ((op) >> (amt)) : 0)
 
 #if INT_MAX > 32767
 #  define IC(x) ((int32_t) x)

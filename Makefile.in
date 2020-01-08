@@ -167,7 +167,6 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/fegetenv.c \
 	$(srcdir)/feholdexcept.c \
 	$(srcdir)/feupdateenv.c \
-	\
 	$(srcdir)/feclearexcept.c \
 	$(srcdir)/fedisableexcept.c \
 	$(srcdir)/feenableexcept.c \
