@@ -168,6 +168,15 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/feholdexcept.c \
 	$(srcdir)/feupdateenv.c \
 	\
+	$(srcdir)/feclearexcept.c \
+	$(srcdir)/fedisableexcept.c \
+	$(srcdir)/feenableexcept.c \
+	$(srcdir)/fegetexcept.c \
+	$(srcdir)/fegetexceptflag.c \
+	$(srcdir)/feraiseexcept.c \
+	$(srcdir)/fesetexceptflag.c \
+	$(srcdir)/fetestexcept.c \
+	\
 	$(srcdir)/truncxfdf2.c \
 	\
 	$(empty)
