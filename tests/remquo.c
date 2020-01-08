@@ -32,6 +32,7 @@ static int test_table_ff_fi(const test_ff_fi_data *data, size_t n, const char *f
 			{
 				for (i = 0; i < jit_loops; i++)
 				{
+					q = 0;
 					TEST_OP_BODY_FF_FI(data[l].x, data[l].y, q);
 					this_fail = check_fp(data[l].e.v.exponent, data[l].e.v.mantissa0, data[l].e.v.mantissa1, &r, data[l].flags, i, file, data[l].line);
 					this_fail |= check_int(data[l].exp, q, data[l].flags, i, file, data[l].line);
