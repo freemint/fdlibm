@@ -1,3 +1,1 @@
-[![Build Status](https://travis-ci.org/freemint/fdlibm.svg?branch=master)](https://travis-ci.org/freemint/fdlibm)
-
-# FDLIBM
+[![Build Status](https://travis-ci.org/freemint/fdlibm.svg?branch=master)](https://travis-ci.org/freemint/fdlibm) [ ![Download](https://api.bintray.com/packages/freemint/freemint/fdlibm/images/download.svg) ](https://bintray.com/freemint/freemint/fdlibm/_latestVersion)
