@@ -208,7 +208,7 @@ $(LIB): $(OBJ)
 	$(AR) cru $(LIB) $(OBJ)
 	$(RANLIB) $(LIB)
 
-install: all
+install: all install-headers
 	if [ -d 68000.soft-float ] ; then \
 	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir); \
 	  cp 68000.soft-float/libm.a $(DESTDIR)$(libdir)/libm.a; \
@@ -261,9 +261,9 @@ install: all
 	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m5475/mshort; \
 	  cp 5475.hard-float.short/libm.a $(DESTDIR)$(libdir)/m5475/mshort/libm.a; \
 	else true; fi
-	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)
-	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)/bits
-	$(MKINSTALLDIRS) $(DESTDIR)$(incdir)/bits/m68k
+
+install-headers:
+	mkdir -p $(DESTDIR)$(incdir)/bits/m68k
 	cp -a include/math.h include/fenv.h include/fpu_control.h $(DESTDIR)$(incdir)
 	cp -a include/bits/fenv.h include/bits/fenvinline.h include/bits/huge_val.h include/bits/inf.h include/bits/math-68881.h include/bits/math-cffpu.h include/bits/mathcall.h include/bits/mathdef.h include/bits/nan.h include/bits/fpu_control.h $(DESTDIR)$(incdir)/bits
 	cp -a include/bits/m68k/fenv.h include/bits/m68k/fpu_control.h $(DESTDIR)$(incdir)/bits/m68k
