@@ -1,14 +1,5 @@
 language: c
 
-addons:
-  apt:
-    sources:
-      - sourceline: 'ppa:vriviere/ppa'
-    packages:
-      - binutils-m68k-atari-mint
-      - gcc-m68k-atari-mint
-      - mintbin-m68k-atari-mint
-
 env:
   global:
     - PROJECT_REPO=$(echo "${TRAVIS_REPO_SLUG}" | cut -d '/' -f 1)
@@ -19,11 +10,10 @@ env:
     - DEPLOY_ARCHIVE="tar.bz2"
     - BINTRAY_USER="mikrosk"
     # BINTRAY_API_KEY is defined in Travis Settings of freemint/fdlibm
+    - BINTRAY_REPO="lib"
 
 # If before_install, install or before_script return a non-zero exit code, the build is errored and stops immediately.
 before_install:
-  # get rid of possibly outdated dependencies
-  - sudo dpkg --remove --force-depends mintlib-m68k-atari-mint pml-m68k-atari-mint
   - wget -q -O - https://github.com/freemint/travis-scripts/archive/master.tar.gz | tar xzf - --strip-components=1 -C .travis
   - if [ -x .travis/before_install.sh ]; then ./.travis/before_install.sh; else true; fi
 
