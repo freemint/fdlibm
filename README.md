@@ -1,1 +1,3 @@
-[![Build Status](https://travis-ci.org/freemint/fdlibm.svg?branch=master)](https://travis-ci.org/freemint/fdlibm) [ ![Download](https://api.bintray.com/packages/freemint/lib/fdlibm/images/download.svg) ](https://bintray.com/freemint/lib/fdlibm/_latestVersion)
+[![Build Status](https://github.com/freemint/fdlibm/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/freemint/fdlibm/actions) 
+
+Latest snapshot: [Download](https://tho-otto.de/snapshots/fdlibm/fdlibm-latest.tar.bz2)
