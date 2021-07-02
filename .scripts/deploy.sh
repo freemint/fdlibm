@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -x
 
 UPLOAD_DIR=web196@server43.webgo24.de:/home/www/snapshots
 
@@ -42,11 +42,23 @@ case $PROJECT_DIR in
 	m68k-atari-mint-binutils-gdb) PROJECT_DIR=binutils ;;
 esac
 
-scp -o "StrictHostKeyChecking no" "$ARCHIVE_PATH" "${UPLOAD_DIR}/${PROJECT_DIR}/${ARCHIVE_NAME}"
+upload_file() {
+	local from="$1"
+	local to="$2"
+	for i in 1 2 3
+	do
+		scp -o "StrictHostKeyChecking no" "$from" "$to"
+		[ $? = 0 ] && return 0
+		sleep 1
+	done
+	exit 1
+}
+
+upload_file "$ARCHIVE_PATH" "${UPLOAD_DIR}/${PROJECT_DIR}/${ARCHIVE_NAME}"
 if test -z "${CPU_TARGET}"
 then
-	scp -o "StrictHostKeyChecking no" "$ARCHIVE_PATH" "${UPLOAD_DIR}/${PROJECT_DIR}/${PROJECT_DIR}-latest.${DEPLOY_ARCHIVE}"
+	upload_file "$ARCHIVE_PATH" "${UPLOAD_DIR}/${PROJECT_DIR}/${PROJECT_DIR}-latest.${DEPLOY_ARCHIVE}"
 fi
 
 echo ${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID} > .latest_version
-scp -o "StrictHostKeyChecking no" .latest_version "${UPLOAD_DIR}/${PROJECT_DIR}/.latest_version"
+upload_file .latest_version "${UPLOAD_DIR}/${PROJECT_DIR}/.latest_version"
