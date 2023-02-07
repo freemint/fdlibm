@@ -108,6 +108,7 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/e_log2.c $(srcdir)/e_log2f.c $(srcdir)/e_log2l.c \
 	$(srcdir)/e_log10.c $(srcdir)/e_log10f.c $(srcdir)/e_log10l.c \
 	$(srcdir)/e_pow.c $(srcdir)/e_powf.c $(srcdir)/e_powl.c \
+	$(srcdir)/e_powi.c $(srcdir)/e_powif.c $(srcdir)/e_powil.c \
 	$(srcdir)/e_rem_pio2.c $(srcdir)/e_rem_pio2f.c $(srcdir)/e_rem_pio2l.c \
 	$(srcdir)/e_remainder.c $(srcdir)/e_remainderf.c $(srcdir)/e_remainderl.c \
 	$(srcdir)/e_scalb.c $(srcdir)/e_scalbf.c $(srcdir)/e_scalbl.c \
