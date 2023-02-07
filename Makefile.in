@@ -85,7 +85,7 @@ SRC = 	$(srcdir)/k_standard.c \
 	$(srcdir)/k_cos.c $(srcdir)/k_cosf.c $(srcdir)/k_cosl.c \
 	$(srcdir)/k_sin.c $(srcdir)/k_sinf.c $(srcdir)/k_sinl.c \
 	$(srcdir)/k_tan.c $(srcdir)/k_tanf.c $(srcdir)/k_tanl.c \
-	$(srcdir)/e_acos.c $(srcdir)/e_acosf.c $(srcdir)/e_acosf.c \
+	$(srcdir)/e_acos.c $(srcdir)/e_acosf.c $(srcdir)/e_acosl.c \
 	$(srcdir)/e_acosh.c $(srcdir)/e_acoshf.c $(srcdir)/e_acoshl.c \
 	$(srcdir)/e_asin.c $(srcdir)/e_asinf.c $(srcdir)/e_asinl.c \
 	$(srcdir)/e_atan2.c $(srcdir)/e_atan2f.c $(srcdir)/e_atan2l.c \
