@@ -12,17 +12,9 @@ ifeq ($(cpu),5475)
 else
 	CPU=-m$(cpu)
 endif
-ifeq ($(lastword $(subst ., ,$(CPU-FPU))),short)
-	MSHORT=-mshort
-else
-	MSHORT=
-endif
-FPU=$(addprefix -m,$(wordlist 2,100, $(subst ., ,$(CPU-FPU))))
+FLAVOUR=$(addprefix -m,$(wordlist 2,100, $(subst ., ,$(CPU-FPU))))
 CC = @CC@
-#CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) $(MSHORT) $(FPU)
-# Remove explicit FPU parameter, let the compiler defines deal with this for 
-# CPU target
-CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) $(MSHORT) -Werror
+CFLAGS = -pipe -O2 -fomit-frame-pointer $(CPU) $(FLAVOUR) -Werror
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 libdir = $(prefix)/lib
@@ -78,6 +70,17 @@ CPU-FPU-TYPES = \
 		68000.soft-float.short \
 		68020-60.68881.short \
 		5475.hard-float.short
+
+BUILD_FAST=$(shell if $(CC) -mfastcall -E - < /dev/null >/dev/null 2>&1; then echo Y; else echo N; fi)
+ifeq ($(BUILD_FAST), Y)
+CPU-FPU-TYPES += \
+		68000.soft-float.fastcall \
+		68020-60.68881.fastcall \
+		5475.hard-float.fastcall \
+		68000.soft-float.short.fastcall \
+		68020-60.68881.short.fastcall \
+		5475.hard-float.short.fastcall
+endif
 
 INCFILES = fdlibm.h k_stand.h
 SRC = 	$(srcdir)/k_standard.c \
@@ -211,58 +214,17 @@ $(LIB): $(OBJ)
 	$(RANLIB) $(LIB)
 
 install: all install-headers
-	if [ -d 68000.soft-float ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir); \
-	  cp 68000.soft-float/libm.a $(DESTDIR)$(libdir)/libm.a; \
-	else true; fi
-	if [ -d 68000.soft-float.short ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/mshort; \
-	  cp 68000.soft-float.short/libm.a $(DESTDIR)$(libdir)/mshort/libm.a; \
-	else true; fi
-	if [ -d 68020-60.soft-float ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m68020-60; \
-	  cp 68020-60.soft-float/libm.a $(DESTDIR)$(libdir)/m68020-60/libm.a; \
-	else true; fi
-	if [ -d 68020-60.68881 ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m68020-60; \
-	  cp 68020-60.68881/libm.a $(DESTDIR)$(libdir)/m68020-60/libm.a; \
-	else true; fi
-	if [ -d 68020-60.68881.short ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m68020-60/mshort; \
-	  cp 68020-60.68881.short/libm.a $(DESTDIR)$(libdir)/m68020-60/mshort/libm.a; \
-	else true; fi
-	if [ -d 68030.soft-float ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm030; \
-	  cp 68030.soft-float/libm.a $(DESTDIR)$(libdir)/libm030/libm.a; \
-	else true; fi
-	if [ -d 68030.68881 ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm030/libm881; \
-	  cp 68030.68881/libm.a $(DESTDIR)$(libdir)/libm030/libm881/libm.a; \
-	else true; fi
-	if [ -d 68040.soft-float ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm040; \
-	  cp 68040.soft-float/libm.a $(DESTDIR)$(libdir)/libm040/libm.a; \
-	else true; fi
-	if [ -d 68040.68881 ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm040/libm881; \
-	  cp 68040.68881/libm.a $(DESTDIR)$(libdir)/libm040/libm881/libm.a; \
-	else true; fi
-	if [ -d 68060.soft-float ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm060; \
-	  cp 68060.soft-float/libm.a $(DESTDIR)$(libdir)/libm060/libm.a; \
-	else true; fi
-	if [ -d 68060.68881 ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/libm060/libm881; \
-	  cp 68060.68881/libm.a $(DESTDIR)$(libdir)/libm060/libm881/libm.a; \
-	else true; fi
-	if [ -d 5475.hard-float ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m5475; \
-	  cp 5475.hard-float/libm.a $(DESTDIR)$(libdir)/m5475/libm.a; \
-	else true; fi
-	if [ -d 5475.hard-float.short ] ; then \
-	  $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/m5475/mshort; \
-	  cp 5475.hard-float.short/libm.a $(DESTDIR)$(libdir)/m5475/mshort/libm.a; \
-	else true; fi
+	@for i in $(CPU-FPU-TYPES); do \
+	  if [ -d $$i ] ; then \
+            cpu=`echo $$i | cut -d . -f 1`; \
+            if test $$cpu = 5475; then cpu=-mcpu=$$cpu; else cpu=-m$$cpu; fi; \
+            flavour=`echo "$$i" | sed -e 's/\./ -m/g' -e 's/[^ ]* //'`; \
+            multilibdir=`$(CC) $$cpu $$flavour -print-multi-directory`; \
+	    $(MKINSTALLDIRS) $(DESTDIR)$(libdir)/$$multilibdir; \
+	    echo cp $$i/libm.a $(DESTDIR)$(libdir)/$$multilibdir/libm.a; \
+	    cp $$i/libm.a $(DESTDIR)$(libdir)/$$multilibdir/libm.a; \
+	  fi; \
+        done
 
 install-headers:
 	mkdir -p $(DESTDIR)$(incdir)/bits/m68k
