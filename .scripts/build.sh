@@ -4,8 +4,8 @@
 # -x: Display expanded script commands
 
 unset CC
-./configure --host=m68k-atari-mint
+if ./configure --prefix=/usr --host=${CROSS_TOOL}; then :; else cat config.log; exit 1; fi
 make
-make prefix="${INSTALL_DIR}" install
+make DESTDIR="${INSTALL_DIR}" install
 
-find "${INSTALL_DIR}" -type f \( -name '*.a' -o -name '*.o' \) -exec m68k-atari-mint-strip -S -X -w -N '.L[0-9]*' {} \;
+find "${INSTALL_DIR}" -type f \( -name '*.a' -o -name '*.o' \) -exec ${CROSS_TOOL}-strip -S -X -w -N '.L[0-9]*' {} \;

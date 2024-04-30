@@ -4,11 +4,22 @@
 # -x: Display expanded script commands
 
 DOWNLOAD_DIR=http://tho-otto.de/snapshots
-SYSROOT_DIR=${SYSROOT_DIR:-"/usr/m68k-atari-mint/sys-root/usr"}
+SYSROOT_DIR=${SYSROOT_DIR:-"/usr/${CROSS_TOOL}/sys-root"}
 
 sudo mkdir -p "${SYSROOT_DIR}" && cd "${SYSROOT_DIR}"
 
+toolsuffix=${CROSS_TOOL##*-}
+
 for package in $*
 do
-	wget -q -O - "$DOWNLOAD_DIR/${package}/${package}-latest.tar.bz2" | sudo tar xjf -
+	# for gcc and binutils, use stable current, not experimental latest build
+	case $package in
+	gcc | binutils)
+		filename=${package}-${toolsuffix}-current.tar.bz2
+		;;
+	*)
+		filename=${package}-${toolsuffix}-latest.tar.bz2
+		;;
+	esac
+	wget -q -O - "$DOWNLOAD_DIR/${package}/${filename}" | sudo tar xjf -
 done

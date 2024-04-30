@@ -1,6 +1,7 @@
 #!/bin/sh -x
 
-UPLOAD_DIR=web196@server43.webgo24.de:/home/www/snapshots
+SERVER=web196@server43.webgo24.de
+UPLOAD_DIR=$SERVER:/home/www/snapshots
 
 if [ -z "${DEPLOY_ARCHIVE+x}" ]
 then
@@ -8,11 +9,13 @@ then
 	DEPLOY_ARCHIVE="zip"
 fi
 
+toolsuffix=${CROSS_TOOL##*-}
+
 if [ -n "${CPU_TARGET+x}" ]
 then
-	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID}-${CPU_TARGET}.${DEPLOY_ARCHIVE}"
+	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID}-${CPU_TARGET}-${toolsuffix}.${DEPLOY_ARCHIVE}"
 else
-	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID}.${DEPLOY_ARCHIVE}"
+	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID}-${toolsuffix}.${DEPLOY_ARCHIVE}"
 fi
 ARCHIVE_PATH="${DEPLOY_DIR}/${ARCHIVE_NAME}"
 
@@ -54,10 +57,22 @@ upload_file() {
 	exit 1
 }
 
+link_file() {
+	local from="$1"
+	local to="$2"
+	for i in 1 2 3
+	do
+		ssh -o "StrictHostKeyChecking no" $SERVER -- "cd www/snapshots/${PROJECT_DIR}; ln -sf $from $to"
+		[ $? = 0 ] && return 0
+		sleep 1
+	done
+	exit 1
+}
+
 upload_file "$ARCHIVE_PATH" "${UPLOAD_DIR}/${PROJECT_DIR}/${ARCHIVE_NAME}"
 if test -z "${CPU_TARGET}"
 then
-	upload_file "$ARCHIVE_PATH" "${UPLOAD_DIR}/${PROJECT_DIR}/${PROJECT_DIR}-latest.${DEPLOY_ARCHIVE}"
+	link_file "$ARCHIVE_NAME" "${PROJECT_DIR}-${toolsuffix}-latest.${DEPLOY_ARCHIVE}"
 fi
 
 echo ${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID} > .latest_version
