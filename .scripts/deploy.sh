@@ -13,9 +13,9 @@ toolsuffix=${CROSS_TOOL##*-}
 
 if [ -n "${CPU_TARGET+x}" ]
 then
-	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID}-${CPU_TARGET}-${toolsuffix}.${DEPLOY_ARCHIVE}"
+	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${LONG_ID}-${CPU_TARGET}-${toolsuffix}.${DEPLOY_ARCHIVE}"
 else
-	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID}-${toolsuffix}.${DEPLOY_ARCHIVE}"
+	ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${LONG_ID}-${toolsuffix}.${DEPLOY_ARCHIVE}"
 fi
 ARCHIVE_PATH="${DEPLOY_DIR}/${ARCHIVE_NAME}"
 
@@ -75,5 +75,3 @@ then
 	link_file "$ARCHIVE_NAME" "${PROJECT_DIR}-${toolsuffix}-latest.${DEPLOY_ARCHIVE}"
 fi
 
-echo ${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID} > .latest_version
-upload_file .latest_version "${UPLOAD_DIR}/${PROJECT_DIR}/.latest_version"
